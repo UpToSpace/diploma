@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+textarea {
+    @apply w-full border my-1 py-2 px-3 rounded-2xl;
+}
+
+textarea {
+    height: 140px;
+}
+
+button {
+    @apply bg-white border border-black text-black font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 focus:ring-gray-100 hover:bg-black hover:text-white hover:border-transparent hover:cursor-pointer;
+}
+button.primary {
+    background-color: #F5385D;
+    @apply bg-primary p-2 w-full text-white rounded-2xl;
+}
+
+
+
+
+.custom-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Задает как содержимое должно быть масштабировано или обрезано, чтобы соответствовать размерам своего контейнера */
+    object-position: left;
+    /* Выравнивание изображения внутри своего контейнера */
+}
