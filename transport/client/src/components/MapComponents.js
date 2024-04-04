@@ -13,7 +13,6 @@ import ReactMapGL, {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getDistance } from 'geolib';
 import { useHttp } from '../hooks/http.hook';
-import { get } from 'config';
 
 export const MAP_TOKEN = "pk.eyJ1IjoidmFsZXJpZTE0My12YWxlcmllIiwiYSI6ImNsZ2RwNHJ3MTAwdXUzc256bHMwc2dpOWwifQ.v4F89QHCuyottjdKLOFfKg";
 const SECRET_TOKEN = "sk.eyJ1IjoidmFsZXJpZTE0My12YWxlcmllIiwiYSI6ImNsZ2tsaWVpMTBkdzQzZHFxOW53M2hoanAifQ.v_wnapRnZGiB1Xof48SmPw"
@@ -80,17 +79,17 @@ export const MiniMap = ({ longitude, latitude, updateCoordinates }) => {
         }
     };
 
-    // useEffect(() => {
-    //     setViewState((oldViewport) => ({
-    //         ...oldViewport,
-    //         latitude,
-    //         longitude,
-    //     }));
-    // }, [latitude, longitude]);
+    useEffect(() => {
+        setViewState((oldViewport) => ({
+            ...oldViewport,
+            latitude,
+            longitude,
+        }));
+    }, [latitude, longitude]);
 
-    // useEffect(() => {
-    //     fetchUserLocation();
-    // }, []); // This effect runs once after the component mounts
+    useEffect(() => {
+        fetchUserLocation();
+    }, []); // This effect runs once after the component mounts
 
     return <ReactMapGL
         style={{ width: "100%", height: "300px"}}
@@ -123,51 +122,51 @@ export const Map = ({ points }) => {
         zoom: ZOOM,
     });
 
-    // const [routes, setRoutes] = useState([]);
+    const [routes, setRoutes] = useState([]);
 
-    // useEffect(() => {
-    //     console.log(points);
-    //     if (points.length >= 2) {
-    //         // Предполагается, что points - это массив объектов с координатами { latitude, longitude }
-    //         const distance = getDistance(
-    //             { latitude: points[0].latitude, longitude: points[0].longitude },
-    //             { latitude: points[1].latitude, longitude: points[1].longitude }
-    //         );
+    useEffect(() => {
+        console.log(points);
+        if (points.length >= 2) {
+            // Предполагается, что points - это массив объектов с координатами { latitude, longitude }
+            const distance = getDistance(
+                { latitude: points[0].latitude, longitude: points[0].longitude },
+                { latitude: points[1].latitude, longitude: points[1].longitude }
+            );
 
-    //         // Приблизительный расчет зума на основе расстояния
-    //         let zoom = 10;
-    //         if (distance > 10000) {
-    //             zoom = 8;
-    //         } else if (distance > 5000) {
-    //             zoom = 9;
-    //         } else if (distance > 1000) {
-    //             zoom = 11;
-    //         } else if (distance > 500) {
-    //             zoom = 12;
-    //         } else {
-    //             zoom = 13;
-    //         }
+            // Приблизительный расчет зума на основе расстояния
+            let zoom = 10;
+            if (distance > 10000) {
+                zoom = 8;
+            } else if (distance > 5000) {
+                zoom = 9;
+            } else if (distance > 1000) {
+                zoom = 11;
+            } else if (distance > 500) {
+                zoom = 12;
+            } else {
+                zoom = 13;
+            }
 
-    //         const centerLatitude = (points[0].latitude + points[1].latitude) / 2;
-    //         const centerLongitude = (points[0].longitude + points[1].longitude) / 2;
+            const centerLatitude = (points[0].latitude + points[1].latitude) / 2;
+            const centerLongitude = (points[0].longitude + points[1].longitude) / 2;
 
-    //         setViewState({
-    //             latitude: centerLatitude,
-    //             longitude: centerLongitude,
-    //             zoom: zoom,
-    //         });
-    //     }
-    //     //getRoutes();
-    // }, [points]); 
+            setViewState({
+                latitude: centerLatitude,
+                longitude: centerLongitude,
+                zoom: zoom,
+            });
+        }
+        //getRoutes();
+    }, [points]); 
     
-    // const getRoutes = useCallback(async () => {
-    //     try {
-    //         const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${points.map(point => [point.longitude, point.latitude])}?steps=true&geometries=geojson&access_token=${MAP_TOKEN}`)
-    //         setRoutes(data.routes[0].geometry.coordinates);
-    //     } catch (e) {
-    //         console.log(e.message);
-    //     }
-    // }, [points]);
+    const getRoutes = useCallback(async () => {
+        try {
+            const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${points.map(point => [point.longitude, point.latitude])}?steps=true&geometries=geojson&access_token=${MAP_TOKEN}`)
+            setRoutes(data.routes[0].geometry.coordinates);
+        } catch (e) {
+            console.log(e.message);
+        }
+    }, [points]);
 
     return (
         <ReactMapGL
