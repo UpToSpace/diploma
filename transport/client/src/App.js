@@ -13,7 +13,7 @@ import { Route, Routes } from "react-router-dom";
 function App() {
   const { login, logout, userId, ready, userRole } = useAuth();
   const { request } = useHttp();
-  // console.log('App.js: userRole = ', userRole)
+  console.log('App.js: userRole = ', userRole)
 
   const routes = useRoutes(userRole);
 

@@ -11,6 +11,9 @@ import ReactMapGL, {
     Layer,
 } from "react-map-gl";
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { getDistance } from 'geolib';
+import { useHttp } from '../hooks/http.hook';
+import { get } from 'config';
 
 export const MAP_TOKEN = "pk.eyJ1IjoidmFsZXJpZTE0My12YWxlcmllIiwiYSI6ImNsZ2RwNHJ3MTAwdXUzc256bHMwc2dpOWwifQ.v4F89QHCuyottjdKLOFfKg";
 const SECRET_TOKEN = "sk.eyJ1IjoidmFsZXJpZTE0My12YWxlcmllIiwiYSI6ImNsZ2tsaWVpMTBkdzQzZHFxOW53M2hoanAifQ.v_wnapRnZGiB1Xof48SmPw"
@@ -52,145 +55,155 @@ const POINT_LAYER = {
     },
 };
 
-const CustomPopup = ({ stop, closePopup, deleteButtonHandler }) => {
-    return (
-        <Popup
-            latitude={stop.latitude}
-            longitude={stop.longitude}
-            onClose={closePopup}
-            closeButton={true}
-            closeOnClick={false}
-            offsetTop={-30}
-        >
-            {stop.name}
-            {deleteButtonHandler && <div><button onClick={() => deleteButtonHandler(stop._id)}>Выдаліць</button></div>}
-        </Popup>
-    )
-};
 
-const CustomMarker = ({ stop, openPopup, icon, height }) => {
-    return (
+export const MiniMap = ({ longitude, latitude, updateCoordinates }) => {
+    const [viewState, setViewState] = useState({
+        latitude: latitude,
+        longitude: longitude,
+        zoom: ZOOM,
+    });
+
+    const fetchUserLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const { latitude, longitude } = position.coords;
+                updateCoordinates(latitude, longitude);
+                setViewState(v => ({ ...v, latitude, longitude }));
+                updateCoordinates(latitude, longitude);
+            }, (error) => {
+                console.error("Error fetching geolocation: ", error);
+            }, {
+                enableHighAccuracy: true
+            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        }
+    };
+
+    // useEffect(() => {
+    //     setViewState((oldViewport) => ({
+    //         ...oldViewport,
+    //         latitude,
+    //         longitude,
+    //     }));
+    // }, [latitude, longitude]);
+
+    // useEffect(() => {
+    //     fetchUserLocation();
+    // }, []); // This effect runs once after the component mounts
+
+    return <ReactMapGL
+        style={{ width: "100%", height: "300px"}}
+        {...viewState}
+        mapboxAccessToken={MAP_TOKEN}
+        mapStyle="mapbox://styles/mapbox/streets-v12"
+        onMove={(event) => {
+            setViewState(event.viewState);
+        }}
+    >
         <Marker
-            longitude={stop.longitude}
-            latitude={stop.latitude}>
-            <div className="marker" onClick={() => openPopup ? openPopup(stop) : null}>
-                <img src={icon ?? busIcon} alt="marker" height={height ?? ZOOM + "px"} />
+            latitude={latitude}
+            longitude={longitude}
+        >
+            <div className="marker">
+                <img src={redflagIcon} 
+                    alt="marker" 
+                    height={ZOOM * 2 + "px"} 
+                    width={ZOOM * 2 + "px"} />
             </div>
         </Marker>
-    )
+    </ReactMapGL>
 };
 
-export const BaseMap = ({
-    openPopup, stops, foundStops, stop, addStopHandler, 
-    selectedStop, closePopup, deleteButtonHandler, MapClickHandler,
-    routeStops, routes, routeStopsForSelectedTransport,
-    FindNearestStopsHandler, setNearestStops, nearestStops, user=false }) => {
+export const Map = ({ points }) => {
+    const { request } = useHttp();
     const [viewState, setViewState] = useState({
         latitude: CENTER[1],
         longitude: CENTER[0],
-        zoom: ZOOM
+        zoom: ZOOM,
     });
 
-    return <ReactMapGL // a map component
-        {...viewState}
-        onMove={event => setViewState(event.viewState)}
-        onClick={addStopHandler && MapClickHandler}
-        style={{ width: "100%", height: 600 }}
-        mapboxAccessToken={MAP_TOKEN}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
-    >
-        <FullscreenControl style={fullscreenControlStyle} />
-        <GeolocateControl
-            style={geolocateControlStyle}
-            positionOptions={{ enableHighAccuracy: true }}
-            trackUserLocation={true}
-            auto={false}
-            onGeolocate={FindNearestStopsHandler}
-            onTrackUserLocationEnd={() => setNearestStops && setNearestStops([])}
-        />
-        {stops?.map(stop => {
-            return (
-                <CustomMarker
-                    key={stop._id}
-                    stop={stop}
-                    openPopup={openPopup}
-                    height={viewState.zoom + "px"}
-                />
-            )
-        })}
-        {routeStops?.map(stop => {
-            return (
-                <CustomMarker
-                    key={stop._id}
-                    stop={stop}
-                    icon={flag}
-                    height={ZOOM * 2 + "px"}
-                    openPopup={openPopup}
-                />
-            )
-        })}
-        {routeStopsForSelectedTransport?.map(stop => { // TODO
-            return (
-                <CustomMarker
-                    key={stop._id}
-                    stop={stop.stopId}
-                    icon={blueflag}
-                    height={ZOOM * 2 + "px"}
-                    openPopup={openPopup}
-                />
-            )
-        })}
-        {selectedStop && 
-            <CustomPopup
-                stop={selectedStop}
-                closePopup={closePopup}
-                deleteButtonHandler={deleteButtonHandler}
-            />}
-        {foundStops?.map(foundStop => {
-            return (<CustomMarker
-                key={foundStop._id}
-                stop={foundStop}
-                openPopup={openPopup}
-                icon={flagIcon}
-                height={ZOOM * 2 + "px"}
-            />)
-        })}
-        {(user && (routes || selectedStop !== null) || routes?.length !== 0) && (
-            <Source id="track" type="geojson" data={{
+    // const [routes, setRoutes] = useState([]);
+
+    // useEffect(() => {
+    //     console.log(points);
+    //     if (points.length >= 2) {
+    //         // Предполагается, что points - это массив объектов с координатами { latitude, longitude }
+    //         const distance = getDistance(
+    //             { latitude: points[0].latitude, longitude: points[0].longitude },
+    //             { latitude: points[1].latitude, longitude: points[1].longitude }
+    //         );
+
+    //         // Приблизительный расчет зума на основе расстояния
+    //         let zoom = 10;
+    //         if (distance > 10000) {
+    //             zoom = 8;
+    //         } else if (distance > 5000) {
+    //             zoom = 9;
+    //         } else if (distance > 1000) {
+    //             zoom = 11;
+    //         } else if (distance > 500) {
+    //             zoom = 12;
+    //         } else {
+    //             zoom = 13;
+    //         }
+
+    //         const centerLatitude = (points[0].latitude + points[1].latitude) / 2;
+    //         const centerLongitude = (points[0].longitude + points[1].longitude) / 2;
+
+    //         setViewState({
+    //             latitude: centerLatitude,
+    //             longitude: centerLongitude,
+    //             zoom: zoom,
+    //         });
+    //     }
+    //     //getRoutes();
+    // }, [points]); 
+    
+    // const getRoutes = useCallback(async () => {
+    //     try {
+    //         const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${points.map(point => [point.longitude, point.latitude])}?steps=true&geometries=geojson&access_token=${MAP_TOKEN}`)
+    //         setRoutes(data.routes[0].geometry.coordinates);
+    //     } catch (e) {
+    //         console.log(e.message);
+    //     }
+    // }, [points]);
+
+    return (
+        <ReactMapGL
+            style={{ width: "100%", height: "100vh" }}
+            {...viewState}
+            mapboxAccessToken={MAP_TOKEN}
+            mapStyle="mapbox://styles/mapbox/streets-v12"
+            onMove={(event) => {
+                setViewState(event.viewState);
+            }}
+        >
+            <Source id="route" type="geojson" data={{
                 type: 'Feature',
                 properties: {},
                 geometry: {
                     type: 'LineString',
-                    coordinates: routes
+                    coordinates: routes,
                 }
             }}>
                 <Layer {...ROUTE_LAYER} />
             </Source>
-        )}
-        {nearestStops?.map(stop => { // stops nearest to user's location
-            return (
-                <CustomMarker
-                    key={stop._id}
-                    stop={stop}
-                    openPopup={openPopup}
-                    icon={redflagIcon}
-                    height={ZOOM * 2 + "px"}
-                />
-            )
-        })}
-        {stop && (
-            <Source
-                id="track"
-                type="geojson"
-                data={{
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [stop.longitude, stop.latitude]
-                    }
-                }}>
-                <Layer {...POINT_LAYER} />
-            </Source>
-        )}
-    </ReactMapGL>
+            <Layer {...POINT_LAYER} />
+            {/* {points.map((point, index) => (
+                <Marker
+                    latitude={point.latitude}
+                    longitude={point.longitude}
+                    key={index}
+                >
+                    <div className="marker">
+                        <img src={redflagIcon}
+                            alt="marker"
+                            height={viewState.zoom * 2 + "px"}
+                            width={viewState.zoom * 2 + "px"} />
+                    </div>
+                </Marker>
+            ))} */}
+        </ReactMapGL>
+    );
 }

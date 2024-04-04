@@ -1,6 +1,12 @@
-import { useState, useEffect, React } from 'react';
+import { useState, useEffect, React, useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useHttp } from '../../hooks/http.hook';
+import { Loader } from '../../components/Loader';
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast';
+import { AuthContext } from '../../context/AuthContext';
+import TravelCard from '../../components/TravelCard';
 
 function useQuery() {
     return new URLSearchParams(useLocation().search);
@@ -8,26 +14,45 @@ function useQuery() {
 
 export const SearchPage = () => {
     const query = useQuery();
-    const [location, setLocation] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [numberOfSeats, setNumberOfSeats] = useState('');
+    const { loading, request } = useHttp();
+    const navigate = useNavigate();
+    const auth = useContext(AuthContext);
+    
+    const [routes, setRoutes] = useState([]);
+    const [params, setParams] = useState({
+        departure: '',
+        destination: '',
+        startDate: '',
+        numberOfSeats: '',
+    });
+
+    const getRoutes = useCallback(async () => {
+        const data = await request(`/api/routes/all?departure=${query.get('departure')}&destination=${query.get('destination')}&startDate=${query.get('startDate')}&numberOfSeats=${query.get('numberOfSeats')}`);
+        setRoutes(data);
+        console.log(data);
+    }, [request])
 
     useEffect(() => {
-        setLocation(query.get('location') || '');
-        setStartDate(query.get('startDate') || '');
-        setEndDate(query.get('endDate') || '');
-        setNumberOfSeats(query.get('numberOfSeats') || '');
-    }, [query]);
+        setParams({
+            departure: query.get('departure'),
+            destination: query.get('destination'),
+            startDate: query.get('startDate'),
+            numberOfSeats: query.get('numberOfSeats'),
+        });
+    }, []);
 
-    const formattedStartDate = startDate ? format(new Date(startDate), 'dd MMMM yy') : '';
+    useEffect(() => {
+        getRoutes();
+    }, [getRoutes]);
+
+
+    //const formattedStartDate = startDate ? format(new Date(startDate), 'dd MMMM yy') : '';
     //const formattedEndDate = endDate ? format(new Date(endDate), 'dd MMMM yy') : '';
     //const range = `${formattedStartDate} - ${formattedEndDate}`;
 
     return (
-        <div className="flex">
-            <h1 className="text-3xl font-semibold mt-2 mb-6">Stays in {location}</h1>
-            <p className="text-xs"> - for {numberOfSeats} guests</p>
-        </div>
+        routes.map(route =>{
+            return <TravelCard trip={route} key={route._id} />
+        })
     );
 }

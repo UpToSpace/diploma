@@ -6,21 +6,43 @@ const router = Router();
 // Create a new Route
 router.post('/', auth, async (req, res) => {
     try {
-        const { transport, departure, destination, departureTime, arrivalTime, price } = req.body;
-        const route = new Route({ transport, departure, destination, departureTime, arrivalTime, price });
+        const { transport, price, departure, destination } = req.body;
+        const route = new Route({ transport, price, departure, destination });
         await route.save();
         res.status(201).json(route);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
+// Get all Routes with params
+router.get('/all', auth, async (req, res) => {
+    try {
+        const { departure, destination, startDate, numberOfSeats } = req.query;
+        console.log(departure, destination, startDate, numberOfSeats);
+        const routes = await Route.find({ 
+            "departure.city": departure, 
+            "departure.date": startDate, 
+            "destination.city": destination
+        });
+        res.json(routes);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
     }
 });
 
-// Get all Routes
-router.get('/', auth, async (req, res) => {
+// Get route by id
+router.get('/:id', auth, async (req, res) => {
     try {
-        const { transports } = req.query;
-        const routes = await Route.find().populate('transport').where('transport').in(transports);
-        res.json(routes);
+        const route = await Route.findById(req.params.id)
+        .populate(
+            {
+                path: 'transport',
+                model: 'Transport'
+            }
+        );
+        res.json(route);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
     }

@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const Transport = require('../models/Transport');
+const Route = require('../models/Route');
 const auth = require('../middleware/auth.middleware');
 const router = Router();
 
@@ -20,12 +21,14 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-// Get all carriers's Transports
+// Get all carriers's Transports and routes
 router.get('/users/:id', auth, async (req, res) => {
     try {
-        const transports = await Transport.find({ carrier: req.params.id});
-        res.json(transports);
+        const transports = await Transport.find({ carrier: req.params.id}).sort({ number: 1 })
+        const routes = await Route.find().populate('transport').where('transport').in(transports);
+        res.json({ transports, routes });
     } catch (e) {
+        console.log(e);
         res.status(500).json({ message: 'Something went wrong' });
     }
 });
