@@ -23,12 +23,13 @@ export default function Header() {
         <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md p-5
     md:px-10 ">
 
-            {/* Left - Airbnb logo */}
+            {/* Left - logo */}
             <div
                 onClick={() => navigate("/")}
                 className="relative flex item-center cursor-pointer my-auto">
-                <div class="relative h-[70px] w-[70px]">
-                    <img src={logo} class="custom-img" />
+                <div class="relative h-[20px] w-[20px]">
+                    {/* <img src={logo} class="custom-img" /> */}
+                    <p>LOGO</p>
                 </div>
             </div>
 
@@ -36,13 +37,7 @@ export default function Header() {
 
             {/* right */}
             <div className="flex items-center space-x-4 justify-end text-gray-500">
-                <p className="hidden md:inline cursor-pointer">Become a host</p>
-                <GlobeAltIcon className="h-6 cursor-pointere" />
-                <div className="flex items-center 
-          space-x-2 border-2 p-2 rounded-full">
-                    <MenuIcon className="h-6" />
-                    <UserCircleIcon className="h-6" />
-                </div>
+                
             </div>
         </header>
     );

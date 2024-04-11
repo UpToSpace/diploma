@@ -1,7 +1,5 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import { MAP_TOKEN } from "./MapComponents";
-import { set } from 'mongoose';
 
 AutoCompleteInput.propTypes = {
     handleManualInputChange: PropTypes.func.isRequired,
@@ -29,11 +27,11 @@ export function AutoCompleteInput({
     };
 
     const handleInputChange = async (query) => {
-        const suggesions = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${MAP_TOKEN}&place_type=address&language=ru`)
+        const suggesions = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=address&language=ru`)
             .then((response) => response.json())
             .then((data) => data.features)
-            .then((features) => features.filter((feature) => feature.place_type.includes("address")))
-            .then((features) => features.slice(0, 5));
+            // .then((features) => features.filter((feature) => feature.place_type.includes("address")))
+            // .then((features) => features.slice(0, 5));
         setSuggestions(suggesions);
     };
 
@@ -81,6 +79,65 @@ export function AutoCompleteInput({
                     ))}
                 </ul>
             </div>
+        </div>
+    );
+}
+
+export function CityAutocomplete({ setCity }) {
+    const [query, setQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+
+    // Function to handle input changes and fetch suggestions
+    const handleInputChange = async (e) => {
+        const input = e.target.value;
+        setQuery(input);
+
+        if (!input.trim()) {
+            setSuggestions([]);
+            return;
+        }
+
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=place&limit=5&language=ru`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            setSuggestions(data.features);
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+            setSuggestions([]);
+        }
+    };
+
+    // Function to handle suggestion selection
+    const handleSuggestionClick = (suggestion) => {
+        setQuery(suggestion.place_name); // Update input field with the selected place name
+        setSuggestions([]); // Clear suggestions
+        setCity(suggestion); // Set the selected city, adjust according to your needs
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                value={query}
+                onChange={handleInputChange}
+                placeholder="Search for a city"
+                className="w-full p-2 border border-gray-300 rounded-md"
+            />
+            {suggestions?.length > 0 && (
+                <ul className="mt-1 max-h-60 overflow-auto border border-gray-200 rounded-md">
+                    {suggestions.map((suggestion) => (
+                        <li
+                            key={suggestion.id}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="p-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                            {suggestion.place_name}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }

@@ -10,5 +10,6 @@
     "smtpPort": 465,
     "smtpSecure": true,
     "smtpUser": "korzhovalera2002@gmail.com",
-    "smtpPassword": "fzstqgczhcnlvsiv"
+    "smtpPassword": "fzstqgczhcnlvsiv",
+    "stripeSecretKey": "sk_test_51P1soV07NkYrLy8rdWYkNSeLzNyLVowYRSbFHEesQxUTRn5v1aaccTcFMrXgMphkAJYEafZFY9K1oj0XQ9hzH5PP00koT3TxEl"
 }

@@ -17,7 +17,7 @@ export const SearchPage = () => {
     const { loading, request } = useHttp();
     const navigate = useNavigate();
     const auth = useContext(AuthContext);
-    
+
     const [routes, setRoutes] = useState([]);
     const [params, setParams] = useState({
         departure: '',
@@ -27,9 +27,13 @@ export const SearchPage = () => {
     });
 
     const getRoutes = useCallback(async () => {
-        const data = await request(`/api/routes/all?departure=${query.get('departure')}&destination=${query.get('destination')}&startDate=${query.get('startDate')}&numberOfSeats=${query.get('numberOfSeats')}`);
-        setRoutes(data);
-        console.log(data);
+        try {
+            const data = await request(`/api/routes/all?departure=${query.get('departure')}&destination=${query.get('destination')}&startDate=${query.get('startDate')}&numberOfSeats=${query.get('numberOfSeats')}`);
+            setRoutes(data);
+            console.log(data);
+        } catch (e) {
+            toast.error(e.message);
+        }
     }, [request])
 
     useEffect(() => {
@@ -49,9 +53,16 @@ export const SearchPage = () => {
     //const formattedStartDate = startDate ? format(new Date(startDate), 'dd MMMM yy') : '';
     //const formattedEndDate = endDate ? format(new Date(endDate), 'dd MMMM yy') : '';
     //const range = `${formattedStartDate} - ${formattedEndDate}`;
+    if (loading) {
+        return <Loader />
+    }
 
+    if (routes.length === 0) {
+        return <div className="text-center text-2xl mt-10">No routes found</div>
+    }
+    
     return (
-        routes.map(route =>{
+        routes.map(route => {
             return <TravelCard trip={route} key={route._id} />
         })
     );

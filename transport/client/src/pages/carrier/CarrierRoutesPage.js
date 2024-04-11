@@ -5,8 +5,10 @@ import { useHttp } from '../../hooks/http.hook';
 import toast from 'react-hot-toast';
 import { Loader } from '../../components/Loader';
 import { AutoCompleteInput } from '../../components/AutoCompleteInput';
-import { set } from 'mongoose';
 import { MiniMap } from '../../components/MapComponents';
+import { ConfirmDialog } from 'primereact/confirmdialog'; // For <ConfirmDialog /> component
+import { confirmDialog } from 'primereact/confirmdialog'; // For confirmDialog method
+
 
 export const CarrierRoutesPage = () => {
     const { request, loading } = useHttp();
@@ -45,7 +47,8 @@ export const CarrierRoutesPage = () => {
         try {
             const response = await request('/api/transports/users/' + auth.userId, 'GET');
             setTransports(response.transports);
-            //console.log(response);
+            //console.log(response.transports);
+            //console.log(response.routes);   
             setRoutes(response.routes);
         } catch (e) {
             toast.error(e.message);
@@ -95,6 +98,13 @@ export const CarrierRoutesPage = () => {
             return toast.error('All fields are required');
         }
         try {
+            const pointsToRequest = `${form.departure.longitude},${form.departure.latitude};${form.destination.longitude},${form.destination.latitude}`;
+            const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${pointsToRequest}?` +
+                `steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAP_TOKEN}&overview=full&annotations=distance,duration`)
+
+            if (data.code === 'NoRoute') {
+                throw new Error('No route found');
+            }
             if (editingRouteId) {
                 await updateRoute(editingRouteId);
             } else {
@@ -104,6 +114,12 @@ export const CarrierRoutesPage = () => {
             // Reset the form or handle navigation as needed
         } catch (error) {
             console.error("Failed to add/edit route", error);
+            if (error.message === 'Route exceeds maximum distance limitation') {
+                toast.error('Route exceeds maximum distance limitation of 10000 km');
+            }
+            if (error.message === 'No route found') {
+                toast.error('No route found');
+            }
         }
     };
 
@@ -141,12 +157,14 @@ export const CarrierRoutesPage = () => {
     };
 
     const deleteRoute = async (id) => {
-        try {
-            await request(`/api/routes/${id}`, 'DELETE');
-            toast('Route deleted successfully!');
-            getTransportsAndRoutes(); // Refresh the list of routes
-        } catch (error) {
-            console.error("Failed to delete route", error);
+        if (confirmDialog('Are you sure you want to delete this route?')) {
+            try {
+                await request(`/api/routes/${id}`, 'DELETE');
+                toast('Route deleted successfully!');
+                getTransportsAndRoutes(); // Refresh the list of routes
+            } catch (error) {
+                console.error("Failed to delete route", error);
+            }
         }
     };
 
@@ -169,6 +187,7 @@ export const CarrierRoutesPage = () => {
 
     return (
         <>
+            <ConfirmDialog />
             <form className="max-w-xl mx-auto my-10 p-5" onSubmit={handleSubmit}>
                 <div className="mb-6">
                     <label htmlFor="transport" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select Transport</label>
@@ -277,7 +296,7 @@ export const CarrierRoutesPage = () => {
                 }}
             />
 
-            <table className="min-w-full leading-normal">
+            {routes.length && <table className="min-w-full leading-normal">
                 <thead>
                     <tr>
                         <th>Transport</th>
@@ -301,7 +320,7 @@ export const CarrierRoutesPage = () => {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table>}
         </>
     );
 }

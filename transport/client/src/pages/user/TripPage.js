@@ -2,9 +2,8 @@ import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useHttp } from '../../hooks/http.hook';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
-import { set } from 'mongoose';
-import { CreditCardInput } from '../../components/CreditCardInput';
 import { Map } from '../../components/MapComponents';
+import PaymentForm from '../../components/PaymentForm';
 
 export const TripPage = () => {
     const { id } = useParams();
@@ -84,15 +83,11 @@ export const TripPage = () => {
                 <div className="px-4 py-4 sm:px-6">
                     <p className="text-gray-500">Выбрано мест: {seats.join(', ')}</p>
                     <p className="text-gray-500">Итого: ${parseFloat((seats.length * trip.price).toFixed(2))}</p>
-
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={null}>Buy</button>
                 </div>
 
             </div>
-            <CreditCardInput />
-            <Map points={[{ latitude: trip.departure.latitude, longitude: trip.departure.longitude }, { latitude: trip.destination.latitude, longitude: trip.destination.longitude }]} />
+            <PaymentForm amount={parseFloat((seats.length * trip.price).toFixed(2))} />
+            {/* <Map points={[{ latitude: trip.departure.latitude, longitude: trip.departure.longitude }, { latitude: trip.destination.latitude, longitude: trip.destination.longitude }]} /> */}
         </>
     );
 }

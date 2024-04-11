@@ -17,16 +17,27 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Get all Routes with params
-router.get('/all', auth, async (req, res) => {
+router.get('/all', auth, async (req, res) => { // TODO number of seats!!
     try {
         const { departure, destination, startDate, numberOfSeats } = req.query;
         console.log(departure, destination, startDate, numberOfSeats);
+        const departureCity = departure.split(',')[0];
+        const destinationCity = destination.split(',')[0];
+        const departureCountry = departure.split(',')[1];
+        const destinationCountry = destination.split(',')[1];
+        //console.log(departureCity);
+        if (new Date(startDate) < new Date()) {
+            return res.status(400).json({ message: 'Invalid date' });
+        }
         const routes = await Route.find({ 
-            "departure.city": departure, 
-            "departure.date": startDate, 
-            "destination.city": destination
+            "departure.city": departureCity,
+            "departure.country": departureCountry,
+            "destination.city": destinationCity,
+            "destination.country": destinationCountry, 
+            "departure.date": startDate
         });
         res.json(routes);
+        //console.log(routes);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
     }

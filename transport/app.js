@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/user', require('./routes/user.routes'));
-app.use('/api/creditcards', require('./routes/creditcards.routes'));
+app.use('/api/creditcards', require('./routes/creditCards.routes'));
 app.use('/api/routes', require('./routes/routes.routes'));
 app.use('/api/transports', require('./routes/transports.routes'));
 app.use('/api/reviews', require('./routes/reviews.routes'));

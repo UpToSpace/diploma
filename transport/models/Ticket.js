@@ -6,6 +6,7 @@ const schema = new Schema({
     purchaseDate: { type: Date, default: Date.now },
     cost: { type: Number, required: true },
     seat: { type: String, required: true },
+    chargeId: { type: String, required: true },
 });
 
 module.exports = model('Ticket', schema);

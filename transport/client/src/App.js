@@ -9,10 +9,13 @@ import { useHttp } from "./hooks/http.hook";
 import Layout from './components/Layout';
 import { ErrorBoundary } from './pages/errorpages/ErrorBoundary';
 import { Route, Routes } from "react-router-dom";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 function App() {
   const { login, logout, userId, ready, userRole } = useAuth();
   const { request } = useHttp();
+  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
   console.log('App.js: userRole = ', userRole)
 
   const routes = useRoutes(userRole);
@@ -24,6 +27,7 @@ function App() {
   return (
     <AuthContext.Provider value={{ userId, login, logout, userRole }}>
       <ErrorBoundary>
+        <Elements stripe={stripePromise}>
         <Toaster
           position="top-center"
           reverseOrder={false}
@@ -33,6 +37,7 @@ function App() {
               {routes}
             </Routes>
         </Router>
+        </Elements>
       </ErrorBoundary>
     </AuthContext.Provider>
   );

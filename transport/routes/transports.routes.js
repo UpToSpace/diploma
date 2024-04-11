@@ -1,6 +1,9 @@
 const { Router } = require('express');
 const Transport = require('../models/Transport');
+const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
+const config = require('config');
+const stripe = require('stripe')(config.get('stripeSecretKey'));
 const auth = require('../middleware/auth.middleware');
 const router = Router();
 
@@ -57,10 +60,38 @@ router.put('/:id', auth, async (req, res) => {
 // Delete a Transport
 router.delete('/:id', auth, async (req, res) => {
     try {
+        // Find all routes associated with the transport
+        const routes = await Route.find({ transport: req.params.id });
+
+        // Find all tickets associated with these routes and initiate refunds
+        for (const route of routes) {
+            const tickets = await Ticket.find({ route: route._id });
+
+            for (const ticket of tickets) {
+                // Assuming `chargeId` is stored in your Ticket model
+                const chargeId = ticket.chargeId;
+                try {
+                    await stripe.refunds.create({ charge: chargeId });
+                } catch (refundError) {
+                    console.error(`Refund failed for charge ${chargeId}:`, refundError);
+                    // Consider how you want to handle failed refunds
+                    // Maybe log them for manual review or try again
+                }
+            }
+
+            // After processing refunds, you can safely delete the tickets
+            await Ticket.deleteMany({ route: route._id });
+        }
+
+        // With tickets handled, delete routes
+        await Route.deleteMany({ transport: req.params.id });
+
+        // Finally, delete the transport
         await Transport.findByIdAndRemove(req.params.id);
-        res.json({ message: 'Transport deleted successfully' });
-    } catch (e) {
-        res.status(500).json({ message: 'Something went wrong' });
+
+        res.json({ message: 'Transport and associated data deleted successfully, refunds issued where applicable' });
+    } catch (error) {
+        res.status(500).json({ message: 'Something went wrong', error: error.message });
     }
 });
 

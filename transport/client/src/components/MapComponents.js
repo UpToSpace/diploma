@@ -14,7 +14,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { getDistance } from 'geolib';
 import { useHttp } from '../hooks/http.hook';
 
-export const MAP_TOKEN = "pk.eyJ1IjoidmFsZXJpZTE0My12YWxlcmllIiwiYSI6ImNsZ2RwNHJ3MTAwdXUzc256bHMwc2dpOWwifQ.v4F89QHCuyottjdKLOFfKg";
 const SECRET_TOKEN = "sk.eyJ1IjoidmFsZXJpZTE0My12YWxlcmllIiwiYSI6ImNsZ2tsaWVpMTBkdzQzZHFxOW53M2hoanAifQ.v_wnapRnZGiB1Xof48SmPw"
 const CENTER = [27.567444, 53.893009];
 const ZOOM = 11;
@@ -94,7 +93,7 @@ export const MiniMap = ({ longitude, latitude, updateCoordinates }) => {
     return <ReactMapGL
         style={{ width: "100%", height: "300px"}}
         {...viewState}
-        mapboxAccessToken={MAP_TOKEN}
+        mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         onMove={(event) => {
             setViewState(event.viewState);
@@ -156,12 +155,15 @@ export const Map = ({ points }) => {
                 zoom: zoom,
             });
         }
-        //getRoutes();
+        getRoutes();
     }, [points]); 
     
     const getRoutes = useCallback(async () => {
         try {
-            const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${points.map(point => [point.longitude, point.latitude])}?steps=true&geometries=geojson&access_token=${MAP_TOKEN}`)
+            const pointsToRequest = points.map(point => `${point.longitude},${point.latitude}`).join(';');
+            const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${pointsToRequest}?`+
+                `steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAP_TOKEN}&overview=full&annotations=distance,duration`)
+            console.log(data);
             setRoutes(data.routes[0].geometry.coordinates);
         } catch (e) {
             console.log(e.message);
@@ -172,7 +174,7 @@ export const Map = ({ points }) => {
         <ReactMapGL
             style={{ width: "100%", height: "100vh" }}
             {...viewState}
-            mapboxAccessToken={MAP_TOKEN}
+            mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
             mapStyle="mapbox://styles/mapbox/streets-v12"
             onMove={(event) => {
                 setViewState(event.viewState);
