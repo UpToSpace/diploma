@@ -59,11 +59,9 @@ export const CarrierTransportPage = () => {
         }
     };
 
-    if (loading) {
+    if (loading || !transport) {
         return <Loader />
     }
-
-    if (!transport) return null;
 
     return (
         <div className="max-w-4xl mx-auto p-5">
@@ -213,7 +211,7 @@ export const CarrierTransportPage = () => {
                                     Seat Layout
                                 </h3>
                                 <div className="mt-4">
-                                    {renderSeatLayout()}
+                                    {renderSeatLayout(transport)}
                                 </div>
                             </div>
                             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

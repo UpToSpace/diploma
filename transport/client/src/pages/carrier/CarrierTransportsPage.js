@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { useHttp } from '../../hooks/http.hook';
+import { Loader } from '../../components/Loader';
 import toast from 'react-hot-toast';
 
 export const CarrierTransportsPage = () => {
@@ -21,9 +22,10 @@ export const CarrierTransportsPage = () => {
     const [transports, setTransports] = useState([]);
 
     const getTransports = useCallback(async () => {
+        if (!auth.userId) return;
         try {
             const response = await request('/api/transports/users/' + auth.userId, 'GET');
-            setTransports(response);
+            setTransports(response.transports);
         } catch (e) {
             toast.error(e.message);
         }
@@ -91,6 +93,7 @@ export const CarrierTransportsPage = () => {
         setForm({
             ...form,
             rows: newRows,
+            capacity: newRows.map(row => row.seats.filter(seat => seat !== '')).filter(row => row.length > 0).flat().length
         });
     };
 
@@ -119,8 +122,8 @@ export const CarrierTransportsPage = () => {
         });
     };
 
-    if (loading) {
-        return <p>Loading...</p>;
+    if (loading || !auth.userId) {
+        return <Loader />;
     }
 
     return (
@@ -166,8 +169,14 @@ export const CarrierTransportsPage = () => {
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="capacity">
                         Capacity
                     </label>
-                    {errors.capacity && <p className="text-red-500 text-xs italic">{errors.capacity}</p>}
-                    <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="capacity" type="number" placeholder="Capacity" name="capacity" value={form.capacity} onChange={handleChange} />
+                    <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
+                    id="capacity" 
+                    type="number" 
+                    placeholder="Capacity" 
+                    name="capacity" 
+                    value={form.capacity} 
+                    readOnly={true}
+                    onChange={handleChange} />
                 </div>
             </div>
 

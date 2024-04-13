@@ -14,8 +14,8 @@ export const SavedCardsSelect = ({ savedCards, onSelectCard }) => {
             >
                 <option value="">Select a card</option>
                 {savedCards.map((card, index) => (
-                    <option key={index} value={card.cardToken}>
-                        **** **** **** {card.cardNumber}
+                    <option key={index} value={card._id}>
+                        **** **** **** {card.last4}
                     </option>
                 ))}
             </select>

@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 import { SavedCardsSelect } from './SavedCardsSelect';
 import { Loader } from './Loader';
 
-export default function PaymentForm({ amount }) {
+export default function PaymentForm({ amount, seats, routeId }) {
     const stripe = useStripe();
     const elements = useElements();
     const { request } = useHttp();
@@ -16,6 +16,7 @@ export default function PaymentForm({ amount }) {
     const [saveCard, setSaveCard] = useState(false);
     const [showCardElement, setShowCardElement] = useState(false);
     const [savedCards, setSavedCards] = useState([]);
+    const [cardToPay, setCardToPay] = useState(null);   
 
     const getSavedCards = useCallback(async () => {
         try {
@@ -30,9 +31,13 @@ export default function PaymentForm({ amount }) {
         getSavedCards();
     }, []);
 
-    const handleSelectCard = (cardToken) => {
-        console.log('Selected card token:', cardToken);
-        // Here you might set state or otherwise use the selected card token
+    const handleSelectCard = async (cardId) => {
+        try {
+            const data = await request('/api/creditcards/charge/saved', 'POST', { cardId, amount, routeId, seats, userId });
+            console.log(data);
+        } catch (e) {
+            toast.error(e.message);
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -54,7 +59,7 @@ export default function PaymentForm({ amount }) {
                 console.log(error);
                 return;
             }
-            const response = await request('/api/creditcards/charge', 'POST', { token: token.id, saveCard, amount, userId })
+            const response = await request('/api/creditcards/charge', 'POST', { token: token.id, saveCard, amount, userId, seats, routeId })
             console.log(response);
         } catch (e) {
             toast.error(e.message);
@@ -79,12 +84,13 @@ export default function PaymentForm({ amount }) {
             </label>
             {!showCardElement &&
                 <>
-                    <SavedCardsSelect savedCards={savedCards} onSelectCard={handleSelectCard} />
+                    <SavedCardsSelect savedCards={savedCards} onSelectCard={setCardToPay} />
                     <div className="flex items-center">
                         <button
                             disabled={!stripe}
                             className={`inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${!stripe ? 'opacity-50 cursor-not-allowed' : ''
                                 }`}
+                            onClick={() => handleSelectCard(cardToPay)}
                         >
                             Pay
                         </button>

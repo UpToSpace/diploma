@@ -123,7 +123,7 @@ export function CityAutocomplete({ setCity }) {
                 value={query}
                 onChange={handleInputChange}
                 placeholder="Search for a city"
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="w-full p-2 border border-gray-200 rounded-md"
             />
             {suggestions?.length > 0 && (
                 <ul className="mt-1 max-h-60 overflow-auto border border-gray-200 rounded-md">

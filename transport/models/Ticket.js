@@ -1,7 +1,7 @@
 const { Schema, model, Types } = require('mongoose');
 
 const schema = new Schema({
-    creditCard: { type: Types.ObjectId, ref: 'CreditCard' },
+    user: { type: Types.ObjectId, ref: 'User' },
     route: { type: Types.ObjectId, ref: 'Route' },
     purchaseDate: { type: Date, default: Date.now },
     cost: { type: Number, required: true },

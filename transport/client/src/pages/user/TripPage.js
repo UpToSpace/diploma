@@ -10,6 +10,7 @@ export const TripPage = () => {
     const { loading, request } = useHttp();
     const [trip, setTrip] = useState(null);
     const [seats, setSeats] = useState([]);
+    const [bookedSeats, setBookedSeats] = useState([]);
     const navigate = useNavigate();
 
     const getTrip = useCallback(async () => {
@@ -21,9 +22,19 @@ export const TripPage = () => {
         }
     }, [id, request, navigate]);
 
+    const getBookedSeats = useCallback(async () => {
+        try {
+            const data = await request(`/api/routes/${id}/seats`);
+            setBookedSeats(data);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [id, request, navigate]);
+
     useEffect(() => {
         getTrip();
-    }, [getTrip]);
+        getBookedSeats();
+    }, [getTrip, getBookedSeats]);
 
     const bookSeat = async (seat) => {
         if (seats.includes(seat)) {
@@ -39,9 +50,17 @@ export const TripPage = () => {
         return trip.transport.seatsLayout.map((row, rowIndex) => (
             <div key={rowIndex} className="flex space-x-2 my-2">
                 {row.map((seat, seatIndex) => (
-                    <div key={seatIndex} className="w-8 h-8 bg-blue-200 text-center leading-8 rounded" onClick={() => bookSeat(seat)}>
-                        {seat}
-                    </div>
+                    seat === '' ?
+                        <div key={seatIndex} className="w-8 h-8 bg-gray-200 rounded"></div> :
+                        bookedSeats.includes(seat) ?
+                            <div key={seatIndex} className="w-8 h-8 bg-red-200 text-center rounded">{seat}</div> :
+                            seats.includes(seat) ?
+                                <div key={seatIndex} className="w-8 h-8 bg-green-200 rounded" onClick={() => bookSeat(seat)}>
+                                    {seat}
+                                </div> :
+                                <div key={seatIndex} className="w-8 h-8 bg-blue-200 text-center leading-8 rounded" onClick={() => bookSeat(seat)}>
+                                    {seat}
+                                </div>
                 ))}
             </div>
         ));
@@ -81,12 +100,12 @@ export const TripPage = () => {
                     </div>
                 </div>
                 <div className="px-4 py-4 sm:px-6">
-                    <p className="text-gray-500">Выбрано мест: {seats.join(', ')}</p>
+                    <p className="text-gray-500">Выбрано мест: {seats.sort().join(', ')}</p>
                     <p className="text-gray-500">Итого: ${parseFloat((seats.length * trip.price).toFixed(2))}</p>
                 </div>
 
             </div>
-            <PaymentForm amount={parseFloat((seats.length * trip.price).toFixed(2))} />
+            <PaymentForm amount={parseFloat((seats.length * trip.price).toFixed(2))} seats={seats} routeId={id} />
             {/* <Map points={[{ latitude: trip.departure.latitude, longitude: trip.departure.longitude }, { latitude: trip.destination.latitude, longitude: trip.destination.longitude }]} /> */}
         </>
     );

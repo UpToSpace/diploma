@@ -5,7 +5,7 @@ export default function Layout() {
     return (
         <>
             <Header />
-            <div className="py-4 px-36 flex flex-col min-h-screen max-w-4xl mx-auto">
+            <div className="py-4 px-1 flex flex-col min-h-screen max-w-4xl mx-auto">
                 <Outlet />
             </div>
         </>

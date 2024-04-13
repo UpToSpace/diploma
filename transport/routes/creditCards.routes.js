@@ -5,46 +5,91 @@ const config = require('config');
 const router = Router();
 const stripe = require('stripe')(config.get('stripeSecretKey'));
 const Ticket = require('../models/Ticket');
+const User = require('../models/User');
 
-// Make payment and Create a new CreditCard
+// Make payment and optionally save the credit card
 router.post('/charge', auth, async (req, res) => {
     try {
-        const { token, saveCard, amount, userId, routeId, seat } = req.body;
-        // Process payment
-        const charge = await stripe.charges.create({
-            amount: Math.round(amount * 100), 
-            currency: 'byn',
-            source: token,
-            description: 'Test Charge',
-        });
+        const { token, saveCard, amount, userId, routeId, seats } = req.body;
+        let charge;
 
-        if (saveCard) {
-            const candidate = await CreditCard.findOne({ user: userId, cardNumber: charge.source.last4 });
-            if (candidate) {
-                return res.status(400).json({ message: 'Card already exists' });
-            }
-            const userCard = new CreditCard({
-                // Assuming you have a way to associate it with a user
-                user: userId,
-                cardToken: token,
-                cardNumber: charge.source.last4,
+        if (!saveCard) {
+            charge = await stripe.charges.create({
+                amount: Math.round(amount * 100),
+                currency: 'byn',
+                source: token,
+                description: 'Test Charge',
             });
-            await userCard.save();
+        } else {
+            const customer = await stripe.customers.create({
+                source: token
+            });
+            charge = await stripe.charges.create({
+                amount: Math.round(amount * 100),
+                currency: 'byn',
+                customer: customer.id,
+                description: 'Test Charge',
+            });
+
+            const last4 = charge.payment_method_details.card.last4;
+            const candidate = await CreditCard.findOne({ user: userId, cardNumber: last4 });
+
+            if (!candidate) {
+                await new CreditCard({
+                    user: userId,
+                    last4,
+                    stripeCustomerId: customer.id
+                }).save();
+            }
         }
 
-        const creditCard = await CreditCard.findOne({ user: userId, cardNumber: charge.source.last4 });
+        await Promise.all(seats.map(async seat => {
+            const ticket = new Ticket({
+                user: userId,
+                route: routeId,
+                purchaseDate: Date.now(),
+                cost: amount,
+                seat,
+                chargeId: charge.id
+            });
+            await ticket.save();
+        }));
 
-        const ticket = new Ticket({
-            creditCard: creditCard._id,
-            route: routeId,
-            purchaseDate: Date.now(),
-            cost: amount,
-            seat,
-            chargeId: charge.id
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Pay with a saved card
+router.post('/charge/saved', auth, async (req, res) => {
+    try {
+        const { cardId, amount, routeId, seats, userId } = req.body;
+        const creditCard = await CreditCard.findById(cardId);
+
+        if (!creditCard) {
+            return res.status(404).json({ message: 'Credit card not found' });
+        }
+
+        const charge = await stripe.charges.create({
+            amount: Math.round(amount * 100),
+            currency: 'byn',
+            customer: creditCard.stripeCustomerId, 
+            description: 'Test Charge',
         });
-        await ticket.save();
+        seats.forEach(async seat => {
+            const ticket = new Ticket({
+                user: userId,
+                route: routeId,
+                purchaseDate: Date.now(),
+                cost: amount,
+                seat,
+                chargeId: charge.id
+            });
+            await ticket.save();
+        });
 
-        res.json(charge);
+        res.json({ success: true, charge });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

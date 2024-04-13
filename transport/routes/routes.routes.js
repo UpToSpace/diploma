@@ -1,5 +1,8 @@
 const { Router } = require('express');
+const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
+const config = require('config');
+const stripe = require('stripe')(config.get('stripeSecretKey'));
 const auth = require('../middleware/auth.middleware');
 const router = Router();
 
@@ -59,6 +62,17 @@ router.get('/:id', auth, async (req, res) => {
     }
 });
 
+// Get all booked Seats for a Route
+router.get('/:id/seats', auth, async (req, res) => {
+    try {
+        const tickets = await Ticket.find({ route: req.params.id });
+        const bookedSeats = tickets.map(ticket => ticket.seat);
+        res.json(bookedSeats);
+    } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
 // Update a Route
 router.put('/:id', auth, async (req, res) => {
     try {
@@ -73,6 +87,23 @@ router.put('/:id', auth, async (req, res) => {
 // Delete a Route
 router.delete('/:id', auth, async (req, res) => {
     try {
+        const route = Route.findById(req.params.id);
+        const tickets = await Ticket.find({ route: req.params.id });
+
+        for (const ticket of tickets) {
+            // Assuming `chargeId` is stored in your Ticket model
+            const chargeId = ticket.chargeId;
+            try {
+                await stripe.refunds.create({ charge: chargeId });
+            } catch (refundError) {
+                console.error(`Refund failed for charge ${chargeId}:`, refundError);
+                // Consider how you want to handle failed refunds
+                // Maybe log them for manual review or try again
+            }
+        }
+
+        // After processing refunds, you can safely delete the tickets
+        await Ticket.deleteMany({ route: route._id });
         await Route.findByIdAndRemove(req.params.id);
         res.json({ message: 'Route deleted successfully' });
     } catch (e) {

@@ -269,7 +269,7 @@ export const CarrierRoutesPage = () => {
                     </button>
                 }
             </form>
-            <MiniMap
+            {/* <MiniMap
                 longitude={form.departure.longitude}
                 latitude={form.departure.latitude}
                 updateCoordinates={(latitude, longitude) => {
@@ -294,7 +294,7 @@ export const CarrierRoutesPage = () => {
                         }
                     }));
                 }}
-            />
+            /> */}
 
             {routes.length && <table className="min-w-full leading-normal">
                 <thead>
