@@ -16,6 +16,7 @@ import { CarrierRoutesPage } from './pages/carrier/CarrierRoutesPage';
 import { TicketsPage } from './pages/user/TicketsPage';
 import { CarrierTransportPage } from './pages/carrier/CarrierTransportPage';
 import { TripPage } from './pages/user/TripPage';
+import { TicketPage } from './pages/user/TicketPage';
 
 export const useRoutes = (userRole) => {
     switch (userRole) {
@@ -36,6 +37,7 @@ export const useRoutes = (userRole) => {
                     <Route path="/trips/:id" element={<TripPage />} />
                     <Route path="/" exact element={<MainPage />} />
                     <Route path="/tickets" element={<TicketsPage />} />
+                    <Route path="/tickets/:id" element={<TicketPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Route>
             );

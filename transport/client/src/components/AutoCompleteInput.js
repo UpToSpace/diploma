@@ -18,8 +18,8 @@ export function AutoCompleteInput({
 
     useEffect(() => {
         setStreetAndNumber(place?.place || "");
-    }, [place]); 
-    
+    }, [place]);
+
     const handleChange = (event) => {
         handleManualInputChange(event, name);
         handleInputChange(event.target.value);
@@ -30,8 +30,8 @@ export function AutoCompleteInput({
         const suggesions = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=address&language=ru`)
             .then((response) => response.json())
             .then((data) => data.features)
-            // .then((features) => features.filter((feature) => feature.place_type.includes("address")))
-            // .then((features) => features.slice(0, 5));
+        // .then((features) => features.filter((feature) => feature.place_type.includes("address")))
+        // .then((features) => features.slice(0, 5));
         setSuggestions(suggesions);
     };
 
@@ -69,7 +69,7 @@ export function AutoCompleteInput({
                     value={streetAndNumber}
                     onChange={handleChange}
                     name="streetAndNumber"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
                 <ul className="addressSuggestions">
                     {suggestions?.map((suggestion, index) => (
@@ -83,7 +83,7 @@ export function AutoCompleteInput({
     );
 }
 
-export function CityAutocomplete({ setCity }) {
+export function CityAutocomplete({ setCity, label }) {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
 
@@ -117,16 +117,17 @@ export function CityAutocomplete({ setCity }) {
     };
 
     return (
-        <div>
+        <div className='flex flex-col relative'>
+            <label className="block text-sm font-medium text-gray-700">Search for a city</label>
             <input
                 type="text"
                 value={query}
                 onChange={handleInputChange}
                 placeholder="Search for a city"
-                className="w-full p-2 border border-gray-200 rounded-md"
+                className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500"
             />
             {suggestions?.length > 0 && (
-                <ul className="mt-1 max-h-60 overflow-auto border border-gray-200 rounded-md">
+                <ul className="absolute w-full mt-1 max-h-60 overflow-auto border border-gray-200 rounded-md bg-white z-50">
                     {suggestions.map((suggestion) => (
                         <li
                             key={suggestion.id}
@@ -139,5 +140,6 @@ export function CityAutocomplete({ setCity }) {
                 </ul>
             )}
         </div>
+
     );
 }

@@ -6,22 +6,22 @@ input[type="password"],
 input[type="email"],
 input[type="number"],
 input[type="tel"],
+input[type="date"],
 textarea {
-    @apply w-full border my-1 py-2 px-3 rounded-2xl;
+    @apply border my-1 py-2 px-3 rounded-2xl;
 }
 
 textarea {
     height: 140px;
 }
 
-button {
+/* button {
     @apply bg-white border border-black text-black font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 focus:ring-gray-100 hover:bg-black hover:text-white hover:border-transparent hover:cursor-pointer;
 }
 button.primary {
     background-color: #F5385D;
     @apply bg-primary p-2 w-full text-white rounded-2xl;
-}
-
+} */
 
 
 
@@ -35,4 +35,93 @@ button.primary {
     /* Задает как содержимое должно быть масштабировано или обрезано, чтобы соответствовать размерам своего контейнера */
     object-position: left;
     /* Выравнивание изображения внутри своего контейнера */
+}
+
+.bg-[#d7b98e] {
+  background: linear-gradient(135deg, #d7b98e, #ab8650);
+}
+
+.btn-date, .input-number, .btn-icon {
+  border: 2px solid transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-date {
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.input-number {
+  max-width: 60px;
+  text-align: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background-color: #cc3333;
+  transform: scale(1.05);
+}
+
+/* Adjustments for icons within buttons for visual clarity */
+.h-6, .h-8 {
+  height: 1.5em;
+  width: 1.5em;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+  top: 100%; /* Positioned right below the input */
+}
+
+ul {
+  transition: all 0.3s ease-in-out;
+  transform-origin: top center;
+}
+
+.icon-small {
+    width: 40px; /* Adjust based on your current size */
+    height: 30px; /* Adjust based on your current size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Adjust padding to keep the icon centered */
+    border-radius: 50%; /* Maintain the circular shape */
+    cursor: pointer;
+}
+
+.input-number {
+    width: 100px; /* Adjust width as necessary to match design */
+    padding: 0 12px;
+    height: 40px; /* Make sure the height matches other inputs */
+}
+
+/* Adjust the height of all inputs and icons for consistency */
+input, .icon-small {
+    height: 40px;  /* Ensures all input fields and icons have the same height */
+}
+.bg {
+    width: 100vw; /* Sets the child width to the full width of the viewport */
+    position: relative;
+    left: 50%; /* Shifts the element to the center */
+    transform: translateX(-50%); /* Correctly centers the element */
 }

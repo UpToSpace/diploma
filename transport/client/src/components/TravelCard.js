@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const TravelCard = ({ trip }) => {
+export const TravelCard = ({ trip }) => {
     return (
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
             <div className="md:flex">
@@ -31,5 +31,3 @@ const TravelCard = ({ trip }) => {
         </div>
     );
 };
-
-export default TravelCard;

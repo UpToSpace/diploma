@@ -2,7 +2,7 @@ import React from 'react';
 
 export const SavedCardsSelect = ({ savedCards, onSelectCard }) => {
     return (
-        <div className="w-full max-w-xs mx-auto">
+        <div>
             <label htmlFor="saved-cards" className="block text-sm font-medium text-gray-700">
                 Your saved cards
             </label>
@@ -10,9 +10,8 @@ export const SavedCardsSelect = ({ savedCards, onSelectCard }) => {
                 id="saved-cards"
                 name="saved-cards"
                 onChange={(e) => onSelectCard(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-                <option value="">Select a card</option>
+                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                >
                 {savedCards.map((card, index) => (
                     <option key={index} value={card._id}>
                         **** **** **** {card.last4}

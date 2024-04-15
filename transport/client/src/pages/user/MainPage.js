@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Calendar } from "react-date-range";
 import { useHttp } from '../../hooks/http.hook';
 import { useAuth } from "../../hooks/auth.hook";
 import { Loader } from '../../components/Loader';
@@ -10,10 +9,7 @@ import {
     UsersIcon,
     XIcon,
 } from "@heroicons/react/solid";
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
-import { ru } from 'date-fns/locale';
-import { AutoCompleteInput, CityAutocomplete } from "../../components/AutoCompleteInput";
+import { CityAutocomplete } from "../../components/AutoCompleteInput";
 
 export const MainPage = () => {
     const { loading } = useHttp();
@@ -22,7 +18,6 @@ export const MainPage = () => {
     const [departureInput, setDepartureInput] = useState("");
     const [destinationInput, setDestinationInput] = useState("");
     const [startDate, setStartDate] = useState(new Date());
-    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [numberOfSeats, setNumberOfSeats] = useState(1);
 
     const search = () => {
@@ -42,16 +37,10 @@ export const MainPage = () => {
         setDestinationInput("");
         setStartDate(new Date());
         setNumberOfSeats(1);
-        setIsCalendarOpen(false);
     };
 
-    const handleSelect = (date) => {
-        setStartDate(date);
-        setIsCalendarOpen(false); // Close the calendar after a date is selected
-    };
-
-    const toggleCalendar = () => {
-        setIsCalendarOpen(!isCalendarOpen);
+    const handleDateChange = (event) => {
+        setStartDate(new Date(event.target.value)); // Update the date state
     };
 
     if (loading) {
@@ -59,43 +48,40 @@ export const MainPage = () => {
     }
 
     return (
-        <div>
-            {/* Search section */}
-            <div className="flex items-center">
-                <CityAutocomplete setCity={setDepartureInput} />
-                <CityAutocomplete setCity={setDestinationInput} />
-                <input
-                    type="text"
-                    readOnly
-                    value={format(startDate, 'PP', { locale: ru })}
-                    onClick={toggleCalendar}
+        <div className="relative w-full">
+            <img src="https://www.flytap.com/-/media/Flytap/new-tap-pages/other-bookings/bus-transportation-galiza-porto/transportation-between-galiza-porto-og-image-1200x630.jpg"
+                alt="background"
+                className='bg'
                 />
-                <UsersIcon className="h-5" />
-                <input
-                    value={numberOfSeats}
-                    onChange={(e) => setNumberOfSeats(e.target.value)}
-                    type="number"
-                    min={1}
-                    className='w-1 h-10 pr-0'
-                />
-                <SearchIcon
-                    className="h-8 bg-red-400 text-white rounded-full p-2 cursor-pointer mx-2"
-                    onClick={search}
-                    disabled={!departureInput || !destinationInput}
-                />
-                <XIcon
-                    className="h-8 bg-red-400 text-white rounded-full p-2 cursor-pointer mx-2"
-                    onClick={resetInput}
-                />
-            </div>
-            {isCalendarOpen && (
-                <Calendar
-                    date={startDate}
-                    onChange={(date) => handleSelect(date)}
-                    locale={ru}
-                    className='absolute z-10 bg-white border shadow-lg'
-                />
-            )}
+            <div className="bg-[#d7b98e] p-4 rounded-lg shadow-lg w-full">
+                {/* Search section */}
+                <div className="flex items-center space-x-4">  {/* Changed from flex-col to flex and combined the rows */}
+                    <CityAutocomplete label={'Откуда'} setCity={setDepartureInput} />
+                    <CityAutocomplete label={'Куда'} setCity={setDestinationInput} />
+                    <input
+                        type="date"
+                        value={startDate.toISOString().substring(0, 10)}
+                        onChange={handleDateChange}
+                    />
+                    <UsersIcon className="h-6 w-6 text-gray-700" />
+                    <input
+                        value={numberOfSeats}
+                        onChange={(e) => setNumberOfSeats(e.target.value)}
+                        type="number"
+                        min={1}
+                        className="input-number"
+                    />
+                    <SearchIcon
+                        className="icon-small bg-red-500 text-white"
+                        onClick={search}
+                        disabled={!departureInput || !destinationInput}
+                    />
+                    <XIcon
+                        className="icon-small bg-red-500 text-white"
+                        onClick={resetInput}
+                    />
+                </div>
+        </div>
         </div>
     );
 };

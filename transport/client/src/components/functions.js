@@ -12,3 +12,31 @@ export const renderSeatLayout = (transport) => {
         </div>
     ));
 };
+
+const parseDateTime = (date, time) => {
+    return new Date(`${date}T${time}`);
+};
+
+export const calculateTimeDifference = (startDate, startTime, endDate, endTime) => {
+    const startDateTime = parseDateTime(startDate, startTime);
+    const endDateTime = parseDateTime(endDate, endTime);
+    const differenceInMilliseconds = endDateTime - startDateTime;
+
+    // Convert milliseconds to a readable format
+    let minutes = Math.floor((differenceInMilliseconds / (1000 * 60)) % 60);
+    let hours = Math.floor((differenceInMilliseconds / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    if (minutes < 10) {
+        minutes = `0${minutes}`;
+    }
+
+    if (hours < 10) {
+        hours = `0${hours}`;
+    }
+
+    if (days === 0 ) {
+        return `${hours}h ${minutes}m`;
+    }
+
+    return `${days}d ${hours}h ${minutes}m`;
+};

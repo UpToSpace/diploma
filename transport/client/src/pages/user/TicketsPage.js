@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useHttp } from '../../hooks/http.hook';
 import { AuthContext } from '../../context/AuthContext';
 import { Loader } from '../../components/Loader';
+import { TicketCard } from '../../components/TicketCard';
 
 export const TicketsPage = () => {
     const { request, loading } = useHttp();
@@ -10,33 +11,39 @@ export const TicketsPage = () => {
 
     const getTickets = useCallback(async () => {
         try {
-            const data = await request('/api/tickets/' + userId);
+            const data = await request('/api/tickets/user/' + userId);
             setTickets(data);
+            console.log(data);
         } catch (e) {
             console.log(e);
         }
-    }, [request]);
+    }, [request, userId]);
 
     useEffect(() => {
         getTickets();
     }, [getTickets]);
 
+    const returnTicketButtonHandler = async (id) => {
+        if (window.confirm('Are you sure you want to return this ticket?')) {
+            try {
+                const data = await request('/api/tickets/' + id, 'DELETE')
+                console.log(data)
+                getTickets()    
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
     if (loading) {
         return <Loader />;
     }
+
     return (
-        <div>
-            <h1 className="text-3xl font-bold">Tickets</h1>
-            <div className="grid grid-cols-1 gap-4 mt-4">
-                {tickets.map(ticket => (
-                    <div key={ticket._id} className="bg-white p-4 rounded shadow">
-                        <p className="text-lg">Route: {ticket.route.departure.city} - {ticket.route.destination.city}</p>
-                        <p className="text-lg">Date: {new Date(ticket.purchaseDate).toLocaleString()}</p>
-                        <p className="text-lg">Cost: ${ticket.cost}</p>
-                        <p className="text-lg">Seat: {ticket.seat}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
+        <>
+            {tickets.map(ticket => (
+                <TicketCard key={ticket._id} ticket={ticket} returnTicketButtonHandler={returnTicketButtonHandler} />
+            ))}
+        </>
     );
-}
+};

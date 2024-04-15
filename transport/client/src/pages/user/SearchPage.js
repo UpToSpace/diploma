@@ -6,7 +6,7 @@ import { Loader } from '../../components/Loader';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../context/AuthContext';
-import TravelCard from '../../components/TravelCard';
+import { TravelCard } from '../../components/TravelCard';   
 
 function useQuery() {
     return new URLSearchParams(useLocation().search);

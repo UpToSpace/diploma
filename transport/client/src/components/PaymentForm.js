@@ -22,6 +22,10 @@ export default function PaymentForm({ amount, seats, routeId }) {
         try {
             const data = await request('/api/creditcards?' + new URLSearchParams({ userId }));
             setSavedCards(data);
+            if (data.length !== 0) {
+                setCardToPay(data[0]._id);
+            }
+            if (data.length === 0) setShowCardElement(true);
         } catch (e) {
             toast.error(e.message);
         }
@@ -32,9 +36,13 @@ export default function PaymentForm({ amount, seats, routeId }) {
     }, []);
 
     const handleSelectCard = async (cardId) => {
+        if (!cardId || !amount || !routeId || !seats || !userId) {
+            return toast.error('Заполните все поля');
+        }
         try {
             const data = await request('/api/creditcards/charge/saved', 'POST', { cardId, amount, routeId, seats, userId });
             console.log(data);
+            if (data) window.location.reload();
         } catch (e) {
             toast.error(e.message);
         }
@@ -45,7 +53,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
             event.preventDefault();
 
             if (!stripe || !elements || !amount || !userId) {
-                return;
+                return toast.error('Заполните все поля');
             }
             // console.log('stripe', stripe);
             // console.log('elements', elements);
@@ -61,6 +69,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
             }
             const response = await request('/api/creditcards/charge', 'POST', { token: token.id, saveCard, amount, userId, seats, routeId })
             console.log(response);
+            window.location.reload();
         } catch (e) {
             toast.error(e.message);
         }
@@ -71,35 +80,36 @@ export default function PaymentForm({ amount, seats, routeId }) {
     }
 
     return (
-        <>
-            <input
-                id="another-card"
-                type="checkbox"
-                checked={showCardElement}
-                onChange={(e) => setShowCardElement(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="another-card" className="ml-2 block text-sm text-gray-900">
-                Pay with another card
-            </label>
-            {!showCardElement &&
-                <>
-                    <SavedCardsSelect savedCards={savedCards} onSelectCard={setCardToPay} />
-                    <div className="flex items-center">
-                        <button
-                            disabled={!stripe}
-                            className={`inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${!stripe ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
-                            onClick={() => handleSelectCard(cardToPay)}
-                        >
-                            Pay
-                        </button>
-                    </div>
-                </>
-            }
-            {showCardElement &&
-                <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md">
-                    <div className="p-4 border border-gray-300 rounded-md">
+        <div className="flex flex-col items-center w-full max-w-96">
+            {savedCards.length !== 0  && <div className="w-full pb-1">
+                <input
+                    id="another-card"
+                    type="checkbox"
+                    checked={showCardElement}
+                    onChange={(e) => setShowCardElement(e.target.checked)}
+                    className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label htmlFor="another-card" className="ml-3 text-sm font-medium text-gray-900 w-full">
+                    Pay with another card
+                </label>
+            </div>}
+
+            {!showCardElement && savedCards.length !== 0 && (
+                <div className="space-y-4 w-full">
+                    <SavedCardsSelect savedCards={savedCards} onSelectCard={setCardToPay} className="w-full" />
+                    <button
+                        disabled={!stripe}
+                        className={`px-6 py-2 w-full text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => handleSelectCard(cardToPay)}
+                    >
+                        Pay
+                    </button>
+                </div>
+            )}
+
+            {showCardElement && (
+                <form onSubmit={handleSubmit} className="space-y-6 w-full">
+                    <div className="p-4 bg-gray-50 border border-gray-300 rounded-md w-full">
                         <CardElement options={{
                             style: {
                                 base: {
@@ -115,27 +125,27 @@ export default function PaymentForm({ amount, seats, routeId }) {
                             },
                         }} />
                     </div>
-                    <div className="flex items-center">
+                    <div className="w-full">
                         <input
                             id="save-card"
                             type="checkbox"
                             checked={saveCard}
                             onChange={(e) => setSaveCard(e.target.checked)}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <label htmlFor="save-card" className="ml-2 block text-sm text-gray-900">
+                        <label htmlFor="save-card" className="ml-3 text-sm text-gray-900 w-full">
                             Save card for future payments
                         </label>
                     </div>
                     <button
                         type="submit"
                         disabled={!stripe}
-                        className={`inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${!stripe ? 'opacity-50 cursor-not-allowed' : ''
-                            }`}
+                        className={`w-full px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         Pay
                     </button>
-                </form>}
-        </>
+                </form>
+            )}
+        </div>
     );
 }
