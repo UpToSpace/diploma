@@ -7,6 +7,7 @@ import { TicketCard } from '../../components/TicketCard';
 export const TicketsPage = () => {
     const { request, loading } = useHttp();
     const [tickets, setTickets] = useState([]);
+    const [reviews, setReviews] = useState([]); 
     const userId = useContext(AuthContext).userId;
 
     const getTickets = useCallback(async () => {
@@ -19,8 +20,19 @@ export const TicketsPage = () => {
         }
     }, [request, userId]);
 
+    const getUserReviews = useCallback(async () => {
+        try {
+            const data = await request('/api/reviews/' + userId);
+            setReviews(data);
+            console.log(data);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [request]);
+
     useEffect(() => {
         getTickets();
+        getUserReviews();
     }, [getTickets]);
 
     const returnTicketButtonHandler = async (id) => {
@@ -41,8 +53,14 @@ export const TicketsPage = () => {
 
     return (
         <>
+            {/* {console.log(reviews)}
+            {console.log(tickets)} */}
             {tickets.map(ticket => (
-                <TicketCard key={ticket._id} ticket={ticket} returnTicketButtonHandler={returnTicketButtonHandler} />
+                <TicketCard 
+                key={ticket._id} 
+                ticket={ticket} 
+                returnTicketButtonHandler={returnTicketButtonHandler} 
+                leaveReviewButtonDisabled={reviews.some(r => r.route === ticket.route._id)}/>
             ))}
         </>
     );

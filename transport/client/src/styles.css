@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 input[type="text"],
 input[type="password"],
 input[type="email"],
@@ -79,10 +81,10 @@ button.primary {
 }
 
 /* Adjustments for icons within buttons for visual clarity */
-.h-6, .h-8 {
+/* .h-6, .h-8 {
   height: 1.5em;
   width: 1.5em;
-}
+} */
 
 .relative {
   position: relative;

@@ -1,15 +1,32 @@
 import React from 'react';
-import { calculateTimeDifference } from './functions';
+import { useState } from 'react';
+import { calculateTimeDifference, checkIfTicketOver } from './functions';
 import { useHttp } from '../hooks/http.hook';
+import { Feedback } from './Feedback';
 
-export const TicketCard = ({ ticket, returnTicketButtonHandler }) => {
+export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButtonDisabled }) => {
+    const [showFeedback, setShowFeedback] = useState(false);
     return (
-        <section className="w-full flex-grow bg-zinc-200 flex items-center justify-center p-4">
+        <section className="w-full flex-grow bg-zinc-200 flex flex-col items-center justify-center p-4">
             <div className="flex w-full max-w-3xl text-zinc-50 h-64">
                 <div className="h-full bg-zinc-900 flex items-center justify-center px-8 rounded-l-3xl">
                     <div className="flex flex-col">
                         <span className="text-xs text-zinc-400">ICON</span>
-                        <button onClick={() => returnTicketButtonHandler(ticket._id)} className="text-xs text-zinc-400 cursor-pointer">Return ticket</button>
+                        {checkIfTicketOver(ticket.route.destination.date, ticket.route.destination.time) ? (
+                            leaveReviewButtonDisabled ? (
+                                <div className="flex items-center px-3 rounded-full bg-red-500 h-8 mt-2 cursor-pointer">
+                                    <button disabled={true} className="text-xs text-zinc-50">Спасибо за отзыв!</button>
+                                </div>
+                                ) : (
+                                    <div className="flex items-center px-3 rounded-full bg-green-500 h-8 mt-2 cursor-pointer">
+                                        <button onClick={() => setShowFeedback(!showFeedback)} className="text-xs text-zinc-50">Оставить отзыв</button>
+                                    </div>
+                            )
+                        ) : (
+                            <div className="flex items-center px-3 rounded-full bg-red-500 h-8 mt-2 cursor-pointer">
+                                <button onClick={() => returnTicketButtonHandler(ticket._id)} className="text-xs text-zinc-50">Вернуть билет</button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="relative h-full flex flex-col items-center border-dashed justify-between border-2 bg-zinc-900 border-zinc-50">
@@ -62,6 +79,8 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler }) => {
                     </div>
                 </div>
             </div>
+
+            {showFeedback && <Feedback setShowFeedback={setShowFeedback} route={ticket.route} />}
         </section>
     )
 }

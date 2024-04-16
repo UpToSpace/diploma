@@ -7,10 +7,10 @@ export const navLinks = {
         { to: "/admin", label: "Admin Panel" }
     ],
     user: [
-        { to: "/", label: "Home" },
-        { to: "/account", label: "Account" },
-        { to: "/search", label: "Search" },
-        { to: "/tickets", label: "My Tickets" }
+        { to: "/", label: "Главная" },
+        { to: "/account", label: "Аккаунт" },
+        { to: "/statistics", label: "Статистика" },
+        { to: "/tickets", label: "Мои Билеты" }
     ],
     carrier: [
         { to: "/", label: "Home" },

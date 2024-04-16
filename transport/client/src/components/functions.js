@@ -40,3 +40,10 @@ export const calculateTimeDifference = (startDate, startTime, endDate, endTime) 
 
     return `${days}d ${hours}h ${minutes}m`;
 };
+
+export const checkIfTicketOver = (date, time) => {
+    const ticketDateTime = parseDateTime(date, time);
+    const currentDateTime = new Date();
+
+    return ticketDateTime > currentDateTime; // change to < to test
+}
