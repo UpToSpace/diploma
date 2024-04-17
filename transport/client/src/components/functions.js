@@ -34,7 +34,7 @@ export const calculateTimeDifference = (startDate, startTime, endDate, endTime) 
         hours = `0${hours}`;
     }
 
-    if (days === 0 ) {
+    if (days === 0) {
         return `${hours}h ${minutes}m`;
     }
 
@@ -46,4 +46,18 @@ export const checkIfTicketOver = (date, time) => {
     const currentDateTime = new Date();
 
     return ticketDateTime > currentDateTime; // change to < to test
+}
+
+export const getMostVisitedCity = (tripsData) => {
+    const cities = tripsData.flatMap(trip => [trip.route.destination.city]); // add trip.route.departure.city to include origin cities
+
+    // Step 2: Count each city's frequency
+    const cityCounts = cities.reduce((acc, city) => {
+        acc[city] = (acc[city] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Step 3: Find the city that appears the most
+    const mostFrequentCity = Object.keys(cityCounts).reduce((a, b) => cityCounts[a] > cityCounts[b] ? a : b);
+    return mostFrequentCity;
 }

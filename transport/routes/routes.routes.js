@@ -32,11 +32,11 @@ router.get('/all', auth, async (req, res) => { // TODO number of seats!!
         if (new Date(startDate) < new Date()) {
             return res.status(400).json({ message: 'Invalid date' });
         }
-        const routes = await Route.find({ 
+        const routes = await Route.find({
             "departure.city": departureCity,
             "departure.country": departureCountry,
             "destination.city": destinationCity,
-            "destination.country": destinationCountry, 
+            "destination.country": destinationCountry,
             "departure.date": startDate
         });
         res.json(routes);
@@ -50,12 +50,12 @@ router.get('/all', auth, async (req, res) => { // TODO number of seats!!
 router.get('/:id', auth, async (req, res) => {
     try {
         const route = await Route.findById(req.params.id)
-        .populate(
-            {
-                path: 'transport',
-                model: 'Transport'
-            }
-        );
+            .populate(
+                {
+                    path: 'transport',
+                    model: 'Transport'
+                }
+            );
         res.json(route);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
@@ -68,6 +68,37 @@ router.get('/:id/seats', auth, async (req, res) => {
         const tickets = await Ticket.find({ route: req.params.id });
         const bookedSeats = tickets.map(ticket => ticket.seat);
         res.json(bookedSeats);
+    } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
+// get all routes by city
+router.get('/city/:city', auth, async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
+
+        const now = new Date(); // Current date and time
+        const departures = await Route.find({
+            "departure.city": req.params.city,
+            // "destination.date": today,
+            // "destination.time": { $gt: now.toISOString().substr(11, 5) } // compare as "HH:MM"
+        }).populate(
+            {
+                path: 'transport',
+                model: 'Transport'
+            });
+        const destinations = await Route.find({
+            "destination.city": req.params.city,
+            // "departure.date": today,
+            // "departure.time": { $lt: now.toISOString().substr(11, 5) } // compare as "HH:MM"
+        }).populate(
+            {
+                path: 'transport',
+                model: 'Transport'
+            });;
+        res.json(departures.concat(destinations));
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
     }

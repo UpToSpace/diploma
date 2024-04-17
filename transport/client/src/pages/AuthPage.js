@@ -79,30 +79,38 @@ export const AuthPage = () => {
     }
 
     return (
-        <div className="mt-4 grow flex items-center justify-around">
-            <div className="mb-64">
-                <h1 className="text-4xl text-center mb-4">Login</h1>
-                <form className="max-w-md mx-auto">
-                    <input type="email"
+        <div className="mt-4 grow flex items-center justify-around bg-gray-100 py-12">
+            <div className="mb-12 w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
+                <h1 className="text-4xl text-center text-indigo-600 font-bold mb-6">Login</h1>
+                <form className="space-y-4">
+                    <input
+                        type="email"
                         placeholder="your@email.com"
                         value={form.email}
                         name="email"
-                        onChange={changeHandler} />
-                    <input type="password"
+                        onChange={changeHandler}
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <input
+                        type="password"
                         placeholder="password"
                         name="password"
                         value={form.password}
-                        onChange={changeHandler} />
+                        onChange={changeHandler}
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
                     <button
                         disabled={loading}
-                        onClick={loginHandler}>
+                        onClick={loginHandler}
+                        className={`w-full px-4 py-2 text-white bg-indigo-600 rounded-md ${loading ? 'bg-indigo-400' : 'hover:bg-indigo-700'} focus:outline-none disabled:opacity-50`}
+                    >
                         Login
                     </button>
                     <div className="text-center py-2 text-gray-500">
-                        Don't have an account yet? <Link className="underline text-black" to={'/register'}>Register now</Link>
+                        Don't have an account yet? <Link className="underline text-indigo-600 hover:text-indigo-800" to={'/register'}>Register now</Link>
                     </div>
                     <div className="text-center py-2 text-gray-500">
-                        Forgot your password? <button onClick={resetHandler}>Reset password</button>
+                        Forgot your password? <button onClick={resetHandler} className="underline text-indigo-600 hover:text-indigo-800">Reset password</button>
                     </div>
                 </form>
             </div>

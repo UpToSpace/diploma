@@ -43,6 +43,21 @@ export const MainPage = () => {
         setStartDate(new Date(event.target.value)); // Update the date state
     };
 
+    const [checkedState, setCheckedState] = useState({
+        check1: false,
+        check2: false,
+        check3: false
+    });
+
+    // Handler to manage changes for each checkbox
+    const handleChange = (event) => {
+        const { name, checked } = event.target;
+        setCheckedState(prevState => ({
+            ...prevState,
+            [name]: checked
+        }));
+    };
+
     if (loading) {
         return <Loader />;
     }
@@ -71,6 +86,38 @@ export const MainPage = () => {
                         min={1}
                         className="input-number"
                     />
+                    <div className="flex flex-col items-start justify-center p-4">
+                        <label className="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="check1"
+                                checked={checkedState.check1}
+                                onChange={handleChange}
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span>Кондиционер</span>
+                        </label>
+                        <label className="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="check2"
+                                checked={checkedState.check2}
+                                onChange={handleChange}
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span>Wi-Fi</span>
+                        </label>
+                        <label className="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="check3"
+                                checked={checkedState.check3}
+                                onChange={handleChange}
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span>220v</span>
+                        </label>
+                    </div>
                     <SearchIcon
                         className="icon-small bg-red-500 text-white"
                         onClick={search}
@@ -81,11 +128,10 @@ export const MainPage = () => {
                         onClick={resetInput}
                     />
                 </div>
-               
             </div>
             <div className="flex justify-between w-full">
                 <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                    <a href="#" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Manage My Booking clicked')}>
+                    <a href="/timetable" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Manage My Booking clicked')}>
                         <div className="flex items-center justify-center w-12 h-12 bg-green-500 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />

@@ -2,6 +2,8 @@ const { Router } = require('express');
 const config = require('config');
 const User = require('../models/User');
 const Favourite = require('../models/Favourite');
+const Ticket = require('../models/Ticket');
+const Route = require('../models/Route');
 const router = Router();
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken")
@@ -17,6 +19,18 @@ router.get('/', auth, async (req, res) => {
         const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
         const user = await User.findOne({ _id: decoded.id });
         res.json(user.email);
+    } catch (e) {
+        console.log(e)
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+});
+
+// /api/user/:id/statistics
+router.get('/:id/statistics', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await Ticket.find({ user: id }).populate('route');
+        res.json(data);
     } catch (e) {
         console.log(e)
         res.status(500).json({ message: 'Что-то пошло не так' });
