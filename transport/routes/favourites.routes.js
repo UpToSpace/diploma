@@ -18,8 +18,9 @@ router.get('/:userId', auth, async (req, res) => {
 // /api/favourite
 router.post('/', auth, async (req, res) => {
     try {
-        const { userId, transportId } = req.body;
-        const favourite = new Favourite({ userId, transportId });
+        const { userId, routeId } = req.body;
+        //console.log(req.body);
+        const favourite = new Favourite({ userId, routeId });
         //console.log(favourite);
         await favourite.save();
         res.status(201).json({ message: 'Избранное создано' });

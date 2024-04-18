@@ -4,11 +4,25 @@ import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import { MapWithRoutesLocations } from '../../components/MapComponents';
 
-export const TimetablePage = () => {
-    const { id } = useParams();
+export const MapPage = () => {
     const { request, loading } = useHttp();
-    const userId = useContext(AuthContext).userId;
+    const [locations, setLocations] = useState([]);
+
+    const getLocations = useCallback(async () => {
+        try {
+            const data = await request('/api/routes/locations');
+            console.log(data);
+            setLocations(data);
+        } catch (e) {
+            console.log(e.message);
+        }
+    }, [request]);
+
+    useEffect(() => {
+        getLocations();
+    }, [getLocations]);
 
     if (loading) {
         return <Loader />;
@@ -16,6 +30,7 @@ export const TimetablePage = () => {
 
     return (
         <>
+        {/* <MapWithRoutesLocations locations={locations} /> */}
         </>
     )
 }

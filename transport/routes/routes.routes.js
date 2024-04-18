@@ -20,27 +20,45 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Get all Routes with params
-router.get('/all', auth, async (req, res) => { // TODO number of seats!!
+router.get('/all', auth, async (req, res) => {
     try {
-        const { departure, destination, startDate, numberOfSeats } = req.query;
+        const { departure, destination, startDate, numberOfSeats, conditioners, wifi, power } = req.query;
         console.log(departure, destination, startDate, numberOfSeats);
+
         const departureCity = departure.split(',')[0];
         const destinationCity = destination.split(',')[0];
         const departureCountry = departure.split(',')[1];
         const destinationCountry = destination.split(',')[1];
-        //console.log(departureCity);
+
         if (new Date(startDate) < new Date()) {
             return res.status(400).json({ message: 'Invalid date' });
         }
-        const routes = await Route.find({
+
+        // Build the query object dynamically based on conditioners parameter
+        let query = {
             "departure.city": departureCity,
             "departure.country": departureCountry,
             "destination.city": destinationCity,
             "destination.country": destinationCountry,
             "departure.date": startDate
-        });
+        };
+
+        // Only add conditioners to the query if the conditioners parameter is true
+        if (conditioners === 'true') {
+            query["transport.conditioners"] = conditioners === 'true';  // Assuming conditioners is a string 'true' or 'false'
+        }
+
+        // Add wifi and power conditions only if they are specified
+        if (wifi === 'true') {
+            query["transport.wifi"] = wifi === 'true';
+        }
+
+        if (power === 'true') {
+            query["transport.power"] = power === 'true';
+        }
+
+        const routes = await Route.find(query);
         res.json(routes);
-        //console.log(routes);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
     }
@@ -101,6 +119,18 @@ router.get('/city/:city', auth, async (req, res) => {
         res.json(departures.concat(destinations));
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
+// get all locations
+router.get('/locations', auth, async (req, res) => {
+    try {
+        const locations = await Route.find({})
+        res.json(locations);
+    } catch (e) {
+        console.log(e);
+        console.log('Something went wrong');
+        res.status(404).json({ message: e });
     }
 });
 

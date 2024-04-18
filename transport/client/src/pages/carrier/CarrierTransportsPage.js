@@ -209,15 +209,16 @@ export const CarrierTransportsPage = () => {
                 </button>
             </div>
 
-
+            <div className="flex items-center justify-center mt-5">
             <button className="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
                 Add Transport
             </button>
+            </div>
         </form>
 
                 <div className="overflow-x-auto relative shadow-md sm:rounded-lg my-5">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table className="w-full text-sm text-left text-gray-500 bg-green-200">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 bg-green-500">
                     <tr>
                         <th scope="col" className="py-3 px-6">
                             Number
@@ -235,13 +236,13 @@ export const CarrierTransportsPage = () => {
                 </thead>
                 <tbody>
                     {transports.map((transport) => (
-                        <tr key={transport.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <tr key={transport.id} className="text-gray-950 border-b transition duration-300 ease-in-out rounded-lg bg-green-200 hover:bg-green-300 cursor-pointer">
                             <td className="py-4 px-6">
                                 {transport.number}
                             </td>
-                            <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="py-4 px-6">
                                 {transport.brand}
-                            </th>
+                            </td>
                             <td className="py-4 px-6">
                                 {transport.model}
                             </td>

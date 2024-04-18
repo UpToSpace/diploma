@@ -8,6 +8,9 @@ const schema = new Schema({
     yearOfBuild: { type: Number, required: true },
     capacity: { type: Number, required: true },
     seatsLayout: { type: Object, required: true },
+    conditioners: { type: Boolean, required: true },
+    wifi: { type: Boolean, required: true },
+    power: { type: Boolean, required: true },
 });
 
 module.exports = model('Transport', schema);

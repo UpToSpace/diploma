@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Favourite = require('../models/Favourite');
 const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
+const Transport = require('../models/Transport');
 const router = Router();
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken")
@@ -36,6 +37,46 @@ router.get('/:id/statistics', auth, async (req, res) => {
         res.status(500).json({ message: 'Что-то пошло не так' });
     }
 });
+
+// /api/user/carrier/:id/statistics
+router.get('/carrier/:id/statistics', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const transports = await Transport.find({ carrier: id }, { _id: 1 });
+        console.log("Transports found:", transports.length, transports);
+
+        const routes = await Route.find({ transport: { $in: transports.map(t => t._id) } }, { _id: 1 });
+        console.log("Routes found:", routes.length, routes);
+
+        if (routes.length === 0) {
+            return res.status(404).json({ message: 'No routes found for the given carrier' });
+        }
+
+        const ticketsNumber = await Ticket.find({ route: { $in: routes.map(r => r._id) } }).countDocuments();
+        const cash = await Ticket.find({ route: { $in: routes.map(r => r._id) } }).select('cost').lean();
+
+        const ticketsByMonth = await Ticket.aggregate([
+            {
+                $match: {
+                    route: { $in: routes.map(r => r._id) }
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: "$purchaseDate" },
+                    count: { $sum: 1 },
+                    totalCost: { $sum: "$cost" }
+                }
+            }
+        ]).sort({ _id: 1 });
+
+        res.json({ ticketsNumber, routesNumber: routes.length, cash, ticketsByMonth });
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+});
+
 
 // /api/user/all
 router.get('/all', admin, async (req, res) => {

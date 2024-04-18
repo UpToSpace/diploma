@@ -111,7 +111,7 @@ export const CarrierRoutesPage = () => {
                 const response = await request('/api/routes', 'POST', form);
                 toast('Route added successfully!');
             }
-            // Reset the form or handle navigation as needed
+            getTransportsAndRoutes(); // Refresh the list of routes
         } catch (error) {
             console.error("Failed to add/edit route", error);
             if (error.message === 'Route exceeds maximum distance limitation') {

@@ -208,3 +208,50 @@ export const Map = ({ points }) => {
         </ReactMapGL>
     );
 }
+
+export const MapWithRoutesLocations = ({ locations }) => {
+
+    const [viewState, setViewState] = useState({
+        latitude: CENTER[1],
+        longitude: CENTER[0],
+        zoom: 3,
+    });
+
+    return (
+        <ReactMapGL
+            style={{ width: "100%", height: "100vh" }}
+            {...viewState}
+            mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
+            mapStyle="mapbox://styles/mapbox/streets-v12"
+            onMove={(event) => {
+                setViewState(event.viewState);
+            }}
+        >
+            {/* <Source id="route" type="geojson" data={{
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: locations,
+                }
+            }}>
+                <Layer {...ROUTE_LAYER} />
+            </Source> */}
+            <Layer {...POINT_LAYER} />
+            {locations.map((point, index) => (
+                <Marker
+                    latitude={point.latitude}
+                    longitude={point.longitude}
+                    key={index}
+                >
+                    <div className="marker">
+                        <img src={redflagIcon}
+                            alt="marker"
+                            height={viewState.zoom * 2 + "px"}
+                            width={viewState.zoom * 2 + "px"} />
+                    </div>
+                </Marker>
+            ))}
+        </ReactMapGL>
+    );
+}

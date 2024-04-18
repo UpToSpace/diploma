@@ -19,15 +19,22 @@ export const MainPage = () => {
     const [destinationInput, setDestinationInput] = useState("");
     const [startDate, setStartDate] = useState(new Date());
     const [numberOfSeats, setNumberOfSeats] = useState(1);
+    const [checkedState, setCheckedState] = useState({
+        check1: false,
+        check2: false,
+        check3: false
+    });
 
     const search = () => {
         const formattedStartDate = format(startDate, 'yyyy-MM-dd');
-
         const searchParams = new URLSearchParams({
             departure: `${departureInput.text_ru},${departureInput.context?.filter((context) => context.id.includes("country"))[0].text_ru}`,
             destination: `${destinationInput.text_ru},${destinationInput.context?.filter((context) => context.id.includes("country"))[0].text_ru}`,
             startDate: formattedStartDate,
             numberOfSeats,
+            conditioners: checkedState.check1,
+            wifi: checkedState.check2,
+            power: checkedState.check3,
         });
         navigate(`/search?${searchParams}`);
     };
@@ -42,12 +49,6 @@ export const MainPage = () => {
     const handleDateChange = (event) => {
         setStartDate(new Date(event.target.value)); // Update the date state
     };
-
-    const [checkedState, setCheckedState] = useState({
-        check1: false,
-        check2: false,
-        check3: false
-    });
 
     // Handler to manage changes for each checkbox
     const handleChange = (event) => {
@@ -142,7 +143,7 @@ export const MainPage = () => {
                 </div>
                 <div className="w-1/3 p-4 rounded-lg shadow-lg">
                     {/* Second menu item (similar structure, different link and label as needed) */}
-                    <a href="#" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Another action clicked')}>
+                    <a href="/map" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Another action clicked')}>
                         <div className="flex items-center justify-center w-12 h-12 bg-green-500 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
