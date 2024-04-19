@@ -91,7 +91,7 @@ export const MiniMap = ({ longitude, latitude, updateCoordinates }) => {
     }, []); // This effect runs once after the component mounts
 
     return <ReactMapGL
-        style={{ width: "100%", height: "300px"}}
+        style={{ width: "100%", height: "300px" }}
         {...viewState}
         mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -104,9 +104,9 @@ export const MiniMap = ({ longitude, latitude, updateCoordinates }) => {
             longitude={longitude}
         >
             <div className="marker">
-                <img src={redflagIcon} 
-                    alt="marker" 
-                    height={ZOOM * 2 + "px"} 
+                <img src={redflagIcon}
+                    alt="marker"
+                    height={ZOOM * 2 + "px"}
                     width={ZOOM * 2 + "px"} />
             </div>
         </Marker>
@@ -156,12 +156,12 @@ export const Map = ({ points }) => {
             });
         }
         getRoutes();
-    }, [points]); 
-    
+    }, [points]);
+
     const getRoutes = useCallback(async () => {
         try {
             const pointsToRequest = points.map(point => `${point.longitude},${point.latitude}`).join(';');
-            const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${pointsToRequest}?`+
+            const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${pointsToRequest}?` +
                 `steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAP_TOKEN}&overview=full&annotations=distance,duration`)
             console.log(data);
             setRoutes(data.routes[0].geometry.coordinates);
@@ -209,49 +209,146 @@ export const Map = ({ points }) => {
     );
 }
 
-export const MapWithRoutesLocations = ({ locations }) => {
+const PointLayer = {
+    id: 'point',
+    type: 'circle',
+    paint: {
+        'circle-radius': 10,
+        'circle-color': '#007cbf'
+    }
+};
 
-    const [viewState, setViewState] = useState({
-        latitude: CENTER[1],
-        longitude: CENTER[0],
-        zoom: 3,
-    });
+const RouteLayer = {
+    id: 'route',
+    type: 'line',
+    layout: {
+        'line-join': 'round',
+        'line-cap': 'round'
+    },
+    paint: {
+        'line-color': '#ff7f00',
+        'line-width': 4
+    }
+};
 
-    return (
-        <ReactMapGL
-            style={{ width: "100%", height: "100vh" }}
-            {...viewState}
-            mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
-            mapStyle="mapbox://styles/mapbox/streets-v12"
-            onMove={(event) => {
-                setViewState(event.viewState);
-            }}
-        >
-            {/* <Source id="route" type="geojson" data={{
+export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture, selectedDestination, setSelectedDestination }) => {
+    const [routes, setRoutes] = useState([]);
+    const [lineData, setLineData] = useState(null);
+
+    const fetchRoutes = async () => {
+        const response = await fetch('/api/routes/locations'); // Adjust API endpoint as necessary
+        const data = await response.json();
+        setRoutes(data);
+    };
+
+    useEffect(() => {
+        fetchRoutes();
+    }, []);
+
+    // Convert fetched routes to a set of unique departures
+    const uniqueDepartures = Array.from(new Set(routes.map(route => ({
+        latitude: route.departure.latitude,
+        longitude: route.departure.longitude,
+        country: route.departure.country,
+        city: route.departure.city
+    }))));
+
+    // Filter destinations based on selected departure
+    const destinations = routes.filter(route => route.departure.city === selectedDeparture?.city && route.departure.country === selectedDeparture?.country)
+        .map(route => ({
+            latitude: route.destination.latitude,
+            longitude: route.destination.longitude,
+            country: route.destination.country,
+            city: route.destination.city
+        }));
+
+    // Handling clicks on departure markers
+    const handleDepartureClick = (departure) => {
+        console.log('Departure clicked', departure);
+        console.log('Selected departure', selectedDeparture);
+        if (selectedDeparture?.longitude === departure.longitude && selectedDeparture?.latitude === departure.latitude) {
+            setSelectedDeparture(null);
+            setSelectedDestination(null);
+            setLineData(null);
+            return;
+        }
+        setSelectedDeparture(departure);
+        setSelectedDestination(null);
+        setLineData(null);
+    };
+
+    // Handling clicks on destination markers
+    const handleDestinationClick = (destination) => {
+        console.log('Destination clicked', destination);
+        console.log('Selected destination', selectedDestination);
+        if (!selectedDeparture) {
+            return;
+        }
+        if (selectedDestination?.longitude === destination.longitude && selectedDestination?.latitude === destination.latitude) {
+            setSelectedDestination(null);
+            setLineData(null);
+            return;
+        }
+        setSelectedDestination(destination);
+        if (selectedDeparture) {
+            setLineData({
                 type: 'Feature',
                 properties: {},
                 geometry: {
                     type: 'LineString',
-                    coordinates: locations,
+                    coordinates: [
+                        [selectedDeparture.longitude, selectedDeparture.latitude],
+                        [destination.longitude, destination.latitude]
+                    ]
                 }
-            }}>
-                <Layer {...ROUTE_LAYER} />
-            </Source> */}
-            <Layer {...POINT_LAYER} />
-            {locations.map((point, index) => (
+            });
+        }
+    };
+
+    // Map and markers setup
+    return (
+        <ReactMapGL
+            style={{ width: "100%", height: "100vh" }}
+            mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
+            mapStyle="mapbox://styles/mapbox/streets-v12"
+        >
+            {!selectedDeparture && uniqueDepartures.map((point, index) => (
                 <Marker
                     latitude={point.latitude}
                     longitude={point.longitude}
                     key={index}
+                    onClick={() => handleDepartureClick(point)}
                 >
-                    <div className="marker">
-                        <img src={redflagIcon}
-                            alt="marker"
-                            height={viewState.zoom * 2 + "px"}
-                            width={viewState.zoom * 2 + "px"} />
-                    </div>
+                    {/* Customize your marker */}
                 </Marker>
             ))}
+
+            {selectedDeparture && destinations.map((point, index) => (
+                <Marker
+                    latitude={point.latitude}
+                    longitude={point.longitude}
+                    key={index}
+                    onClick={() => handleDestinationClick(point)}
+                >
+                    {/* Customize your marker */}
+                </Marker>
+            ))}
+
+            {selectedDeparture && (
+                <Marker
+                    latitude={selectedDeparture.latitude}
+                    longitude={selectedDeparture.longitude}
+                    onClick={() => handleDepartureClick(selectedDeparture)}
+                >
+                    {/* Customize your marker */}
+                </Marker>
+            )}
+
+            {lineData && (
+                <Source id="route" type="geojson" data={lineData}>
+                    <Layer type="line" layout={{ 'line-cap': 'round', 'line-join': 'round' }} paint={{ 'line-color': '#888', 'line-width': 8 }} />
+                </Source>
+            )}
         </ReactMapGL>
     );
-}
+};

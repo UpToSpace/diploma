@@ -81,7 +81,8 @@ router.get('/carrier/:id/statistics', auth, async (req, res) => {
 // /api/user/all
 router.get('/all', admin, async (req, res) => {
     try {
-        const users = await User.find();
+        const { email } = req.query;
+        const users = await User.find({ email: { $regex: email, $options: 'i' } }, { password: 0 });
         res.json(users);
     } catch (e) {
         console.log(e)
@@ -116,27 +117,68 @@ router.post('/', auth,
 
 // /api/user
 router.delete('/:id', admin, async (req, res) => {
-    //const session = await mongoose.startSession();
+    const session = await mongoose.startSession();
+    session.startTransaction();  // Start the transaction at the beginning after session starts
+
     try {
         const { id } = req.params;
-        const decoded = jwt.verify(req.headers.authorization.split(' ')[1], config.get('jwtAccessSecret'));
-        const user = await User.findOne({ _id: decoded.id })
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
+        const user = await User.findOne({ _id: decoded.id }).session(session); // Use the session
+
         if (decoded.id === id) {
-            //session.endSession();
-            return res.status(400).json({ message: 'Нельга выдалiць самога сябе' });
+            throw new Error('Нельга выдалiць самога сябе'); // Throw error to handle in catch block
         }
-        //session.startTransaction();
-        await Favourite.deleteMany({ userId: id })
-        await User.deleteOne({ _id: id })
-        //await session.commitTransaction();
+
+        if (user.role === 'admin') {
+            await User.deleteOne({ _id: id }).session(session);
+        } else if (user.role === 'user') {
+            await User.deleteOne({ _id: id }).session(session);
+            await Favourite.deleteMany({ userId: id }).session(session);
+            await Review.deleteMany({ user: id }).session(session);
+            await CreditCard.deleteMany({ user: id }).session(session);
+            const tickets = await Ticket.find({ user: id }).session(session);
+            for (const ticket of tickets) {
+                try {
+                    await stripe.refunds.create({ charge: ticket.chargeId });
+                } catch (refundError) {
+                    console.error(`Refund failed for charge ${ticket.chargeId}:`, refundError);
+                    throw refundError; // Throw to handle in catch block
+                }
+            }
+            await Ticket.deleteMany({ user: id }).session(session);
+        } else if (user.role === 'carrier') {
+            await User.deleteOne({ _id: id }).session(session);
+            const transports = await Transport.find({ carrier: id }).session(session);
+            for (const transport of transports) {
+                const routes = await Route.find({ transport: transport._id }).session(session);
+                for (const route of routes) {
+                    const tickets = await Ticket.find({ route: route._id }).session(session);
+                    for (const ticket of tickets) {
+                        try {
+                            await stripe.refunds.create({ charge: ticket.chargeId });
+                        } catch (refundError) {
+                            console.error(`Refund failed for charge ${ticket.chargeId}:`, refundError);
+                            throw refundError; // Throw to handle in catch block
+                        }
+                    }
+                    await Ticket.deleteMany({ route: route._id }).session(session);
+                }
+                await Route.deleteMany({ transport: transport._id }).session(session);
+                await Transport.findByIdAndRemove(transport._id).session(session);
+            }
+        }
+
+        await session.commitTransaction(); // Commit the transaction after all operations are successful
         res.json({ message: "Карыстальнiк выдалены паспяхова" });
     } catch (e) {
-        //session.abortTransaction();
-        console.log(e)
-        res.status(500).json({ message: 'Что-то пошло не так' });
+        await session.abortTransaction(); // Abort the transaction on error
+        console.log(e);
+        res.status(500).json({ message: 'Что-то пошло не так', error: e.toString() });
     } finally {
-        //session.endSession();
+        session.endSession(); // End session in finally to ensure it always executes
     }
-})
+});
+
 
 module.exports = router;

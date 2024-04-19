@@ -16,7 +16,8 @@ export const navLinks = {
         { to: "/", label: "Home" },
         { to: "/account", label: "Account" },
         { to: "/transports", label: "Transports" },
-        { to: "/routes", label: "Routes" }
+        { to: "/routes", label: "Routes" },
+        { to: "/statistics", label: "Статистика" },
     ],
     guest: [
         { to: "/reset", label: "Reset Password" },

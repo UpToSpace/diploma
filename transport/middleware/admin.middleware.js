@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../models/User');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
     if (req.method === 'OPTIONS') {
         return next();
     }
@@ -15,7 +15,9 @@ module.exports = (req, res, next) => {
         }
         const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
         //console.log(decoded)
-        if (decoded.role !== 'admin') {
+        const user = await User.findOne({ _id: decoded.id });
+        //console.log(user)
+        if (user.role !== 'admin') {
             return res.status(403).json({ message: 'Няма доступу' });
         }
         next();

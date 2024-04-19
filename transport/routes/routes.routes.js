@@ -19,6 +19,16 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
+// get all locations
+router.get('/locations', async (req, res) => {
+    try {
+        const locations = await Route.find({});
+        res.json(locations);
+    } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
 // Get all Routes with params
 router.get('/all', auth, async (req, res) => {
     try {
@@ -122,17 +132,7 @@ router.get('/city/:city', auth, async (req, res) => {
     }
 });
 
-// get all locations
-router.get('/locations', auth, async (req, res) => {
-    try {
-        const locations = await Route.find({})
-        res.json(locations);
-    } catch (e) {
-        console.log(e);
-        console.log('Something went wrong');
-        res.status(404).json({ message: e });
-    }
-});
+
 
 // Update a Route
 router.put('/:id', auth, async (req, res) => {

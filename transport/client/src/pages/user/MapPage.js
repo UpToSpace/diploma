@@ -1,36 +1,55 @@
-import { useEffect, useState, useCallback, useContext } from 'react';
+import { useState, useEffect } from 'react';
+import ReactMapGL, { Marker, Source, Layer } from 'react-map-gl';
+import { CityAutocomplete } from '../../components/AutoCompleteInput';
 import { Loader } from '../../components/Loader';
-import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/http.hook';
-import { useParams } from 'react-router-dom';
-import moment from 'moment';
 import { MapWithRoutesLocations } from '../../components/MapComponents';
 
 export const MapPage = () => {
-    const { request, loading } = useHttp();
-    const [locations, setLocations] = useState([]);
+    const [lineData, setLineData] = useState(null);
+    const [selectedDeparture, setSelectedDeparture] = useState(null);
+    const [selectedDestination, setSelectedDestination] = useState(null);
 
-    const getLocations = useCallback(async () => {
-        try {
-            const data = await request('/api/routes/locations');
-            console.log(data);
-            setLocations(data);
-        } catch (e) {
-            console.log(e.message);
-        }
-    }, [request]);
 
-    useEffect(() => {
-        getLocations();
-    }, [getLocations]);
-
-    if (loading) {
-        return <Loader />;
-    }
+    // const handleSetDestination = (suggestion) => {
+    //     setDestination(suggestion);
+    //     // Draw line between departure and destination
+    //     if (departure) {
+    //         setLineData({
+    //             type: 'Feature',
+    //             properties: {},
+    //             geometry: {
+    //                 type: 'LineString',
+    //                 coordinates: [
+    //                     [departure.center[0], departure.center[1]],
+    //                     [suggestion.center[0], suggestion.center[1]]
+    //                 ]
+    //             }
+    //         });
+    //     }
+    // };
 
     return (
-        <>
-        {/* <MapWithRoutesLocations locations={locations} /> */}
-        </>
-    )
-}
+        <div>
+            <input type="text" 
+                value={selectedDeparture ? `${selectedDeparture.city}, ${selectedDeparture.country}` : ''}
+                label="Departure"
+                placeholder="Select departure"
+                readOnly={true}
+            />
+            <input type="text"
+                value={selectedDestination ? `${selectedDestination.city}, ${selectedDestination.country}` : ''}
+                label="Destination"
+                placeholder="Select destination"
+                readOnly={true}
+            />
+            <MapWithRoutesLocations
+                lineData={lineData}
+                setSelectedDeparture={setSelectedDeparture}
+                setSelectedDestination={setSelectedDestination}
+                selectedDeparture={selectedDeparture}
+                selectedDestination={selectedDestination}
+            />
+        </div>
+    );
+};

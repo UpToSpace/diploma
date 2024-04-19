@@ -61,3 +61,15 @@ export const getMostVisitedCity = (tripsData) => {
     const mostFrequentCity = Object.keys(cityCounts).reduce((a, b) => cityCounts[a] > cityCounts[b] ? a : b);
     return mostFrequentCity;
 }
+
+export const convertDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+
+    // Extract day, month, and year from the date object
+    const day = String(date.getDate()).padStart(2, '0');  // Ensure day is two digits
+    const month = String(date.getMonth() + 1).padStart(2, '0');  // Month is 0-indexed, so add 1
+    const year = date.getFullYear();
+
+    // Combine in desired format
+    return `${day}.${month}.${year}`;
+}

@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const Review = require('../models/Review');
 const auth = require('../middleware/auth.middleware');
+const Transport = require('../models/Transport');
 const router = Router();
 
 // Create a new Review
@@ -8,7 +9,8 @@ router.post('/', auth, async (req, res) => {
     try {
         const { user, text, rating, route } = req.body;
         const date = new Date();
-        const review = new Review({ user, text, date, rating, route });
+        const carrier = await Transport.findById(route.transport).select('carrier');
+        const review = new Review({ user, text, date, rating, carrier });
         await review.save();
         res.status(201).json({ message: 'Review created' });
     } catch (e) {

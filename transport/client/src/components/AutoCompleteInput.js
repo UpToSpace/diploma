@@ -83,11 +83,10 @@ export function AutoCompleteInput({
     );
 }
 
-export function CityAutocomplete({ setCity, label }) {
-    const [query, setQuery] = useState('');
+export function CityAutocomplete({ value, setValue, label, placeholder }) {
+    const [query, setQuery] = useState(value);
     const [suggestions, setSuggestions] = useState([]);
 
-    // Function to handle input changes and fetch suggestions
     const handleInputChange = async (e) => {
         const input = e.target.value;
         setQuery(input);
@@ -97,8 +96,7 @@ export function CityAutocomplete({ setCity, label }) {
             return;
         }
 
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=place&limit=5&language=ru`;
-
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=place&limit=5&language=en`;
         try {
             const response = await fetch(url);
             const data = await response.json();
@@ -109,21 +107,20 @@ export function CityAutocomplete({ setCity, label }) {
         }
     };
 
-    // Function to handle suggestion selection
     const handleSuggestionClick = (suggestion) => {
-        setQuery(suggestion.place_name); // Update input field with the selected place name
-        setSuggestions([]); // Clear suggestions
-        setCity(suggestion); // Set the selected city, adjust according to your needs
+        setQuery(suggestion.place_name);
+        setValue(suggestion);
+        setSuggestions([]);
     };
 
     return (
         <div className='flex flex-col relative'>
-            <label className="block text-sm font-medium text-gray-700">Search for a city</label>
+            <label className="block text-sm font-medium text-gray-700">{label}</label>
             <input
                 type="text"
                 value={query}
                 onChange={handleInputChange}
-                placeholder="Search for a city"
+                placeholder={placeholder}
                 className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500"
             />
             {suggestions?.length > 0 && (
@@ -140,6 +137,5 @@ export function CityAutocomplete({ setCity, label }) {
                 </ul>
             )}
         </div>
-
     );
 }
