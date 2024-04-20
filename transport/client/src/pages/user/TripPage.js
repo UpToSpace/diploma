@@ -96,6 +96,7 @@ export const TripPage = () => {
                                 </div>
                                 <div className="border-b border-dashed border-gray-400 my-2"></div>
                                 <div className="text-lg font-semibold">{trip.price} BYN</div>
+                                <a href="/carrier" className="text-indigo-500">Перевозчик</a>
                             </div>
                         </div>
                         <div className="flex-1">

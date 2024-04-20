@@ -96,7 +96,7 @@ export function CityAutocomplete({ value, setValue, label, placeholder }) {
             return;
         }
 
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=place&limit=5&language=en`;
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${process.env.REACT_APP_MAP_TOKEN}&types=place&limit=5&language=ru`;
         try {
             const response = await fetch(url);
             const data = await response.json();

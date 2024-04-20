@@ -32,7 +32,7 @@ router.get('/locations', async (req, res) => {
 // Get all Routes with params
 router.get('/all', auth, async (req, res) => {
     try {
-        const { departure, destination, startDate, numberOfSeats, conditioners, wifi, power } = req.query;
+        const { departure, destination, numberOfSeats, conditioners, wifi, power, startDate } = req.query;
         console.log(departure, destination, startDate, numberOfSeats);
 
         const departureCity = departure.split(',')[0];
@@ -40,7 +40,7 @@ router.get('/all', auth, async (req, res) => {
         const departureCountry = departure.split(',')[1];
         const destinationCountry = destination.split(',')[1];
 
-        if (new Date(startDate) < new Date()) {
+        if (startDate && new Date(startDate) < new Date()) {
             return res.status(400).json({ message: 'Invalid date' });
         }
 
@@ -50,8 +50,11 @@ router.get('/all', auth, async (req, res) => {
             "departure.country": departureCountry,
             "destination.city": destinationCity,
             "destination.country": destinationCountry,
-            "departure.date": startDate
         };
+
+        if (startDate) {
+            query["departure.date"] = startDate;
+        }
 
         // Only add conditioners to the query if the conditioners parameter is true
         if (conditioners === 'true') {
@@ -67,9 +70,13 @@ router.get('/all', auth, async (req, res) => {
             query["transport.power"] = power === 'true';
         }
 
-        const routes = await Route.find(query);
+        const routes = await Route.find(query).populate({
+            path: 'transport',
+            model: 'Transport'
+        });
         res.json(routes);
     } catch (e) {
+        console.log(e);
         res.status(500).json({ message: 'Something went wrong' });
     }
 });

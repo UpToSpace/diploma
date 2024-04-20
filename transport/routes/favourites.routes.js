@@ -4,6 +4,20 @@ const auth = require('../middleware/auth.middleware');
 const { mongo } = require('mongoose');
 const router = Router();
 
+// /api/favourite/:userId/routes
+router.get('/:userId/routes', auth, async (req, res) => {
+    try {
+        const favourite = await Favourite.find({ userId: req.params.userId }).populate({
+            path: 'routeId',
+            model: 'Route'
+        });
+        res.json(favourite);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: 'Что-то пошло не так /api/favourite/:userId/routes, попробуйте снова' });
+    }
+});
+
 // /api/favourite/:userId
 router.get('/:userId', auth, async (req, res) => {
     try {

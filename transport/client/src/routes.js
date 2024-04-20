@@ -21,6 +21,7 @@ import { StatisticsPage } from './pages/user/StatisticsPage';
 import { TimetablePage } from './pages/user/TimetablePage';
 import { MapPage } from './pages/user/MapPage';
 import { CarrierStatisticsPage } from './pages/carrier/CarrierStatisticsPage';
+import { FavoritesPage } from './pages/user/FavoritesPage';
 
 export const useRoutes = (userRole) => {
     switch (userRole) {
@@ -44,6 +45,7 @@ export const useRoutes = (userRole) => {
                     <Route path="/tickets/:id" element={<TicketPage />} />
                     <Route path="/statistics" element={<StatisticsPage />} />
                     <Route path="/timetable" element={<TimetablePage />} />
+                    <Route path="/favorites" element={<FavoritesPage />} />
                     <Route path="/map" element={<MapPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Route>

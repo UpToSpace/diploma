@@ -1,15 +1,39 @@
 import { useState, useEffect } from 'react';
-import ReactMapGL, { Marker, Source, Layer } from 'react-map-gl';
+import { useNavigate } from 'react-router-dom';
 import { CityAutocomplete } from '../../components/AutoCompleteInput';
 import { Loader } from '../../components/Loader';
 import { useHttp } from '../../hooks/http.hook';
 import { MapWithRoutesLocations } from '../../components/MapComponents';
+import { SearchIcon } from '@heroicons/react/solid';
+import toast from 'react-hot-toast';
+import { format } from 'date-fns';
 
 export const MapPage = () => {
     const [lineData, setLineData] = useState(null);
     const [selectedDeparture, setSelectedDeparture] = useState(null);
     const [selectedDestination, setSelectedDestination] = useState(null);
+    const navigate = useNavigate();
+    const { request, loading } = useHttp();
 
+    const search = () => {
+        if (!selectedDeparture || !selectedDestination) {
+            toast.error('Please select departure and destination');
+            return;
+        }
+        try {
+            const searchParams = new URLSearchParams({
+                departure: `${selectedDeparture.city},${selectedDeparture.country}`,
+                destination: `${selectedDestination.city},${selectedDestination.country}`,
+                numberOfSeats: 1,
+                conditioners: false,
+                wifi: false,
+                power: false,
+            });
+            navigate(`/search?${searchParams}`);
+        } catch (e) {
+            toast.error(e.message);
+        }
+    };
 
     // const handleSetDestination = (suggestion) => {
     //     setDestination(suggestion);
@@ -42,6 +66,10 @@ export const MapPage = () => {
                 label="Destination"
                 placeholder="Select destination"
                 readOnly={true}
+            />
+            <SearchIcon
+                className="icon-small bg-red-500 text-white"
+                onClick={search}
             />
             <MapWithRoutesLocations
                 lineData={lineData}

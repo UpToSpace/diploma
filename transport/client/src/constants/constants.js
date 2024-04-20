@@ -10,7 +10,10 @@ export const navLinks = {
         { to: "/", label: "Главная" },
         { to: "/account", label: "Аккаунт" },
         { to: "/statistics", label: "Статистика" },
-        { to: "/tickets", label: "Мои Билеты" }
+        { to: "/tickets", label: "Мои Билеты" },
+        { to: "/favorites", label: "Избранное" },
+        { to: "/timetable", label: "Расписание" },
+        { to: "/map", label: "Карта" }
     ],
     carrier: [
         { to: "/", label: "Home" },

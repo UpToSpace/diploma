@@ -1,7 +1,6 @@
 import busIcon from "../styles/images/bus-icon.svg"
 import React, { useCallback, useContext, useEffect, useState, useRef } from "react";
 import flagIcon from "../styles/images/flag.svg"
-import flag from "../styles/images/redflag.svg"
 import blueflag from "../styles/images/blueflag.svg"
 import redflagIcon from "../styles/images/redflag.svg"
 import { Marker, Popup, Source } from 'react-map-gl';
@@ -234,6 +233,11 @@ const RouteLayer = {
 export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture, selectedDestination, setSelectedDestination }) => {
     const [routes, setRoutes] = useState([]);
     const [lineData, setLineData] = useState(null);
+    const [viewState, setViewState] = useState({
+        latitude: CENTER[1],
+        longitude: CENTER[0],
+        zoom: 3,
+    });
 
     const fetchRoutes = async () => {
         const response = await fetch('/api/routes/locations'); // Adjust API endpoint as necessary
@@ -308,9 +312,13 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
     // Map and markers setup
     return (
         <ReactMapGL
+        {...viewState}
             style={{ width: "100%", height: "100vh" }}
             mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
             mapStyle="mapbox://styles/mapbox/streets-v12"
+            onMove={(event) => {
+                setViewState(event.viewState);
+            }}
         >
             {!selectedDeparture && uniqueDepartures.map((point, index) => (
                 <Marker
@@ -340,7 +348,23 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
                     longitude={selectedDeparture.longitude}
                     onClick={() => handleDepartureClick(selectedDeparture)}
                 >
-                    {/* Customize your marker */}
+                        <img src={redflagIcon}
+                            alt="marker"
+                            height={viewState.zoom * 10 + "px"}
+                            width={viewState.zoom * 10 + "px"} />
+                </Marker>
+            )}
+
+            {selectedDestination && (
+                <Marker
+                    latitude={selectedDestination.latitude}
+                    longitude={selectedDestination.longitude}
+                    onClick={() => handleDestinationClick(selectedDestination)}
+                >
+                    <img src={blueflag}
+                        alt="marker"
+                        height={viewState.zoom * 10 + "px"}
+                        width={viewState.zoom * 10 + "px"} />
                 </Marker>
             )}
 

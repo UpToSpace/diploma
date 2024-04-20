@@ -26,6 +26,7 @@ export const MainPage = () => {
     });
 
     const search = () => {
+        console.log(departureInput);
         const formattedStartDate = format(startDate, 'yyyy-MM-dd');
         const searchParams = new URLSearchParams({
             departure: `${departureInput.text_ru},${departureInput.context?.filter((context) => context.id.includes("country"))[0].text_ru}`,
@@ -72,8 +73,15 @@ export const MainPage = () => {
             <div className="bg-[#d7b98e] p-4 rounded-lg shadow-lg w-full">
                 {/* Search section */}
                 <div className="flex items-center space-x-4">  {/* Changed from flex-col to flex and combined the rows */}
-                    <CityAutocomplete label={'Откуда'} setCity={setDepartureInput} />
-                    <CityAutocomplete label={'Куда'} setCity={setDestinationInput} />
+                    <CityAutocomplete
+                        label={'Откуда'}
+                        setValue={setDepartureInput}
+                        placeholder={'Откуда'}
+                    />
+                    <CityAutocomplete
+                        label={'Куда'}
+                        setValue={setDestinationInput}
+                        placeholder={'Куда'} />
                     <input
                         type="date"
                         value={startDate.toISOString().substring(0, 10)}
