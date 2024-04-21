@@ -73,3 +73,19 @@ export const convertDate = (isoDateString) => {
     // Combine in desired format
     return `${day}.${month}.${year}`;
 }
+
+export function calculateRatingsData(data) {
+    const totalReviews = data.length;
+    let totalRatingSum = 0;
+
+    data.forEach(review => {
+        totalRatingSum += review.rating; // Summing up all the ratings
+    });
+
+    const averageRating = totalReviews > 0 ? (totalRatingSum / totalReviews).toFixed(2) : 0;
+
+    return {
+        averageRating: averageRating, // The average rating value
+        numberOfRatings: totalReviews // Total number of reviews/ratings
+    };
+}

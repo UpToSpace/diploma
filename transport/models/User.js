@@ -11,7 +11,8 @@ const schema = new Schema({
     fullName: { type: String, required: true },
     address: { type: String, required: false },
     dateOfRegistration: { type: Date, default: Date.now },
-    dateOfBirth: { type: Date, required: false }
+    dateOfBirth: { type: Date, required: false },
+    activatedAsCarrier: { type: Boolean, default: false },
 });
 
 module.exports = model('User', schema);

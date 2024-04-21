@@ -9,7 +9,8 @@ router.post('/', auth, async (req, res) => {
     try {
         const { user, text, rating, route } = req.body;
         const date = new Date();
-        const carrier = await Transport.findById(route.transport).select('carrier');
+        const transport = await Transport.findById(route.transport);
+        const carrier = transport.carrier;
         const review = new Review({ user, text, date, rating, carrier });
         await review.save();
         res.status(201).json({ message: 'Review created' });
@@ -23,6 +24,20 @@ router.get('/:user', auth, async (req, res) => {
     try {
         const user = req.params.user;
         const reviews = await Review.find({ user });
+        res.json(reviews);
+    } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
+// Get all Reviews of carrier
+router.get('/carriers/:carrier', auth, async (req, res) => {
+    try {
+        const carrier = req.params.carrier;
+        const reviews = await Review.find({ carrier }).populate({
+            path: 'user',
+            model: 'User',
+        });
         res.json(reviews);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });

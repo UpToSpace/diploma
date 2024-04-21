@@ -18,6 +18,7 @@ export const TripPage = () => {
         try {
             const data = await request(`/api/routes/${id}`);
             setTrip(data);
+            console.log(data);
         } catch (e) {
             navigate('/404');
         }
@@ -96,7 +97,7 @@ export const TripPage = () => {
                                 </div>
                                 <div className="border-b border-dashed border-gray-400 my-2"></div>
                                 <div className="text-lg font-semibold">{trip.price} BYN</div>
-                                <a href="/carrier" className="text-indigo-500">Перевозчик</a>
+                                <a href={'carrier/' + trip.transport.carrier} className="text-indigo-500">Перевозчик</a>
                             </div>
                         </div>
                         <div className="flex-1">

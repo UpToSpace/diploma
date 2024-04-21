@@ -16,7 +16,7 @@ router.post(
     '/register',
     async (req, res) => {
         try {
-            const { email, password, fullName, dateOfBirth } = req.body;
+            const { email, password, fullName, dateOfBirth, isCarrier } = req.body;
 
             const candidate = await User.findOne({ email: email.toLowerCase() });
             if (candidate) {
@@ -26,12 +26,21 @@ router.post(
             const hashedPassword = await bcrypt.hash(password, 12);
             const activationLink = uuid.v4();
             await MailService.sendActivationMail(email, `${config.get('baseUrl')}/api/auth/activate/${activationLink}`);
-            const user = new User({ email: email.toLowerCase(), password: hashedPassword, fullName: fullName, role: "user", activationLink, dateOfBirth });  
-            await user.save();
-            const tokens = TokenService.generateTokens({ id: user._id});
-            await TokenService.saveToken(user._id, tokens.refreshToken);
-            res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'none' });
-            res.status(201).json({ ...tokens, user, message: 'Карыстальнiк створаны. Праверце пошту.' });
+            if (isCarrier) {
+                const user = new User({ email: email.toLowerCase(), password: hashedPassword, fullName: fullName, role: "carrier", activationLink, dateOfBirth, activatedAsCarrier: false});
+                await user.save();
+                const tokens = TokenService.generateTokens({ id: user._id });
+                await TokenService.saveToken(user._id, tokens.refreshToken);
+                res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'none' });
+                res.status(201).json({ ...tokens, user, message: 'Пользователь создан. Проверьте почту.' });
+            } else {
+                const user = new User({ email: email.toLowerCase(), password: hashedPassword, fullName: fullName, role: "user", activationLink, dateOfBirth });
+                await user.save();
+                const tokens = TokenService.generateTokens({ id: user._id });
+                await TokenService.saveToken(user._id, tokens.refreshToken);
+                res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'none' });
+                res.status(201).json({ ...tokens, user, message: 'Пользователь создан. Проверьте почту.' });
+            }
         } catch (e) {
             console.log(e);
             res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
@@ -50,8 +59,12 @@ router.post(
                 return res.status(400).json({ message: 'Карыстальнiк не знойдзены' });
             }
 
-            if(!user.isActivated) {
+            if (!user.isActivated) {
                 return res.status(400).json({ message: 'Праверце пошту, каб актываваць акаунт' });
+            }
+
+            if (user.role === 'carrier' && user.activatedAsCarrier === false) {
+                return res.status(400).json({ message: 'Ваш аккаунт не активирован как перевозчика. Ждите подтверждения' });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
@@ -62,7 +75,7 @@ router.post(
             const tokens = TokenService.generateTokens({ id: user._id, role: user.role });
             await TokenService.saveToken(user._id, tokens.refreshToken);
             res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'none' });
-            res.json({ token: tokens.accessToken, user: {id: user.id, role: user.role} });
+            res.json({ token: tokens.accessToken, user: { id: user.id, role: user.role } });
 
         } catch (e) {
             console.log(e);
@@ -106,7 +119,7 @@ router.post('/refresh', async (req, res) => {
         const tokens = TokenService.generateTokens({ id: userFromDb._id });
         res.json({ token: tokens.accessToken });
     } catch (e) {
-        if(e instanceof jwt.TokenExpiredError) {
+        if (e instanceof jwt.TokenExpiredError) {
             return res.status(401).json({ message: 'refresh jwt expired' });
         }
         console.log('refresh' + e);

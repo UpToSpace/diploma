@@ -22,6 +22,9 @@ import { TimetablePage } from './pages/user/TimetablePage';
 import { MapPage } from './pages/user/MapPage';
 import { CarrierStatisticsPage } from './pages/carrier/CarrierStatisticsPage';
 import { FavoritesPage } from './pages/user/FavoritesPage';
+import { CarrierPage } from './pages/user/CarrierPage';
+import { AdminStatisticsPage } from './pages/admin/AdminStatisticsPage';
+import { AdminMainPage } from './pages/admin/AdminMainPage';
 
 export const useRoutes = (userRole) => {
     switch (userRole) {
@@ -29,8 +32,10 @@ export const useRoutes = (userRole) => {
             return (
                 <Route path="/" element={<Layout />}>
                     <Route path="/account" element={<AccountPage />} />
+                    <Route path="/statistics" element={<AdminStatisticsPage />} />
                     <Route path="/admin" exact element={<AdminPage />} />
-                    <Route path="/" exact element={<MainPage />} />
+                    <Route path="/admin/carrier/:id" element={<CarrierPage />} />
+                    <Route path="/" exact element={<AdminMainPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Route>
             );
@@ -39,6 +44,7 @@ export const useRoutes = (userRole) => {
                 <Route path="/" element={<Layout />}>
                     <Route path="/account" element={<AccountPage />} />
                     <Route path="/search" element={<SearchPage />} />
+                    <Route path="/trips/carrier/:id" element={<CarrierPage />} />
                     <Route path="/trips/:id" element={<TripPage />} />
                     <Route path="/" exact element={<MainPage />} />
                     <Route path="/tickets" element={<TicketsPage />} />

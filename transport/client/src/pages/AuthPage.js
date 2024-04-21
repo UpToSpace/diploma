@@ -33,18 +33,6 @@ export const AuthPage = () => {
         return true;
     }
 
-    const registerHandler = async () => {
-        try {
-            const { email, password } = form;
-            if (checkFields(email, password)) {
-                const data = await request('/api/auth/register', 'POST', { ...form });
-                toast(data.toast);
-            }
-        } catch (e) {
-            toast(e.toast);
-        }
-    }
-
     const loginHandler = async () => {
         try {
             const { email, password } = form;
@@ -81,19 +69,21 @@ export const AuthPage = () => {
     return (
         <div className="mt-4 grow flex items-center justify-around bg-gray-100 py-12">
             <div className="mb-12 w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
-                <h1 className="text-4xl text-center text-indigo-600 font-bold mb-6">Login</h1>
+                <h1 className="text-4xl text-center text-indigo-600 font-bold mb-6">Вход</h1>
                 <form className="space-y-4">
+                    <label className="block text-sm font-medium text-gray-700">Почта</label>
                     <input
                         type="email"
-                        placeholder="your@email.com"
+                        placeholder="почта@email.com"
                         value={form.email}
                         name="email"
                         onChange={changeHandler}
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
+                    <label className="block text-sm font-medium text-gray-700">Пароль</label>
                     <input
                         type="password"
-                        placeholder="password"
+                        placeholder="пароль"
                         name="password"
                         value={form.password}
                         onChange={changeHandler}
@@ -104,13 +94,13 @@ export const AuthPage = () => {
                         onClick={loginHandler}
                         className={`w-full px-4 py-2 text-white bg-indigo-600 rounded-md ${loading ? 'bg-indigo-400' : 'hover:bg-indigo-700'} focus:outline-none disabled:opacity-50`}
                     >
-                        Login
+                        Войти
                     </button>
                     <div className="text-center py-2 text-gray-500">
-                        Don't have an account yet? <Link className="underline text-indigo-600 hover:text-indigo-800" to={'/register'}>Register now</Link>
+                        Все еще нет аккаунта? <Link className="underline text-indigo-600 hover:text-indigo-800" to={'/register'}>Зарегистрироваться</Link>
                     </div>
                     <div className="text-center py-2 text-gray-500">
-                        Forgot your password? <button onClick={resetHandler} className="underline text-indigo-600 hover:text-indigo-800">Reset password</button>
+                        Забыли пароль? <button onClick={resetHandler} className="underline text-indigo-600 hover:text-indigo-800">Восстановить</button>
                     </div>
                 </form>
             </div>

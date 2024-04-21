@@ -26,6 +26,42 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
+// /api/user/admin/statistics
+const aggregateByMonth = async (role) => {
+    return User.aggregate([
+        { $match: { role: { $eq: role } } },
+        { $group: { _id: { $month: "$dateOfRegistration" }, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+    ]);
+};
+
+router.get('/admin/statistics', auth, async (req, res) => {
+    try {
+        const usersCount = await User.countDocuments({ role: 'user' });
+        const carriersCount = await User.countDocuments({ role: 'carrier' });
+        const routesCount = await Route.countDocuments();
+
+        const carriersByMonth = await aggregateByMonth('carrier');
+        const usersByMonth = await aggregateByMonth('user');
+
+        res.json({ usersCount, carriersCount, carriersByMonth, usersByMonth, routesCount });
+    } catch (e) {
+        console.error(e);  // More specific error handling can be done based on error types
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+});
+
+// /api/user/admin/carriers
+router.get('/admin/carriers', auth, async (req, res) => {
+    try {
+        const carriers = await User.find({ role: 'carrier', activatedAsCarrier: false }, { password: 0 });
+        res.json(carriers);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+});
+
 // /api/user/:id/statistics
 router.get('/:id/statistics', auth, async (req, res) => {
     try {
@@ -78,11 +114,25 @@ router.get('/carrier/:id/statistics', auth, async (req, res) => {
 });
 
 
+
+// /api/carriers/:id
+router.get('/carriers/:id', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findOne({ _id: id }, { password: 0 });
+        res.json(user);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+});
+
+
 // /api/user/all
 router.get('/all', admin, async (req, res) => {
     try {
         const { email } = req.query;
-        const users = await User.find({ email: { $regex: email, $options: 'i' } }, { password: 0 });
+        const users = await User.find({ email: { $regex: email, $options: 'i' } }, { password: 0 }).limit(20);
         res.json(users);
     } catch (e) {
         console.log(e)

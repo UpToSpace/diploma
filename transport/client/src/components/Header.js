@@ -21,7 +21,7 @@ export default function Header() {
             <div
                 onClick={() => navigate("/")}
                 className="relative flex item-center cursor-pointer my-auto">
-                <div class="relative h-[20px] w-[20px]">
+                <div className="relative h-[20px] w-[20px]">
                     {/* <img src={logo} class="custom-img" /> */}
                     <p>LOGO</p>
                 </div>
