@@ -165,6 +165,20 @@ router.post('/', auth,
         }
     })
 
+// /api/user/admin/carriers/:id/activate
+router.put('/admin/carriers/:id/activate', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        user.activatedAsCarrier = true;
+        await user.save();
+        res.json({ message: 'Carrier activated' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+})
+
 // /api/user
 router.delete('/:id', admin, async (req, res) => {
     const session = await mongoose.startSession();

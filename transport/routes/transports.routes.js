@@ -11,15 +11,16 @@ const router = Router();
 // /api/transports
 router.post('/', auth, async (req, res) => {
     try {
-        const { carrier, number, brand, model, yearOfBuild, capacity, seatsLayout } = req.body;
+        const { carrier, number, brand, model, yearOfBuild, capacity, seatsLayout, conditioners, wifi, power } = req.body;
         const candidate = await Transport.findOne({ number });
         if (candidate) {
             return res.status(400).json({ message: `Transport ` + number + ` already exists` });
         }
-        const transport = new Transport({ carrier, number, brand, model, yearOfBuild, capacity, seatsLayout });
+        const transport = new Transport({ carrier, number, brand, model, yearOfBuild, capacity, seatsLayout, conditioners, wifi, power });
         await transport.save();
         res.status(201).json({ message: `Transport ` + number + ` added successfully`});
     } catch (e) {
+        console.log(e);
         res.status(500).json({ message: 'Something went wrong' });
     }
 });
@@ -50,6 +51,10 @@ router.get('/:id', auth, async (req, res) => {
 router.put('/:id', auth, async (req, res) => {
     try {
         const { number, brand, model, yearOfBuild, capacity, seatsLayout } = req.body;
+        const candidate = await Transport.findOne({ number, _id: { $ne: req.params.id }});
+        if (candidate) {
+            return res.status(400).json({ message: `Transport ` + number + ` already exists` });
+        }
         const transport = await Transport.findByIdAndUpdate(req.params.id, { number, brand, model, yearOfBuild, capacity, seatsLayout }, { new: true });
         res.json(transport);
     } catch (e) {

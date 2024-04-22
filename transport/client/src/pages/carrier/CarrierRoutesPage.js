@@ -296,7 +296,7 @@ export const CarrierRoutesPage = () => {
                 }}
             /> */}
 
-            {routes.length && <table className="min-w-full leading-normal">
+            {routes.length !== 0 && <table className="min-w-full leading-normal">
                 <thead>
                     <tr>
                         <th>Transport</th>

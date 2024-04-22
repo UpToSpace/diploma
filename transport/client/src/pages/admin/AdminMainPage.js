@@ -58,16 +58,17 @@ export const AdminMainPage = () => {
                     </div>
                     <div class="flex items-center space-x-2">
                         <span class="font-medium">Carrier Activation:</span>
-                        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() => toast.promise(request(`/api/user/admin/carriers/${carrier._id}/activate`, 'PUT'), {
+                        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() => window.confirm('Вы точно хотите активировать перевозчика?') && toast.promise(request(`/api/user/admin/carriers/${carrier._id}/activate`, 'PUT'), {
                             loading: 'Activating...',
                             success: 'Carrier activated',
                             error: 'Error activating carrier'
-                        })}>Activate</button>
+                        })
+                        .then(() => fetchCarriers())}>Activate</button>
                     </div>
                 </div>
             </div>
         </div>)) : (
-            <p class="text-center mt-10">No carriers found</p>
+            <p class="text-center mt-10">Все перевозчики активированы</p>
         )
     )
 }
