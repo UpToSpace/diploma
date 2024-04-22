@@ -312,7 +312,7 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
     // Map and markers setup
     return (
         <ReactMapGL
-        {...viewState}
+            {...viewState}
             style={{ width: "100%", height: "100vh" }}
             mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
             mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -331,7 +331,7 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
                 </Marker>
             ))}
 
-            {selectedDeparture && destinations.map((point, index) => (
+            {selectedDeparture && (!selectedDestination ? destinations.map((point, index) => (
                 <Marker
                     latitude={point.latitude}
                     longitude={point.longitude}
@@ -340,7 +340,18 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
                 >
                     {/* Customize your marker */}
                 </Marker>
-            ))}
+            )) :
+                <Marker
+                    latitude={selectedDestination.latitude}
+                    longitude={selectedDestination.longitude}
+                    onClick={() => handleDestinationClick(selectedDestination)}
+                >
+                    <img src={blueflag}
+                        alt="marker"
+                        height={viewState.zoom * 10 + "px"}
+                        width={viewState.zoom * 10 + "px"} />
+                </Marker>
+            )}
 
             {selectedDeparture && (
                 <Marker
@@ -348,10 +359,10 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
                     longitude={selectedDeparture.longitude}
                     onClick={() => handleDepartureClick(selectedDeparture)}
                 >
-                        <img src={redflagIcon}
-                            alt="marker"
-                            height={viewState.zoom * 10 + "px"}
-                            width={viewState.zoom * 10 + "px"} />
+                    <img src={redflagIcon}
+                        alt="marker"
+                        height={viewState.zoom * 10 + "px"}
+                        width={viewState.zoom * 10 + "px"} />
                 </Marker>
             )}
 

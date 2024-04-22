@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/http.hook';
@@ -13,6 +14,7 @@ export const TimetablePage = () => {
     const userId = useContext(AuthContext).userId;
     const [departureInput, setDepartureInput] = useState("");
     const [routes, setRoutes] = useState([]);
+    const navigate = useNavigate();
 
     const search = async (e) => {
         console.log(departureInput);
@@ -32,7 +34,7 @@ export const TimetablePage = () => {
     return (
         <>
             <div className="flex items-center space-x-4 justify-center">
-                <CityAutocomplete label={'Откуда'} setCity={setDepartureInput} />
+                <CityAutocomplete label={'Откуда'} setValue={setDepartureInput} placeholder={'Откуда'} />
                 <SearchIcon
                     className="icon-small bg-red-500 text-white"
                     onClick={search}
@@ -43,7 +45,7 @@ export const TimetablePage = () => {
                     onClick={resetInput}
                 />
             </div>
-            <div class="flex flex-col">
+            {routes.length !== 0 && <div class="flex flex-col">
                 <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                         <div class="overflow-hidden">
@@ -61,7 +63,9 @@ export const TimetablePage = () => {
                                 <tbody>
                                     {routes.map((route, index) => (
                                         <tr
-                                            class="border-b border-neutral-200 transition duration-300 ease-in-out rounded-lg bg-green-200 hover:bg-green-300 cursor-pointer">
+                                            class="border-b border-neutral-200 transition duration-300 ease-in-out rounded-lg bg-green-200 hover:bg-green-300 cursor-pointer"
+                                            onClick={(() => navigate(`/trips/${route._id}`))}
+                                            >
                                             <td class="whitespace-nowrap px-6 py-4 font-medium">{index + 1}</td>
                                             {route.departure.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{route.departure.time}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
                                             {route.destination.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{route.destination.time}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
@@ -80,7 +84,7 @@ export const TimetablePage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
         </>
     )
 }

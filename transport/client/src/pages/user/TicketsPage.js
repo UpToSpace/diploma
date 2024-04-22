@@ -60,7 +60,9 @@ export const TicketsPage = () => {
                 key={ticket._id} 
                 ticket={ticket} 
                 returnTicketButtonHandler={returnTicketButtonHandler} 
-                leaveReviewButtonDisabled={reviews.some(r => r.route === ticket.route._id)}/>
+                leaveReviewButtonDisabled={reviews.some(r => r.carrier === ticket.route.transport.carrier)}
+                getTickets={getTickets}
+                getUserReviews={getUserReviews}/>
             ))}
         </>
     );

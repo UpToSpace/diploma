@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
 import { Loader } from './Loader';
 
-export const Feedback = ({ setShowFeedback, route }) => {
+export const Feedback = ({ setShowFeedback, route, getTickets, getUserReviews }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const { request, loading } = useHttp();
@@ -32,8 +32,10 @@ export const Feedback = ({ setShowFeedback, route }) => {
             return;
         }
         try {
-        const data = await request('/api/reviews', 'POST', { user: userId, rating, text: comment, route });
-        setShowFeedback(false);
+            const data = await request('/api/reviews', 'POST', { user: userId, rating, text: comment, route });
+            await getTickets();
+            await getUserReviews();
+            setShowFeedback(false);
         } catch (e) {
             console.log(e);
         }
@@ -70,14 +72,14 @@ export const Feedback = ({ setShowFeedback, route }) => {
                     rows="4"
                 />
                 <div className="mt-4 flex justify-center">
-                    <button 
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-4"
-                    onClick={() => setShowFeedback(false)}>
+                    <button
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-4"
+                        onClick={() => setShowFeedback(false)}>
                         Отменить
                     </button>
-                    <button 
-                    type="submit" 
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <button
+                        type="submit"
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Отправить
                     </button>
                 </div>

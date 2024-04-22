@@ -6,7 +6,7 @@ import { TravelCard } from '../../components/TravelCard';
 import { useHttp } from '../../hooks/http.hook';
 import { Loader } from '../../components/Loader';
 import { Review } from '../../components/Review';
-import { calculateRatingsData } from '../../components/functions';
+import { calculateRatingsData, convertDate } from '../../components/functions';
 
 export const CarrierPage = () => {
     const { id } = useParams();
@@ -15,6 +15,7 @@ export const CarrierPage = () => {
     const [reviewsRatings, setReviewsRatings] = useState([]);
     const { loading, request } = useHttp();
     const userRole = useContext(AuthContext).userRole;
+    const userId = useContext(AuthContext).userId;
 
     const getCarrier = useCallback(async () => {
         try {
@@ -69,6 +70,38 @@ export const CarrierPage = () => {
 
     return (
         <div>
+            <div class="max-w-full mx-auto p-6 bg-white rounded-lg shadow-md mb-3">
+                <h1 class="text-xl font-semibold text-gray-800">Информация о перевозчике</h1>
+                <div class="mt-4">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">ID:</span>
+                            <span class="text-gray-600">{carrier._id}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">Email:</span>
+                            <span class="text-blue-600">{carrier.email}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">Activated:</span>
+                            {carrier.activatedAsCarrier ? <span class="text-green-950">true</span> : <span class="text-red-950">false</span>}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">Full Name:</span>
+                            <span class="text-gray-600">{carrier.fullName}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">Date of Birth:</span>
+                            <span class="text-gray-600">{convertDate(carrier.dateOfBirth)}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">Registration Date:</span>
+                            <span class="text-gray-600">{convertDate(carrier.dateOfRegistration)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div className="flex items-center mb-2">
                 {Array(4).fill(
                     <svg className="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" fill="currentColor" viewBox="0 0 22 20">
@@ -95,7 +128,12 @@ export const CarrierPage = () => {
 
             <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
                 {reviews.length !== 0 && reviews.map(review => (
-                    <Review key={review._id} review={review} userRole={userRole} getReviews={getReviews} />
+                    <Review 
+                    key={review._id} 
+                    review={review} 
+                    userRole={userRole} 
+                    getReviews={getReviews}
+                    editButtonEnable={review.user._id === userId} />
                 ))}
             </div>
         </div>

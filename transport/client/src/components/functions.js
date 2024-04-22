@@ -45,7 +45,7 @@ export const checkIfTicketOver = (date, time) => {
     const ticketDateTime = parseDateTime(date, time);
     const currentDateTime = new Date();
 
-    return ticketDateTime > currentDateTime; // change to < to test
+    return ticketDateTime < currentDateTime; // change to < 
 }
 
 export const getMostVisitedCity = (tripsData) => {
@@ -72,6 +72,17 @@ export const convertDate = (isoDateString) => {
 
     // Combine in desired format
     return `${day}.${month}.${year}`;
+}
+
+export const convertTime = (isoDateString) => {
+    const date = new Date(isoDateString);
+
+    // Extract hours and minutes from the date object
+    const hours = String(date.getHours()).padStart(2, '0');  // Ensure hours is two digits
+    const minutes = String(date.getMinutes()).padStart(2, '0');  // Ensure minutes is two digits
+
+    // Combine in desired format
+    return `${hours}:${minutes}`;
 }
 
 export function calculateRatingsData(data) {

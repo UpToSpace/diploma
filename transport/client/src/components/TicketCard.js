@@ -4,7 +4,7 @@ import { calculateTimeDifference, checkIfTicketOver } from './functions';
 import { useHttp } from '../hooks/http.hook';
 import { Feedback } from './Feedback';
 
-export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButtonDisabled }) => {
+export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButtonDisabled, getTickets, getUserReviews }) => {
     const [showFeedback, setShowFeedback] = useState(false);
     return (
         <section className="w-full flex-grow bg-zinc-200 flex flex-col items-center justify-center p-4">
@@ -14,7 +14,7 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButto
                         <span className="text-xs text-zinc-400">ICON</span>
                         {checkIfTicketOver(ticket.route.destination.date, ticket.route.destination.time) ? (
                             leaveReviewButtonDisabled ? (
-                                <div className="flex items-center px-3 rounded-full bg-red-500 h-8 mt-2 cursor-pointer">
+                                <div className="flex items-center px-3 rounded-full bg-red-500 h-8 mt-2">
                                     <button disabled={true} className="text-xs text-zinc-50">Спасибо за отзыв!</button>
                                 </div>
                                 ) : (
@@ -27,6 +27,9 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButto
                                 <button onClick={() => returnTicketButtonHandler(ticket._id)} className="text-xs text-zinc-50">Вернуть билет</button>
                             </div>
                         )}
+                        <a href={`/trips/carrier/${ticket.route.transport.carrier}`} className="text-xs text-green-500 cursor-pointer">
+                            Перевозчик
+                        </a>
                     </div>
                 </div>
                 <div className="relative h-full flex flex-col items-center border-dashed justify-between border-2 bg-zinc-900 border-zinc-50">
@@ -80,7 +83,8 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButto
                 </div>
             </div>
 
-            {showFeedback && <Feedback setShowFeedback={setShowFeedback} route={ticket.route} />}
+            {showFeedback && <Feedback setShowFeedback={setShowFeedback} route={ticket.route} getTickets={getTickets}
+                getUserReviews={getUserReviews} />}
         </section>
     )
 }

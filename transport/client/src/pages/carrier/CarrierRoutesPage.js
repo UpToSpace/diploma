@@ -5,9 +5,9 @@ import { useHttp } from '../../hooks/http.hook';
 import toast from 'react-hot-toast';
 import { Loader } from '../../components/Loader';
 import { AutoCompleteInput } from '../../components/AutoCompleteInput';
-import { MiniMap } from '../../components/MapComponents';
-import { ConfirmDialog } from 'primereact/confirmdialog'; // For <ConfirmDialog /> component
-import { confirmDialog } from 'primereact/confirmdialog'; // For confirmDialog method
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { convertDate, convertTime } from '../../components/functions';
 
 
 export const CarrierRoutesPage = () => {
@@ -97,14 +97,32 @@ export const CarrierRoutesPage = () => {
         if (!form.transport || !form.departure || !form.destination || !form.price) {
             return toast.error('All fields are required');
         }
+        if (form.departure.city === form.destination.city) {
+            return toast.error('Departure and destination cities must be different');
+        }
+        const checkIfTransportAvailable = await request(`/api/transports/check`, 'POST',{
+            
+        });
         try {
             const pointsToRequest = `${form.departure.longitude},${form.departure.latitude};${form.destination.longitude},${form.destination.latitude}`;
             const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${pointsToRequest}?` +
                 `steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAP_TOKEN}&overview=full&annotations=distance,duration`)
-
+                console.log(data);
             if (data.code === 'NoRoute') {
                 throw new Error('No route found');
             }
+            if (data.routes[0].distance > 10000 * 1000) {
+                throw new Error('Route exceeds maximum distance limitation');
+            }
+            const travelDurationSeconds = data.routes[0].duration; // duration in seconds
+            const departureDateTime = new Date(`${form.departure.date}T${form.departure.time}`);
+            const expectedArrivalDateTime = new Date(departureDateTime.getTime() + travelDurationSeconds * 1000);
+            const userDestinationDateTime = new Date(`${form.destination.date}T${form.destination.time}`);
+
+            if (userDestinationDateTime < expectedArrivalDateTime) {
+                throw new Error(`Минимальная дата и время прибытия: ${convertDate(expectedArrivalDateTime)} ${convertTime(expectedArrivalDateTime)}`);
+            }
+
             if (editingRouteId) {
                 await updateRoute(editingRouteId);
             } else {
@@ -120,6 +138,7 @@ export const CarrierRoutesPage = () => {
             if (error.message === 'No route found') {
                 toast.error('No route found');
             }
+            toast.error(error.message);
         }
     };
 
@@ -157,7 +176,7 @@ export const CarrierRoutesPage = () => {
     };
 
     const deleteRoute = async (id) => {
-        if (confirmDialog('Are you sure you want to delete this route?')) {
+        if (window.confirm('Are you sure you want to delete this route?')) {
             try {
                 await request(`/api/routes/${id}`, 'DELETE');
                 toast('Route deleted successfully!');
@@ -185,9 +204,16 @@ export const CarrierRoutesPage = () => {
         return <Loader />;
     }
 
+    if (!transports.length) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full">
+                <p className="text-lg font-semibold text-gray-800">You don't have any transports yet. Please add some</p>
+                </div>
+        );
+    }
+
     return (
         <>
-            <ConfirmDialog />
             <form className="max-w-xl mx-auto my-10 p-5" onSubmit={handleSubmit}>
                 <div className="mb-6">
                     <label htmlFor="transport" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select Transport</label>
@@ -296,26 +322,37 @@ export const CarrierRoutesPage = () => {
                 }}
             /> */}
 
-            {routes.length !== 0 && <table className="min-w-full leading-normal">
+            {routes.length !== 0 && <table className="table-auto w-full mt-4">
                 <thead>
-                    <tr>
-                        <th>Transport</th>
-                        <th>Departure City</th>
-                        <th>Destination City</th>
-                        <th>Price</th>
-                        <th>Actions</th>
+                    <tr className="bg-gray-200">
+                        <th className="px-4 py-2">Transport</th>
+                        <th className="px-4 py-2">Departure City</th>
+                        <th className="px-4 py-2">Destination City</th>
+                        <th className="px-4 py-2">Price</th>
+                        <th className="px-4 py-2"></th>
+                        <th className="px-4 py-2"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {routes.map(route => (
-                        <tr key={route._id}>
-                            <td>{route.transport.model}</td>
-                            <td>{route.departure.city}</td>
-                            <td>{route.destination.city}</td>
-                            <td>{route.price}</td>
-                            <td>
-                                <button onClick={() => editRoute(route._id)}>Edit</button>
-                                <button onClick={() => deleteRoute(route._id)}>Delete</button>
+                    {routes.map((route, index) => (
+                        <tr key={route._id} className="bg-white">
+                            <td className="border px-4 py-2">{route.transport.model}</td>
+                            <td className="border px-4 py-2">{route.departure.city}</td>
+                            <td className="border px-4 py-2">{route.destination.city}</td>
+                            <td className="border px-4 py-2">{route.price}</td>
+                            <td className="border px-4 py-2">
+                                <button
+                                    className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    onClick={() => editRoute(route._id)}>
+                                    Edit
+                                </button>
+                            </td>
+                            <td className="border px-4 py-2">
+                                <button
+                                    className="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    onClick={() => deleteRoute(route._id)}>
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     ))}

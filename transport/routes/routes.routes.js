@@ -10,6 +10,31 @@ const router = Router();
 router.post('/', auth, async (req, res) => {
     try {
         const { transport, price, departure, destination } = req.body;
+        const departureDate = new Date(`${departure.date}T${departure.time}`);
+        const destinationDate = new Date(`${destination.date}T${destination.time}`);
+
+        // Check for existing routes with the same transport and overlapping dates
+        const existingRoute = await Route.findOne({
+            transport: transport,
+            $or: [
+                {
+                    "departure.date": {
+                        $lte: destinationDate,
+                        $gte: departureDate
+                    }
+                },
+                {
+                    "destination.date": {
+                        $lte: destinationDate,
+                        $gte: departureDate
+                    }
+                }
+            ]
+        });
+
+        if (existingRoute) {
+            return res.status(400).json({ message: 'Transport is already in use during the specified dates.' });
+        }
         const route = new Route({ transport, price, departure, destination });
         await route.save();
         res.status(201).json(route);
@@ -49,7 +74,7 @@ router.get('/all', auth, async (req, res) => {
             "departure.city": departureCity,
             "departure.country": departureCountry,
             "destination.city": destinationCity,
-            "destination.country": destinationCountry,
+            "destination.country": destinationCountry
         };
 
         if (startDate) {
@@ -70,10 +95,21 @@ router.get('/all', auth, async (req, res) => {
             query["transport.power"] = power === 'true';
         }
 
-        const routes = await Route.find(query).populate({
+        const allRoutes = await Route.find(query).populate({
             path: 'transport',
             model: 'Transport'
         });
+
+        const routes = await Promise.all(allRoutes.map(async (route) => {
+            const ticketsSold = await Ticket.countDocuments({ route: route._id });
+            const seatsAvailable = route.transport.capacity - ticketsSold;
+            if (seatsAvailable >= numberOfSeats) {
+                return route;
+            }
+        }));
+        if (!routes || !routes[0]) {
+            return res.status(404).json({ message: 'Routes not found' });
+        }
         res.json(routes);
     } catch (e) {
         console.log(e);

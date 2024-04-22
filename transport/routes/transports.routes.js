@@ -47,6 +47,38 @@ router.get('/:id', auth, async (req, res) => {
     }
 })
 
+// check if a Transport is available
+router.post('/check', auth, async (req, res) => {
+    try {
+        const { transport, departureDate, departureTime, destinationDate, destinationTime } = req.body;
+        const destinationDateTime = new Date(`${destinationDate}T${destinationTime}`);
+        const departureDateTime = new Date(`${departureDate}T${departureTime}`);
+        const routes = await Route.find({
+            transport,
+            $or: [
+                {
+                    departureDateTime: {
+                        $gte: departureDateTime,
+                        $lt: destinationDateTime
+                    }
+                },
+                {
+                    destinationDateTime: {
+                        $gt: departureDateTime,
+                        $lte: destinationDateTime
+                    }
+                }
+            ]
+        })
+        if (routes.length > 0) {
+            return res.json({ message: 'Transport is not available' });
+        }
+        res.json({ message: 'Transport is available' });
+    } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
 // Update a Transport
 router.put('/:id', auth, async (req, res) => {
     try {

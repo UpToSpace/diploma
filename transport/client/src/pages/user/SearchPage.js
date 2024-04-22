@@ -27,6 +27,7 @@ export const SearchPage = () => {
             const queryString = `/api/routes/all?${params}${startDate ? `&startDate=${startDate}` : ''}`;
             const data = await request(queryString);
             setRoutes(data);
+            console.log(data);
         } catch (e) {
             toast.error(e.message);
         }
@@ -63,7 +64,7 @@ export const SearchPage = () => {
     };
 
     if (loading) return <Loader />;
-    if (!routes.length) return <div className="text-center text-2xl mt-10">No routes found</div>;
+    if (routes.length === 0) return <div className="text-center text-2xl mt-10">No routes found</div>;
 
     return (
         routes.map(route => (

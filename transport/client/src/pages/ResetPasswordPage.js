@@ -45,51 +45,44 @@ export const ResetPasswordPage = () => {
     }
 
     return (
-        <div className="login-form">
-            <div className="col s6 offset-s3">
-                <div className="card">
-                    <div className="card-content dark-grey-text">
-                        <span className="card-title">Змена пароля</span>
-                        <div>
-                            <div className="row">
-                                <div className="input-field col s12">
-                                    <input
-                                        maxLength={12}
-                                        id="password"
-                                        type="password"
-                                        name="password"
-                                        value={form.password}
-                                        className="validate"
-                                        onChange={changeHandler} />
-                                    <label
-                                        htmlFor="password">
-                                        Увядзіце пароль
-                                    </label>
-                                </div>
-                            </div>
+        <div className="flex justify-center items-center h-screen">
+            <div className="w-full max-w-md">
+                <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <div className="mb-4">
+                        <span className="block text-gray-700 text-xl font-bold mb-2">Змена пароля</span>
+                        <div className="mb-6">
+                            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+                                Увядзіце пароль
+                            </label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                maxLength={12}
+                                value={form.password}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                onChange={changeHandler}
+                            />
                         </div>
-
-                        <div className="row">
-                            <div className="input-field col s12">
-                                <input
-                                    maxLength={12}
-                                    id="confirmPassword"
-                                    type="password"
-                                    name="confirmPassword"
-                                    value={form.confirmPassword}
-                                    className="validate"
-                                    onChange={changeHandler} />
-                                <label
-                                    htmlFor="confirmPassword">
-                                    Паутарыце пароль
-                                </label>
-                            </div>
+                        <div>
+                            <label htmlFor="confirmPassword" className="block text-gray-700 text-sm font-bold mb-2">
+                                Паутарыце пароль
+                            </label>
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                name="confirmPassword"
+                                maxLength={12}
+                                value={form.confirmPassword}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                onChange={changeHandler}
+                            />
                         </div>
                     </div>
 
-                    <div className="card-action">
+                    <div className="flex items-center justify-between">
                         <button
-                            className="waves-effect waves-light btn-large"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300"
                             disabled={loading}
                             onClick={changePasswordHandler}>
                             Змянiць
@@ -98,5 +91,6 @@ export const ResetPasswordPage = () => {
                 </div>
             </div>
         </div>
+
     )
 };
