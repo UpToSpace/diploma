@@ -142,7 +142,7 @@ export const CarrierStatisticsPage = () => {
                 </div>
             </> :
             <div className="flex justify-center items-center h-96">
-                <p className="text-2xl">Для статистики необходимо добавить поездок!</p>
+                <p className="text-2xl">Для статистики необходимо добавить поездок и чтобы у вас купили билеты!</p>
             </div>
     );
 }

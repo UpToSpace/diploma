@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { Map } from '../../components/MapComponents';
 import PaymentForm from '../../components/PaymentForm';
-import { calculateTimeDifference } from '../../components/functions';
+import { calculateTimeDifference, convertDate, convertTime } from '../../components/functions';
 
 export const TripPage = () => {
     const { id } = useParams();
@@ -85,7 +85,7 @@ export const TripPage = () => {
                                     <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                         {trip.departure.city}, {trip.departure.country}
                                     </p>
-                                    <p className="mt-2 text-gray-500">{trip.departure.date} в {trip.departure.time}</p>
+                                    <p className="mt-2 text-gray-500">{convertDate(trip.departure.date)} в {convertTime(trip.departure.date)}</p>
                                     <p className="mt-2 text-gray-500">{trip.departure.place}</p>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@ export const TripPage = () => {
                         <div className="mx-6 my-4 md:my-0"> {/* Ensure consistent margins */}
                             <div className="text-center">
                                 <div className="text-lg font-semibold">
-                                    {calculateTimeDifference(trip.departure.date, trip.departure.time, trip.destination.date, trip.destination.time)}
+                                    {calculateTimeDifference(trip.departure.date, trip.destination.date)}
                                 </div>
                                 <div className="border-b border-dashed border-gray-400 my-2"></div>
                                 <div className="text-lg font-semibold">{trip.price} BYN</div>
@@ -118,7 +118,7 @@ export const TripPage = () => {
                                     <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                         {trip.destination.city}, {trip.destination.country}
                                     </p>
-                                    <p className="mt-2 text-gray-500">{trip.destination.date} в {trip.destination.time}</p>
+                                    <p className="mt-2 text-gray-500">{convertDate(trip.destination.date)} в {convertTime(trip.destination.date)}</p>
                                     <p className="mt-2 text-gray-500">{trip.destination.place}</p>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@ export const TripPage = () => {
                     <div className="flex flex-col md:flex-row justify-between">
                         <div className="px-4 py-4 sm:px-6">
                             <p className="text-gray-500">Выбраные места: {seats.sort().join(', ')}</p>
-                            <p className="text-gray-500">Итого: ${parseFloat((seats.length * trip.price).toFixed(2))}</p>
+                            <p className="text-gray-500">Итого: {parseFloat((seats.length * trip.price).toFixed(2))} BYN</p>
                         </div>
                     </div>
                 </div>

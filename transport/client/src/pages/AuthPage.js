@@ -78,6 +78,7 @@ export const AuthPage = () => {
                         value={form.email}
                         name="email"
                         onChange={changeHandler}
+                        maxLength={30}
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <label className="block text-sm font-medium text-gray-700">Пароль</label>
@@ -85,6 +86,7 @@ export const AuthPage = () => {
                         type="password"
                         placeholder="пароль"
                         name="password"
+                        maxLength={30}
                         value={form.password}
                         onChange={changeHandler}
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"

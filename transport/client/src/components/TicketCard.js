@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { calculateTimeDifference, checkIfTicketOver } from './functions';
+import { calculateTimeDifference, checkIfTicketOver, convertDate, convertTime } from './functions';
 import { useHttp } from '../hooks/http.hook';
 import { Feedback } from './Feedback';
 
@@ -12,7 +12,7 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButto
                 <div className="h-full bg-zinc-900 flex items-center justify-center px-8 rounded-l-3xl">
                     <div className="flex flex-col">
                         <span className="text-xs text-zinc-400">ICON</span>
-                        {checkIfTicketOver(ticket.route.destination.date, ticket.route.destination.time) ? (
+                        {checkIfTicketOver(ticket.route.destination.date) ? (
                             leaveReviewButtonDisabled ? (
                                 <div className="flex items-center px-3 rounded-full bg-red-500 h-8 mt-2">
                                     <button disabled={true} className="text-xs text-zinc-50">Спасибо за отзыв!</button>
@@ -50,7 +50,7 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButto
                                 <div className="w-3 h-3 rounded-full border-2 border-zinc-900"></div>
                             </div>
                             <div className="flex items-center px-3 rounded-full bg-lime-400 h-8 mt-2">
-                                <span className="text-sm text-zinc-900">{calculateTimeDifference(ticket.route.departure.date, ticket.route.departure.time, ticket.route.destination.date, ticket.route.destination.time)}</span>
+                                <span className="text-sm text-zinc-900">{calculateTimeDifference(ticket.route.departure.date, ticket.route.destination.date)}</span>
                             </div>
                         </div>
                         <div className="flex flex-col items-center">
@@ -61,13 +61,13 @@ export const TicketCard = ({ ticket, returnTicketButtonHandler, leaveReviewButto
                     <div className="flex w-full mt-auto justify-between">
                         <div className="flex flex-col">
                             <span className="text-xs text-zinc-400">Departure</span>
-                            <span className="font-mono">{ticket.route.departure.time}</span>
-                            <span className="font-mono">{ticket.route.departure.date}</span>
+                            <span className="font-mono">{convertTime(ticket.route.departure.date)}</span>
+                            <span className="font-mono">{convertDate(ticket.route.departure.date)}</span>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xs text-zinc-400">Destination</span>
-                            <span className="font-mono">{ticket.route.destination.time}</span>
-                            <span className="font-mono">{ticket.route.destination.date}</span>
+                            <span className="font-mono">{convertTime(ticket.route.destination.date)}</span>
+                            <span className="font-mono">{convertDate(ticket.route.destination.date)}</span>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xs text-zinc-400">Transport</span>

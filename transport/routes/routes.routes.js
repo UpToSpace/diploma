@@ -35,6 +35,10 @@ router.post('/', auth, async (req, res) => {
         if (existingRoute) {
             return res.status(400).json({ message: 'Transport is already in use during the specified dates.' });
         }
+        departure.date = departureDate;
+        destination.date = destinationDate;
+        delete departure.time;
+        delete destination.time;
         const route = new Route({ transport, price, departure, destination });
         await route.save();
         res.status(201).json(route);
@@ -47,7 +51,9 @@ router.post('/', auth, async (req, res) => {
 // get all locations
 router.get('/locations', async (req, res) => {
     try {
-        const locations = await Route.find({});
+        const locations = await Route.find({
+            "departure.date": { $gt: new Date() }
+        });
         res.json(locations);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });
@@ -58,15 +64,17 @@ router.get('/locations', async (req, res) => {
 router.get('/all', auth, async (req, res) => {
     try {
         const { departure, destination, numberOfSeats, conditioners, wifi, power, startDate } = req.query;
-        console.log(departure, destination, startDate, numberOfSeats);
+        console.log(departure, destination, startDate, numberOfSeats, wifi, power, conditioners);
 
         const departureCity = departure.split(',')[0];
         const destinationCity = destination.split(',')[0];
         const departureCountry = departure.split(',')[1];
         const destinationCountry = destination.split(',')[1];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
 
-        if (startDate && new Date(startDate) < new Date()) {
-            return res.status(400).json({ message: 'Invalid date' });
+        if (startDate && new Date(startDate) < today) {
+            return res.status(400).json({ message: 'Invalid date: Start date cannot be in the past' });
         }
 
         // Build the query object dynamically based on conditioners parameter
@@ -77,27 +85,26 @@ router.get('/all', auth, async (req, res) => {
             "destination.country": destinationCountry
         };
 
+        if (startDate === undefined) {
+            query["departure.date"] = { $gt: today };
+        }
+
         if (startDate) {
-            query["departure.date"] = startDate;
+            const departureDate = new Date(startDate);
+            departureDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
+            query["departure.date"] = { $gt: departureDate };
         }
 
-        // Only add conditioners to the query if the conditioners parameter is true
-        if (conditioners === 'true') {
-            query["transport.conditioners"] = conditioners === 'true';  // Assuming conditioners is a string 'true' or 'false'
-        }
-
-        // Add wifi and power conditions only if they are specified
-        if (wifi === 'true') {
-            query["transport.wifi"] = wifi === 'true';
-        }
-
-        if (power === 'true') {
-            query["transport.power"] = power === 'true';
-        }
+        console.log(query)
 
         const allRoutes = await Route.find(query).populate({
             path: 'transport',
-            model: 'Transport'
+            model: 'Transport',
+            match: {
+                wifi: wifi === 'true' ? true : { $exists: true },
+                power: power === 'true' ? true : { $exists: true },
+                conditioners: conditioners === 'true' ? true : { $exists: true }
+            }
         });
 
         const routes = await Promise.all(allRoutes.map(async (route) => {
@@ -181,6 +188,12 @@ router.get('/city/:city', auth, async (req, res) => {
 router.put('/:id', auth, async (req, res) => {
     try {
         const { departure, destination, departureTime, arrivalTime, price } = req.body;
+        const departureDate = new Date(`${departure.date}T${departure.time}`);
+        const destinationDate = new Date(`${destination.date}T${destination.time}`);
+        departure.date = departureDate;
+        destination.date = destinationDate;
+        delete departure.time;
+        delete destination.time;
         const route = await Route.findByIdAndUpdate(req.params.id, { departure, destination, departureTime, arrivalTime, price }, { new: true });
         res.json(route);
     } catch (e) {

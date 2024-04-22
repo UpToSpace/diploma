@@ -181,27 +181,24 @@ router.put('/admin/carriers/:id/activate', auth, async (req, res) => {
 
 // /api/user
 router.delete('/:id', admin, async (req, res) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();  // Start the transaction at the beginning after session starts
-
     try {
         const { id } = req.params;
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
-        const user = await User.findOne({ _id: decoded.id }).session(session); // Use the session
+        const user = await User.findOne({ _id: decoded.id }) // Use the session
 
         if (decoded.id === id) {
             throw new Error('Нельга выдалiць самога сябе'); // Throw error to handle in catch block
         }
 
         if (user.role === 'admin') {
-            await User.deleteOne({ _id: id }).session(session);
+            await User.deleteOne({ _id: id })
         } else if (user.role === 'user') {
-            await User.deleteOne({ _id: id }).session(session);
-            await Favourite.deleteMany({ userId: id }).session(session);
-            await Review.deleteMany({ user: id }).session(session);
-            await CreditCard.deleteMany({ user: id }).session(session);
-            const tickets = await Ticket.find({ user: id }).session(session);
+            await User.deleteOne({ _id: id })
+            await Favourite.deleteMany({ userId: id })
+            await Review.deleteMany({ user: id })
+            await CreditCard.deleteMany({ user: id })
+            const tickets = await Ticket.find({ user: id })
             for (const ticket of tickets) {
                 try {
                     await stripe.refunds.create({ charge: ticket.chargeId });
@@ -210,14 +207,14 @@ router.delete('/:id', admin, async (req, res) => {
                     throw refundError; // Throw to handle in catch block
                 }
             }
-            await Ticket.deleteMany({ user: id }).session(session);
+            await Ticket.deleteMany({ user: id })
         } else if (user.role === 'carrier') {
-            await User.deleteOne({ _id: id }).session(session);
-            const transports = await Transport.find({ carrier: id }).session(session);
+            await User.deleteOne({ _id: id })
+            const transports = await Transport.find({ carrier: id })
             for (const transport of transports) {
-                const routes = await Route.find({ transport: transport._id }).session(session);
+                const routes = await Route.find({ transport: transport._id })
                 for (const route of routes) {
-                    const tickets = await Ticket.find({ route: route._id }).session(session);
+                    const tickets = await Ticket.find({ route: route._id })
                     for (const ticket of tickets) {
                         try {
                             await stripe.refunds.create({ charge: ticket.chargeId });
@@ -226,21 +223,17 @@ router.delete('/:id', admin, async (req, res) => {
                             throw refundError; // Throw to handle in catch block
                         }
                     }
-                    await Ticket.deleteMany({ route: route._id }).session(session);
+                    await Ticket.deleteMany({ route: route._id })
                 }
-                await Route.deleteMany({ transport: transport._id }).session(session);
-                await Transport.findByIdAndRemove(transport._id).session(session);
+                await Route.deleteMany({ transport: transport._id })
+                await Transport.findByIdAndRemove(transport._id)
             }
         }
 
-        await session.commitTransaction(); // Commit the transaction after all operations are successful
         res.json({ message: "Карыстальнiк выдалены паспяхова" });
     } catch (e) {
-        await session.abortTransaction(); // Abort the transaction on error
         console.log(e);
         res.status(500).json({ message: 'Что-то пошло не так', error: e.toString() });
-    } finally {
-        session.endSession(); // End session in finally to ensure it always executes
     }
 });
 

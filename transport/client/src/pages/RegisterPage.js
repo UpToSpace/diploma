@@ -83,6 +83,7 @@ export const RegisterPage = () => {
                         placeholder="почта@email.com"
                         value={form.email}
                         name='email'
+                        maxLength={30}
                         onChange={changeHandler} />
                     <label className="block text-sm font-medium text-gray-700">Имя</label>
                     <input type="text"
@@ -90,6 +91,7 @@ export const RegisterPage = () => {
                         placeholder="Ваш ФИО"
                         name='fullName'
                         value={form.fullName}
+                        maxLength={30}
                         onChange={changeHandler} />
                     <label className="block text-sm font-medium text-gray-700">Пароль</label>
                     <input type="password"
@@ -97,6 +99,7 @@ export const RegisterPage = () => {
                         placeholder="пароль"
                         name='password'
                         value={form.password}
+                        maxLength={30}
                         onChange={changeHandler} />
                     <label className="block text-sm font-medium text-gray-700">Повторите пароль</label>
                     <input type="password"
@@ -104,12 +107,14 @@ export const RegisterPage = () => {
                         placeholder="повторите пароль"
                         name='repeatedPassword'
                         value={form.repeatedPassword}
+                        maxLength={30}
                         onChange={changeHandler} />
                     <label className="block text-sm font-medium text-gray-700">Дата рождения</label>
                     <input type="text"
                         className="w-full px-4 py-2 border rounded-md focus:outline-none"
                         placeholder="Ваш ФИО"
                         name='dateOfBirth'
+                        maxLength={30}
                         value={convertDate(form.dateOfBirth)}
                         readOnly={true} />
                     <Calendar

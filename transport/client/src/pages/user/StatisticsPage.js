@@ -11,7 +11,7 @@ export const StatisticsPage = () => {
     const { id } = useParams();
     const { request, loading } = useHttp();
     const userId = useContext(AuthContext).userId;
-    const [tripsData, setTripsData] = useState(null);
+    const [tripsData, setTripsData] = useState([]);
 
     const getData = useCallback(async () => {
         try {
@@ -117,8 +117,12 @@ export const StatisticsPage = () => {
         };
     };
 
-    if (loading || !tripsData) {
+    if (loading) {
         return <Loader />;
+    }
+
+    if (!tripsData.length) {
+        return <h1 className="text-center text-2xl mt-4">Для сбора статистики купите билеты</h1>;
     }
 
     return (

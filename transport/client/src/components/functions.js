@@ -17,9 +17,9 @@ const parseDateTime = (date, time) => {
     return new Date(`${date}T${time}`);
 };
 
-export const calculateTimeDifference = (startDate, startTime, endDate, endTime) => {
-    const startDateTime = parseDateTime(startDate, startTime);
-    const endDateTime = parseDateTime(endDate, endTime);
+export const calculateTimeDifference = (startDate, endDate) => {
+    const startDateTime = new Date(startDate.substring(0, 10) + 'T' + startDate.substring(11, 16));
+    const endDateTime = new Date(endDate.substring(0, 10) + 'T' + endDate.substring(11, 16));
     const differenceInMilliseconds = endDateTime - startDateTime;
 
     // Convert milliseconds to a readable format
@@ -41,8 +41,8 @@ export const calculateTimeDifference = (startDate, startTime, endDate, endTime) 
     return `${days}d ${hours}h ${minutes}m`;
 };
 
-export const checkIfTicketOver = (date, time) => {
-    const ticketDateTime = parseDateTime(date, time);
+export const checkIfTicketOver = (date) => {
+    const ticketDateTime = new Date(date);
     const currentDateTime = new Date();
 
     return ticketDateTime < currentDateTime; // change to < 

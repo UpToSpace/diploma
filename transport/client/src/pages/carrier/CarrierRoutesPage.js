@@ -5,10 +5,8 @@ import { useHttp } from '../../hooks/http.hook';
 import toast from 'react-hot-toast';
 import { Loader } from '../../components/Loader';
 import { AutoCompleteInput } from '../../components/AutoCompleteInput';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import { convertDate, convertTime } from '../../components/functions';
-
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 export const CarrierRoutesPage = () => {
     const { request, loading } = useHttp();
@@ -16,6 +14,7 @@ export const CarrierRoutesPage = () => {
     const [transports, setTransports] = useState([]);
     const [routes, setRoutes] = useState([]);
     const [editingRouteId, setEditingRouteId] = useState(null);
+    const timeZone = 'Europe/Tallinn'
 
     const [form, setForm] = useState({
         transport: '',
@@ -97,17 +96,31 @@ export const CarrierRoutesPage = () => {
         if (!form.transport || !form.departure || !form.destination || !form.price) {
             return toast.error('All fields are required');
         }
+        if (!form.departure.city || !form.destination.city) {
+            return toast.error('Выберите город из выпадающего списка');
+        }
         if (form.departure.city === form.destination.city) {
             return toast.error('Departure and destination cities must be different');
         }
-        const checkIfTransportAvailable = await request(`/api/transports/check`, 'POST',{
-            
+        if (new Date(`${form.departure.date}T${form.departure.time}`) < new Date()) {
+            return toast.error('Departure date and time must be in the future');
+        }
+        if (new Date(`${form.destination.date}T${form.destination.time}`) < new Date(`${form.departure.date}T${form.departure.time}`)) {
+            return toast.error('Destination date and time must be after departure date and time');
+        }
+        const checkIfTransportAvailable = await request(`/api/transports/check`, 'POST', {
+            transport: form.transport,
+            departureDate: fromZonedTime(`${form.departure.date}T${form.departure.time}`, timeZone).toISOString(),
+            destinationDate: fromZonedTime(`${form.destination.date}T${form.destination.time}`, timeZone).toISOString(),
         });
+        if (checkIfTransportAvailable.message === 'Transport is not available') {
+            return toast.error('Transport is not available during the specified dates');
+        }
         try {
             const pointsToRequest = `${form.departure.longitude},${form.departure.latitude};${form.destination.longitude},${form.destination.latitude}`;
             const data = await request(`https://api.mapbox.com/directions/v5/mapbox/driving/${pointsToRequest}?` +
                 `steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAP_TOKEN}&overview=full&annotations=distance,duration`)
-                console.log(data);
+            console.log(data);
             if (data.code === 'NoRoute') {
                 throw new Error('No route found');
             }
@@ -130,6 +143,28 @@ export const CarrierRoutesPage = () => {
                 toast('Route added successfully!');
             }
             getTransportsAndRoutes(); // Refresh the list of routes
+            setForm({
+                transport: transports[0]?._id || '',
+                departure: {
+                    latitude: 0,
+                    longitude: 0,
+                    city: '',
+                    country: '',
+                    place: '',
+                    date: '',
+                    time: '',
+                },
+                destination: {
+                    latitude: 0,
+                    longitude: 0,
+                    city: '',
+                    country: '',
+                    place: '',
+                    date: '',
+                    time: '',
+                },
+                price: '',
+            });
         } catch (error) {
             console.error("Failed to add/edit route", error);
             if (error.message === 'Route exceeds maximum distance limitation') {
@@ -145,7 +180,7 @@ export const CarrierRoutesPage = () => {
     const updateRoute = async (id) => {
         try {
             await request(`/api/routes/${id}`, 'PUT', form);
-            toast('Route updated successfully!');
+            toast.success('Route updated successfully!');
             setEditingRouteId(null); // Exit editing mode
             getTransportsAndRoutes(); // Refresh the list of routes
             setForm({
@@ -179,7 +214,7 @@ export const CarrierRoutesPage = () => {
         if (window.confirm('Are you sure you want to delete this route?')) {
             try {
                 await request(`/api/routes/${id}`, 'DELETE');
-                toast('Route deleted successfully!');
+                toast.success('Route deleted successfully!');
                 getTransportsAndRoutes(); // Refresh the list of routes
             } catch (error) {
                 console.error("Failed to delete route", error);
@@ -191,6 +226,22 @@ export const CarrierRoutesPage = () => {
         const routeToEdit = routes.find(route => route._id === id);
         console.log(routeToEdit)
         setEditingRouteId(id);
+        const date = new Date(routeToEdit.departure.date);
+        const offset = date.getTimezoneOffset() * 60000;
+        const localDate = new Date(date.getTime() - offset);
+        const localDepartureDateTime = localDate.toISOString().replace('Z', '');
+
+        const date2 = new Date(routeToEdit.destination.date);
+        const offset2 = date2.getTimezoneOffset() * 60000;
+        const localDate2 = new Date(date2.getTime() - offset2);
+        const localDestinationDateTime = localDate2.toISOString().replace('Z', '');
+        console.log(routeToEdit.departure.date)
+        console.log(localDepartureDateTime)
+        routeToEdit.departure.time = localDepartureDateTime.split('T')[1].slice(0, 5);
+        routeToEdit.departure.date = localDepartureDateTime.split('T')[0];
+        routeToEdit.destination.time = localDestinationDateTime.split('T')[1].slice(0, 5);
+        routeToEdit.destination.date = localDestinationDateTime.split('T')[0];
+
         setForm({
             transport: routeToEdit.transport._id,
             departure: routeToEdit.departure,
@@ -208,7 +259,7 @@ export const CarrierRoutesPage = () => {
         return (
             <div className="flex flex-col items-center justify-center h-full">
                 <p className="text-lg font-semibold text-gray-800">You don't have any transports yet. Please add some</p>
-                </div>
+            </div>
         );
     }
 

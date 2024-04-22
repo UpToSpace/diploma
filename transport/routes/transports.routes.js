@@ -71,7 +71,7 @@ router.post('/check', auth, async (req, res) => {
             ]
         })
         if (routes.length > 0) {
-            return res.json({ message: 'Transport is not available' });
+            return res.status(404).json({ message: 'Transport is not available' });
         }
         res.json({ message: 'Transport is available' });
     } catch (e) {

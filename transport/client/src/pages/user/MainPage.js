@@ -10,6 +10,7 @@ import {
     XIcon,
 } from "@heroicons/react/solid";
 import { CityAutocomplete } from "../../components/AutoCompleteInput";
+import toast from 'react-hot-toast';
 
 export const MainPage = () => {
     const { loading } = useHttp();
@@ -26,7 +27,17 @@ export const MainPage = () => {
     });
 
     const search = () => {
-        console.log(departureInput);
+        if (!departureInput || !destinationInput) {
+            return toast.error('Пожалуйста, выберите место отправления и назначения');
+        }
+        if (departureInput.text_ru === destinationInput.text_ru) {
+            return toast.error('Место отправления и назначения не могут совпадать');
+        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (startDate < today) {
+            return toast.error('Дата отправления не может быть раньше текущей даты');
+        }
         const formattedStartDate = format(startDate, 'yyyy-MM-dd');
         const searchParams = new URLSearchParams({
             departure: `${departureInput.text_ru},${departureInput.context?.filter((context) => context.id.includes("country"))[0].text_ru}`,
@@ -93,6 +104,7 @@ export const MainPage = () => {
                         onChange={(e) => setNumberOfSeats(e.target.value)}
                         type="number"
                         min={1}
+                        max={10}
                         className="input-number"
                     />
                     <div className="flex flex-col items-start justify-center p-4">

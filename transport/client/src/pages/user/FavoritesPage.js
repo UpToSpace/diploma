@@ -42,7 +42,7 @@ export const FavoritesPage = () => {
     };
 
     if (loading) return <Loader />;
-    if (!favorites.length) return <div className="text-center text-2xl mt-10">No favorites found</div>;
+    if (!favorites.length) return <div className="text-center text-2xl mt-10">У вас нет избранных поездок</div>;
 
     return (
         favorites.map(favorite => (

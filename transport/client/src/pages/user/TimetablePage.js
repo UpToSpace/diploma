@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import { CityAutocomplete } from '../../components/AutoCompleteInput';
 import { SearchIcon, XIcon } from "@heroicons/react/solid";
+import { convertDate, convertTime } from '../../components/functions';
 
 export const TimetablePage = () => {
     const { id } = useParams();
@@ -67,8 +68,8 @@ export const TimetablePage = () => {
                                             onClick={(() => navigate(`/trips/${route._id}`))}
                                             >
                                             <td class="whitespace-nowrap px-6 py-4 font-medium">{index + 1}</td>
-                                            {route.departure.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{route.departure.time}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
-                                            {route.destination.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{route.destination.time}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
+                                            {route.departure.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{`${convertDate(route.departure.date)} ${convertTime(route.departure.date)}`}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
+                                            {route.destination.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{`${convertDate(route.destination.date)} ${convertTime(route.destination.date)}`}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
                                             <td class="whitespace-nowrap px-6 py-4 font-medium">{`${route.transport.number} ${route.transport.brand}-${route.transport.model}`}</td>
                                         </tr>))}
                                     {/* <tr

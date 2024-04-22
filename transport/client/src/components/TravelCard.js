@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { calculateTimeDifference } from './functions';
+import { calculateTimeDifference, convertDate, convertTime } from './functions';
 
 export const TravelCard = ({ trip, isFavorite, likeButtonHandler }) => {
     return (
@@ -13,7 +13,7 @@ export const TravelCard = ({ trip, isFavorite, likeButtonHandler }) => {
                             <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                 {trip.departure.city}, {trip.departure.country}
                             </p>
-                            <p className="mt-2 text-gray-500">{trip.departure.date} в {trip.departure.time}</p>
+                            <p className="mt-2 text-gray-500">{convertDate(trip.departure.date)} в {convertTime(trip.departure.date)}</p>
                             <p className="mt-2 text-gray-500">{trip.departure.place}</p>
                         </div>
                     </div>
@@ -21,7 +21,7 @@ export const TravelCard = ({ trip, isFavorite, likeButtonHandler }) => {
                 <div className="mx-6 my-4 md:my-0">
                     <div className="text-center">
                         <div className="text-lg font-semibold">
-                            {calculateTimeDifference(trip.departure.date, trip.departure.time, trip.destination.date, trip.destination.time)}
+                            {calculateTimeDifference(trip.departure.date, trip.destination.date)}
                         </div>
                         <div className="border-b border-dashed border-gray-400 my-2"></div>
                         <div className="text-lg font-semibold">{trip.price} BYN</div>
@@ -34,7 +34,7 @@ export const TravelCard = ({ trip, isFavorite, likeButtonHandler }) => {
                             <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                 {trip.destination.city}, {trip.destination.country}
                             </p>
-                            <p className="mt-2 text-gray-500">{trip.destination.date} в {trip.destination.time}</p>
+                            <p className="mt-2 text-gray-500">{convertDate(trip.destination.date)} в {convertTime(trip.destination.date)}</p>
                             <p className="mt-2 text-gray-500">{trip.destination.place}</p>
                         </div>
                     </div>

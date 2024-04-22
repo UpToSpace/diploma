@@ -51,6 +51,10 @@ export const TicketsPage = () => {
         return <Loader />;
     }
 
+    if (!tickets.length) {
+        return <h1 className="text-center text-2xl mt-4">У вас еще нет билетов</h1>;
+    }
+
     return (
         <>
             {/* {console.log(reviews)}

@@ -11,12 +11,13 @@ import { Loader } from './Loader';
 export default function PaymentForm({ amount, seats, routeId }) {
     const stripe = useStripe();
     const elements = useElements();
-    const { request } = useHttp();
+    const { request, loading } = useHttp();
     const { userId } = useContext(AuthContext);
     const [saveCard, setSaveCard] = useState(false);
     const [showCardElement, setShowCardElement] = useState(false);
     const [savedCards, setSavedCards] = useState([]);
     const [cardToPay, setCardToPay] = useState(null);   
+    const [payButtonDisabled, setPayButtonDisabled] = useState(false);
 
     const getSavedCards = useCallback(async () => {
         try {
@@ -36,6 +37,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
     }, []);
 
     const handleSelectCard = async (cardId) => {
+        setPayButtonDisabled(true);
         if (!cardId || !amount || !routeId || !seats || !userId) {
             return toast.error('Заполните все поля');
         }
@@ -55,6 +57,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
             if (!stripe || !elements || !amount || !userId) {
                 return toast.error('Заполните все поля');
             }
+            setPayButtonDisabled(true);
             // console.log('stripe', stripe);
             // console.log('elements', elements);
             // console.log('amount', amount);
@@ -75,7 +78,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
         }
     };
 
-    if (!stripe || !elements || !userId || !savedCards) {
+    if (!stripe || !elements || !userId || !savedCards || loading) {
         return <Loader />
     }
 
@@ -98,7 +101,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
                 <div className="space-y-4 w-full">
                     <SavedCardsSelect savedCards={savedCards} onSelectCard={setCardToPay} className="w-full" />
                     <button
-                        disabled={!stripe}
+                        disabled={!stripe || !cardToPay || loading || payButtonDisabled}
                         className={`px-6 py-2 w-full text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={() => handleSelectCard(cardToPay)}
                     >
@@ -139,7 +142,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
                     </div>
                     <button
                         type="submit"
-                        disabled={!stripe}
+                        disabled={!stripe || loading || payButtonDisabled}
                         className={`w-full px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         Pay
