@@ -82,12 +82,12 @@ router.post('/check', auth, async (req, res) => {
 // Update a Transport
 router.put('/:id', auth, async (req, res) => {
     try {
-        const { number, brand, model, yearOfBuild, capacity, seatsLayout } = req.body;
+        const { number, brand, model, yearOfBuild, capacity, seatsLayout, wifi, power, conditioners } = req.body;
         const candidate = await Transport.findOne({ number, _id: { $ne: req.params.id }});
         if (candidate) {
             return res.status(400).json({ message: `Transport ` + number + ` already exists` });
         }
-        const transport = await Transport.findByIdAndUpdate(req.params.id, { number, brand, model, yearOfBuild, capacity, seatsLayout }, { new: true });
+        const transport = await Transport.findByIdAndUpdate(req.params.id, { number, brand, model, yearOfBuild, capacity, seatsLayout, wifi, power, conditioners }, { new: true });
         res.json(transport);
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong' });

@@ -4,6 +4,8 @@ import { toast } from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import google from '../styles/images/google.svg';
+import linkedin from '../styles/images/linkedin.svg';
 
 export const AuthPage = () => {
     const auth = useContext(AuthContext);
@@ -67,45 +69,59 @@ export const AuthPage = () => {
     }
 
     return (
-        <div className="mt-4 grow flex items-center justify-around bg-gray-100 py-12">
-            <div className="mb-12 w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
-                <h1 className="text-4xl text-center text-indigo-600 font-bold mb-6">Вход</h1>
-                <form className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700">Почта</label>
-                    <input
-                        type="email"
-                        placeholder="почта@email.com"
-                        value={form.email}
-                        name="email"
-                        onChange={changeHandler}
-                        maxLength={30}
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <label className="block text-sm font-medium text-gray-700">Пароль</label>
-                    <input
-                        type="password"
-                        placeholder="пароль"
-                        name="password"
-                        maxLength={30}
-                        value={form.password}
-                        onChange={changeHandler}
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <button
-                        disabled={loading}
-                        onClick={loginHandler}
-                        className={`w-full px-4 py-2 text-white bg-indigo-600 rounded-md ${loading ? 'bg-indigo-400' : 'hover:bg-indigo-700'} focus:outline-none disabled:opacity-50`}
-                    >
-                        Войти
-                    </button>
-                    <div className="text-center py-2 text-gray-500">
-                        Все еще нет аккаунта? <Link className="underline text-indigo-600 hover:text-indigo-800" to={'/register'}>Зарегистрироваться</Link>
+        <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+                <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+                <h2>Вход в аккаунт</h2>
+            </div>
+
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <form class="space-y-6" action="#" method="POST">
+                    <div>
+                        <label for="email">Электронная почта</label>
+                        <div class="mt-2">
+                            <input id="email" name="email" type="email" autocomplete="email" required class="" />
+                        </div>
                     </div>
-                    <div className="text-center py-2 text-gray-500">
-                        Забыли пароль? <button onClick={resetHandler} className="underline text-indigo-600 hover:text-indigo-800">Восстановить</button>
+
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label for="password">Пароль</label>
+                            <div class="text-sm">
+                                <a href="#">Забыли пароль?</a>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <input id="password" name="password" type="password" autocomplete="current-password" required />
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="primary">Войти</button>
                     </div>
                 </form>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <div>
+                        <button class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-1.5 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <img src={google} alt="Google" class="mr-3 h-4" />
+                            Google
+                        </button>
+                    </div>
+                    <div>
+                        <button class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-1.5 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <img src={linkedin} alt="GitHub" class="mr-3 h-4" />
+                            LinkedIn
+                        </button>
+                    </div>
+                </div>
+
+                <p class="note">
+                    Не зарегистрированы?
+                    <a href="#"> Регистрация</a>
+                </p>
             </div>
         </div>
+
     )
 };

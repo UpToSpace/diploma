@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --primary: #072446; /* text */
+    --secondary: #fafafa; /* background */
+    --tertiary: #444444; /* background blocks */
+    --quaternary: #020E1D; /* text */
+    --quinary: #DDE2E9; /* background */
+    --senary: #0b3360; /* button hover */
+    --septenary: #FF3AFF;
+    --octonary: #FF843A;
+    --nonary: #FFD43A;
+    --denary: #3A3A3A;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'Jost';
+    src: url('./styles/fonts/Jost/Jost-VariableFont_wght.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+} 
+
+body {
+    @apply bg-secondary text-quaternary font-jost;
+}
 
 input[type="text"],
 input[type="password"],
@@ -10,22 +39,28 @@ input[type="number"],
 input[type="tel"],
 input[type="date"],
 textarea {
-    @apply border my-1 py-2 px-3 rounded-2xl;
+    @apply border px-3 py-1 rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-full shadow-sm ring-gray-300;
 }
 
-textarea {
-    height: 140px;
+label {
+  @apply text-primary text-sm font-medium px-2;
 }
 
-/* button {
-    @apply bg-white border border-black text-black font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 focus:ring-gray-100 hover:bg-black hover:text-white hover:border-transparent hover:cursor-pointer;
+h2 {
+    @apply text-primary text-3xl font-bold text-center;
 }
+
 button.primary {
-    background-color: #F5385D;
-    @apply bg-primary p-2 w-full text-white rounded-2xl;
-} */
+    @apply bg-primary p-2 w-full text-white rounded-md hover:bg-senary transition-all duration-300;
+}
 
+a {
+    @apply text-primary font-semibold hover:text-senary transition-all duration-300;
+}
 
+p.note {
+  @apply mt-10 text-center text-sm text-gray-500
+}
 
 .custom-img {
     position: absolute;
@@ -118,12 +153,3 @@ ul {
 }
 
 /* Adjust the height of all inputs and icons for consistency */
-input, .icon-small {
-    height: 40px;  /* Ensures all input fields and icons have the same height */
-}
-.bg {
-    width: 100vw; /* Sets the child width to the full width of the viewport */
-    position: relative;
-    left: 50%; /* Shifts the element to the center */
-    transform: translateX(-50%); /* Correctly centers the element */
-}
