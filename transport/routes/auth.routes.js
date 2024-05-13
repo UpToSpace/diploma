@@ -8,9 +8,26 @@ const TokenService = require('../services/token.service');
 const MailService = require('../services/mail.service');
 const auth = require('../middleware/auth.middleware');
 const admin = require('../middleware/admin.middleware');
+const passport = require('passport');
 
 const router = Router();
 
+// Google auth route
+router.get('/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res) => res.redirect('/dashboard')); // Redirect to a secure page
+
+// LinkedIn auth route
+router.get('/linkedin',
+    passport.authenticate('linkedin'));
+
+router.get('/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: '/login' }),
+    (req, res) => res.redirect('/dashboard')); // Redirect to a secure page
+    
 // /api/auth/register
 router.post(
     '/register',

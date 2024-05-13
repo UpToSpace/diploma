@@ -121,7 +121,7 @@ export function CityAutocomplete({ value, setValue, label, placeholder }) {
                 value={query}
                 onChange={handleInputChange}
                 placeholder={placeholder}
-                className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500"
+                className="mt-1 p-2 w-full border rounded-md"
             />
             {suggestions?.length > 0 && (
                 <ul className="absolute w-full mt-1 max-h-60 overflow-auto border border-gray-200 rounded-md bg-white z-50">

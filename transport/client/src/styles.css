@@ -39,7 +39,7 @@ input[type="number"],
 input[type="tel"],
 input[type="date"],
 textarea {
-    @apply border px-3 py-1 rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-full shadow-sm ring-gray-300;
+    @apply border border-gray-400 px-3 py-1 rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-full shadow-sm;
 }
 
 label {
@@ -50,8 +50,20 @@ h2 {
     @apply text-primary text-3xl font-bold text-center;
 }
 
+h2.main {
+  @apply text-white text-6xl font-thin text-center;
+}
+
+h3.main {
+  @apply text-white text-4xl font-thin text-center;
+}
+
 button.primary {
-    @apply bg-primary p-2 w-full text-white rounded-md hover:bg-senary transition-all duration-300;
+    @apply bg-primary p-2 w-full text-white rounded-md hover:bg-senary transition-all duration-300 cursor-pointer;
+}
+
+button.secondary {
+    @apply w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-1.5 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all duration-300;
 }
 
 a {
@@ -62,23 +74,20 @@ p.note {
   @apply mt-10 text-center text-sm text-gray-500
 }
 
-.custom-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    /* Задает как содержимое должно быть масштабировано или обрезано, чтобы соответствовать размерам своего контейнера */
-    object-position: left;
-    /* Выравнивание изображения внутри своего контейнера */
+img.logo {
+    @apply w-20 h-20 mx-auto;
 }
 
-.bg-[#d7b98e] {
-  background: linear-gradient(135deg, #d7b98e, #ab8650);
+.calendar {
+    @apply w-20;
 }
 
-.btn-date, .input-number, .btn-icon {
+input[type="date"] {
+    height: 34px;
+}
+
+
+/* .btn-date, .input-number, .btn-icon {
   border: 2px solid transparent;
   padding: 8px 12px;
   border-radius: 8px;
@@ -115,19 +124,18 @@ p.note {
   transform: scale(1.05);
 }
 
-/* Adjustments for icons within buttons for visual clarity */
 /* .h-6, .h-8 {
   height: 1.5em;
   width: 1.5em;
 } */
 
-.relative {
+/* .relative {
   position: relative;
 }
 
 .absolute {
   position: absolute;
-  top: 100%; /* Positioned right below the input */
+  top: 100%; 
 }
 
 ul {
@@ -136,20 +144,19 @@ ul {
 }
 
 .icon-small {
-    width: 40px; /* Adjust based on your current size */
-    height: 30px; /* Adjust based on your current size */
+    width: 40px; 
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px; /* Adjust padding to keep the icon centered */
-    border-radius: 50%; /* Maintain the circular shape */
+    padding: 10px;
+    border-radius: 50%; 
     cursor: pointer;
 }
 
 .input-number {
-    width: 100px; /* Adjust width as necessary to match design */
+    width: 100px; 
     padding: 0 12px;
-    height: 40px; /* Make sure the height matches other inputs */
-}
+    height: 40px; 
+} */
 
-/* Adjust the height of all inputs and icons for consistency */

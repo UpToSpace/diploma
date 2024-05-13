@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/solid";
 import { CityAutocomplete } from "../../components/AutoCompleteInput";
 import toast from 'react-hot-toast';
+import mainImage from "../../styles/images/city.jpg"
 
 export const MainPage = () => {
     const { loading } = useHttp();
@@ -77,79 +78,103 @@ export const MainPage = () => {
 
     return (
         <div className="relative w-full">
-            <img src="https://www.flytap.com/-/media/Flytap/new-tap-pages/other-bookings/bus-transportation-galiza-porto/transportation-between-galiza-porto-og-image-1200x630.jpg"
-                alt="background"
-                className='bg'
-            />
-            <div className="bg-[#d7b98e] p-4 rounded-lg shadow-lg w-full">
-                {/* Search section */}
-                <div className="flex items-center space-x-4">  {/* Changed from flex-col to flex and combined the rows */}
-                    <CityAutocomplete
-                        label={'Откуда'}
-                        setValue={setDepartureInput}
-                        placeholder={'Откуда'}
-                    />
-                    <CityAutocomplete
-                        label={'Куда'}
-                        setValue={setDestinationInput}
-                        placeholder={'Куда'} />
-                    <input
-                        type="date"
-                        value={startDate.toISOString().substring(0, 10)}
-                        onChange={handleDateChange}
-                    />
-                    <UsersIcon className="h-6 w-6 text-gray-700" />
-                    <input
-                        value={numberOfSeats}
-                        onChange={(e) => setNumberOfSeats(e.target.value)}
-                        type="number"
-                        min={1}
-                        max={10}
-                        className="input-number"
-                    />
-                    <div className="flex flex-col items-start justify-center p-4">
-                        <label className="inline-flex items-center space-x-2">
+            <div className="relative w-full overflow-hidden" style={{ height: "675px" }}>
+                {/* Background Image */}
+                <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url(${mainImage})` }} />
+
+                {/* Bluish Overlay */}
+                <div className="absolute inset-0 bg-primary opacity-50 z-10"></div>
+
+                {/* Content */}
+                <div className="relative z-20 p-4 text-white flex flex-col items-center justify-center h-full">
+                    <h2 className='main mb-2'>Откройте для себя новое</h2>
+                    <h3 className='main mb-4'>Быстрые и комфортные поездки по приятной цене!</h3>
+
+                    <div className="p-4 rounded-lg bg-white text-primary shadow-lg w-full max-w-7xl grid grid-cols-5 gap-2">
+                        <CityAutocomplete
+                            label={'Откуда'}
+                            setValue={setDepartureInput}
+                            placeholder={'Откуда'}
+                        />
+
+                        <CityAutocomplete
+                            label={'Куда'}
+                            setValue={setDestinationInput}
+                            placeholder={'Куда'} />
+
+                        <div className='flex flex-col relative'>
+                            <label className="block text-sm font-medium text-gray-700">Дата отправления</label>
                             <input
-                                type="checkbox"
-                                name="check1"
-                                checked={checkedState.check1}
-                                onChange={handleChange}
-                                className="form-checkbox h-5 w-5 text-blue-600"
+                                type="date"
+                                value={startDate.toISOString().substring(0, 10)}
+                                onChange={handleDateChange}
+                                className="mt-1 p-2 w-full border rounded-md"
                             />
-                            <span>Кондиционер</span>
-                        </label>
-                        <label className="inline-flex items-center space-x-2">
-                            <input
-                                type="checkbox"
-                                name="check2"
-                                checked={checkedState.check2}
-                                onChange={handleChange}
-                                className="form-checkbox h-5 w-5 text-blue-600"
-                            />
-                            <span>Wi-Fi</span>
-                        </label>
-                        <label className="inline-flex items-center space-x-2">
-                            <input
-                                type="checkbox"
-                                name="check3"
-                                checked={checkedState.check3}
-                                onChange={handleChange}
-                                className="form-checkbox h-5 w-5 text-blue-600"
-                            />
-                            <span>220v</span>
-                        </label>
+                        </div>
+
+                        <div className='flex'>
+                            <div className='flex flex-col relative items-center'>
+                                <UsersIcon className="h-6 w-6 text-primary" />
+                                <input
+                                    value={numberOfSeats}
+                                    onChange={(e) => setNumberOfSeats(e.target.value)}
+                                    type="number"
+                                    min={1}
+                                    max={10}
+                                />
+                            </div>
+                            <div className="flex flex-col items-start justify-center">
+                                <label className="inline-flex items-center space-x-2 mb-1">
+                                    <input
+                                        type="checkbox"
+                                        name="check1"
+                                        checked={checkedState.check1}
+                                        onChange={handleChange}
+                                        className="form-checkbox h-5 w-5"
+                                    />
+                                    <span>Кондиционер</span>
+                                </label>
+                                <label className="inline-flex items-center space-x-2 mb-1">
+                                    <input
+                                        type="checkbox"
+                                        name="check2"
+                                        checked={checkedState.check2}
+                                        onChange={handleChange}
+                                        className="form-checkbox h-5 w-5 text-blue-600"
+                                    />
+                                    <span>Wi-Fi</span>
+                                </label>
+                                <label className="inline-flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        name="check3"
+                                        checked={checkedState.check3}
+                                        onChange={handleChange}
+                                        className="form-checkbox h-5 w-5 text-blue-600"
+                                    />
+                                    <span>220v</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className='flex'>
+                            <button className="primary bg-primary text-white text-lg rounded-lg p-2 inline-flex items-center justify-center" onClick={search} disabled={!departureInput || !destinationInput}>
+                                <SearchIcon
+                                    className="icon-small text-white rounded-lg mx-1 h-5 w-5"
+                                    onClick={search}
+                                    disabled={!departureInput || !destinationInput}
+                                />
+                                Найти рейсы
+                            </button>
+                        </div>
+
                     </div>
-                    <SearchIcon
-                        className="icon-small bg-red-500 text-white"
-                        onClick={search}
-                        disabled={!departureInput || !destinationInput}
-                    />
-                    <XIcon
-                        className="icon-small bg-red-500 text-white"
-                        onClick={resetInput}
-                    />
                 </div>
             </div>
+
+
+
+
             <div className="flex justify-between w-full">
                 <div className="w-1/3 p-4 rounded-lg shadow-lg">
                     <a href="/timetable" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Manage My Booking clicked')}>

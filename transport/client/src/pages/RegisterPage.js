@@ -3,11 +3,10 @@ import { useHttp } from '../hooks/http.hook';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { Calendar } from "react-date-range";
-import { da, ru } from 'date-fns/locale';
+import { ru } from 'date-fns/locale';
 import { convertDate } from '../components/functions';
 
 export const RegisterPage = () => {
@@ -15,7 +14,7 @@ export const RegisterPage = () => {
     const navigate = useNavigate();
     const { loading, request } = useHttp();
     const [form, setForm] = useState({
-        email: '', password: '', dateOfBirth: new Date(), fullName: '', repeatedPassword: '', isCarrier: false
+        email: '', password: '', dateOfBirth: new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate()), fullName: '', repeatedPassword: '', isCarrier: false
     });
 
     const handleChange = (event) => {
@@ -73,46 +72,40 @@ export const RegisterPage = () => {
     }
 
     return (
-        <div className="mt-4 grow flex items-center justify-around bg-gray-100 py-12">
-            <div className="mb-12 w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
-                <h1 className="text-4xl text-center text-indigo-600 font-bold mb-6">Регистрация</h1>
-                <form className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700">Почта</label>
+        <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+                <img class="logo" src="https://img.icons8.com/dotty/80/000000/get-on-bus.png" alt="get-on-bus" />
+                <h2>Регистрация</h2>
+            </div>
+
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <form className="space-y-2">
+                    <label>Электронная почта</label>
                     <input type="email"
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="почта@email.com"
                         value={form.email}
                         name='email'
                         maxLength={30}
                         onChange={changeHandler} />
-                    <label className="block text-sm font-medium text-gray-700">Имя</label>
+                    <label>Имя</label>
                     <input type="text"
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Ваш ФИО"
                         name='fullName'
                         value={form.fullName}
                         maxLength={30}
                         onChange={changeHandler} />
-                    <label className="block text-sm font-medium text-gray-700">Пароль</label>
+                    <label>Пароль</label>
                     <input type="password"
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="пароль"
                         name='password'
                         value={form.password}
                         maxLength={30}
                         onChange={changeHandler} />
-                    <label className="block text-sm font-medium text-gray-700">Повторите пароль</label>
+                    <label>Повторите пароль</label>
                     <input type="password"
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="повторите пароль"
                         name='repeatedPassword'
                         value={form.repeatedPassword}
                         maxLength={30}
                         onChange={changeHandler} />
-                    <label className="block text-sm font-medium text-gray-700">Дата рождения</label>
+                    <label>Дата рождения</label>
                     <input type="text"
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none"
-                        placeholder="Ваш ФИО"
                         name='dateOfBirth'
                         maxLength={30}
                         value={convertDate(form.dateOfBirth)}
@@ -121,26 +114,30 @@ export const RegisterPage = () => {
                         date={form.dateOfBirth}
                         onChange={calendarHandler}
                         locale={ru}
+                        className='calendar'
+                        maxDate={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate())}
+                        minDate={new Date(new Date().getFullYear() - 100, new Date().getMonth(), new Date().getDate())}
+                        color='primary'
                     />
-                    <label className="inline-flex items-center space-x-2 cursor-pointer">
+                    <label>
                         <input
                             type="checkbox"
                             name="isCarrier"
                             checked={form.isCarrier}
                             onChange={handleChange}
-                            className="form-checkbox h-5 w-5 text-blue-600"
+                            className="form-checkbox h-5 w-5 text-primary"
                         />
                         <span>Я перевозчик</span>
                     </label>
                     <button
-                        className={`w-full px-4 py-2 text-white bg-indigo-600 rounded-md ${loading ? 'bg-indigo-400' : 'hover:bg-indigo-700'} focus:outline-none disabled:opacity-50`}
+                        className='primary'
                         disabled={loading}
                         onClick={registerHandler}>
                         Зарегистрироваться
                     </button>
-                    <div className="text-center py-2 text-gray-500">
-                        Есть аккаунт? <Link className="underline text-black" to={'/'}>Войти</Link>
-                    </div>
+                    <p className='note'>
+                        Есть аккаунт? <a href='/'>Войти</a>
+                    </p>
                 </form>
             </div>
         </div>

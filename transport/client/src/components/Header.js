@@ -14,32 +14,45 @@ export default function Header() {
     const isActive = (path) => location.pathname === path;
     const links = navLinks[userRole] || navLinks.guest;
     return (
-        <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md p-5
-    md:px-10 ">
+        <header className="sticky top-0 z-50 grid grid-cols-3 bg-primary shadow-md md:px-10 ">
  
             {/* Left - logo */}
             <div
                 onClick={() => navigate("/")}
                 className="relative flex item-center cursor-pointer my-auto">
                 <div className="relative h-[20px] w-[20px]">
-                    {/* <img src={logo} class="custom-img" /> */}
-                    <p>LOGO</p>
+                    <p className='text-white'>ONTEN</p>
                 </div>
             </div>
 
            
 
             {/* right */}
-            <div className="flex items-center space-x-4 justify-start bg-white px-6">
+            <div className="flex items-center space-x-4 justify-start px-2">
                 {links.map(link => (
-                    <Link
-                        key={link.to}
-                        to={link.to}
-                        className={`hover:text-gray-700 ${isActive(link.to) ? 'text-gray-800' : 'text-gray-500'}`}
-                    >
-                        {link.label}
-                    </Link>
+                    <div className={`flex items-center h-full text-center py-6 ${isActive(link.to) && 'border-b-white border-b-2'}`}>
+                        <Link
+                            key={link.to}
+                            to={link.to}
+                            className={`font-light text-white hover:text-gray-300`}
+                        >
+                            {link.label}
+                        </Link>
+                    </div>
                 ))}
+            </div>
+
+            {/* Right - Auth */}
+            <div className="flex items-center justify-end space-x-4">
+                <div className={`flex items-center h-full text-center py-6 ${isActive('/account') && 'border-b-white border-b-2'}`}>
+                    <Link
+                        to={'/account'}
+                        className={`font-light text-white hover:text-gray-300 flex`}
+                    >
+                        <img width="30" height="30" src="https://img.icons8.com/dotty/80/ffffff/gender-neutral-user.png" alt="gender-neutral-user" />
+                        <div className='items-center'>Аккаунт</div>
+                    </Link>
+                </div>
             </div>
         </header>
     );
