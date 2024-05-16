@@ -182,6 +182,21 @@ router.get('/city/:city', auth, async (req, res) => {
     }
 });
 
+// get 3 popular routes
+router.get('/popular', auth, async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const routes = await Route.find({
+            departure: { $gt: today }
+        })
+            .sort({ 'departure.date': 1 })
+            .limit(3)
+        res.json(routes);
+    } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
 
 
 // Update a Route

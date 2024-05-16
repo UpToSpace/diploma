@@ -313,7 +313,7 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
     return (
         <ReactMapGL
             {...viewState}
-            style={{ width: "100%", height: "100vh" }}
+            style={{ width: "100%", height: "100%" }}
             mapboxAccessToken={process.env.REACT_APP_MAP_TOKEN}
             mapStyle="mapbox://styles/mapbox/streets-v12"
             onMove={(event) => {

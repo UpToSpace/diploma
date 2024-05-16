@@ -12,6 +12,7 @@ import {
 import { CityAutocomplete } from "../../components/AutoCompleteInput";
 import toast from 'react-hot-toast';
 import mainImage from "../../styles/images/city.jpg"
+import mapImage from "../../styles/images/map.jpg"
 
 export const MainPage = () => {
     const { loading } = useHttp();
@@ -90,7 +91,7 @@ export const MainPage = () => {
                     <h2 className='main mb-2'>Откройте для себя новое</h2>
                     <h3 className='main mb-4'>Быстрые и комфортные поездки по приятной цене!</h3>
 
-                    <div className="p-4 rounded-lg bg-white text-primary shadow-lg w-full max-w-7xl grid grid-cols-5 gap-2">
+                    <div className="max-w-7xl mx-auto p-4 rounded-lg bg-white text-primary shadow-lg w-full grid grid-cols-5 gap-2">
                         <CityAutocomplete
                             label={'Откуда'}
                             setValue={setDepartureInput}
@@ -172,41 +173,86 @@ export const MainPage = () => {
                 </div>
             </div>
 
+            <div className="container w-full justify-start py-6">
+                <h2 className='section'>Ближайшие отправления</h2>
+                <div className="flex flex-wrap justify-center">
 
-
-
-            <div className="flex justify-between w-full">
-                <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                    <a href="/timetable" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Manage My Booking clicked')}>
-                        <div className="flex items-center justify-center w-12 h-12 bg-green-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
+                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
+                        <div className="relative bg-white rounded-lg overflow-hidden">
+                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h2 className="text-2xl font-bold text-white">Москва</h2>
+                            </div>
                         </div>
-                        <span className="block mt-2 text-center text-gray-900 font-normal">Расписание</span>
-                    </a>
+                    </div>
+
+                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
+                        <div className="relative bg-white rounded-lg overflow-hidden">
+                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h2 className="text-2xl font-bold text-white">Санкт-Петербург</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
+                        <div className="relative bg-white rounded-lg overflow-hidden">
+                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h2 className="text-2xl font-bold text-white">Казань</h2>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                    {/* Second menu item (similar structure, different link and label as needed) */}
-                    <a href="/map" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Another action clicked')}>
-                        <div className="flex items-center justify-center w-12 h-12 bg-green-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-                            </svg>
+            </div>
+
+            <div className="container w-full justify-start py-6">
+                <h2 className='section'>Популярные направления</h2>
+                <div className="flex flex-wrap justify-center">
+
+                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
+                        <div className="relative bg-white rounded-lg overflow-hidden">
+                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h2 className="text-2xl font-bold text-white">Москва</h2>
+                            </div>
                         </div>
-                        <span className="block mt-2 text-center text-gray-900 font-normal">Карта</span>
-                    </a>
+                    </div>
+
+                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
+                        <div className="relative bg-white rounded-lg overflow-hidden">
+                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h2 className="text-2xl font-bold text-white">Санкт-Петербург</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
+                        <div className="relative bg-white rounded-lg overflow-hidden">
+                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <h2 className="text-2xl font-bold text-white">Казань</h2>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                    {/* Third menu item */}
-                    <a href="/favorites" className="block text-green-700 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-blue-600" onClick={() => console.log('Third action clicked')}>
-                        <div className="flex items-center justify-center w-12 h-12 bg-green-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
-                            </svg>
-                        </div>
-                        <span className="block mt-2 text-center text-gray-900 font-normal">Избранное</span>
-                    </a>
+            </div>
+
+            <div className="container w-full justify-start py-6">
+                <h2 className='section'>Карта маршрутов</h2>
+                <div className="flex">
+                    <img className="h-64 object-cover object-center rounded" src={mapImage} alt="content" />
+                    <div className='p-10 items-end'>
+                        <p className='text-lg py-3'>
+                            Откройте карту, выберите ваше местоположение и пункт назначения, и наша система мгновенно предложит вам лучшие варианты маршрутов и доступные билеты. Легко сравнивайте различные рейсы по времени отправления, стоимости и продолжительности путешествия, чтобы выбрать оптимальный для вас вариант.
+                        </p>
+                        <button className='primary max-w-60 text-white h-10'>
+                            <a href="/map">Воспользоваться картой</a>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

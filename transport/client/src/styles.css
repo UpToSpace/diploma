@@ -9,7 +9,7 @@
     --quaternary: #020E1D; /* text */
     --quinary: #DDE2E9; /* background */
     --senary: #0b3360; /* button hover */
-    --septenary: #FF3AFF;
+    --septenary: #ffb84e; /* like button */
     --octonary: #FF843A;
     --nonary: #FFD43A;
     --denary: #3A3A3A;
@@ -50,6 +50,10 @@ h2 {
     @apply text-primary text-3xl font-bold text-center;
 }
 
+h2.section {
+    @apply text-primary text-2xl font-bold py-2;
+}
+
 h2.main {
   @apply text-white text-6xl font-thin text-center;
 }
@@ -66,8 +70,16 @@ button.secondary {
     @apply w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-1.5 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all duration-300;
 }
 
+button a {
+    @apply text-white hover:text-gray-300 p-2 font-light transition-all duration-300;
+}
+
 a {
     @apply text-primary font-semibold hover:text-senary transition-all duration-300;
+}
+
+a.secondary {
+    @apply font-light text-white hover:text-gray-300 transition-all duration-300 px-4;
 }
 
 p.note {
@@ -86,6 +98,9 @@ input[type="date"] {
     height: 34px;
 }
 
+.container {
+    @apply max-w-7xl mx-auto;
+}
 
 /* .btn-date, .input-number, .btn-icon {
   border: 2px solid transparent;

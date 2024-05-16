@@ -5,6 +5,7 @@ import { useHttp } from '../../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import ReactECharts from 'echarts-for-react';
 import moment from 'moment';
+import 'moment/locale/ru';
 import { getMostVisitedCity } from '../../components/functions';
 
 export const StatisticsPage = () => {
@@ -31,7 +32,7 @@ export const StatisticsPage = () => {
         const stats = {};
 
         data.forEach(({ cost, purchaseDate }) => {
-            const month = moment(purchaseDate).format('MMMM');
+            const month = moment(purchaseDate).locale('ru').format('MMMM');
             if (!stats[month]) {
                 stats[month] = { totalCost: 0, tripCount: 0 };
             }
@@ -68,7 +69,7 @@ export const StatisticsPage = () => {
                 }
             },
             legend: {
-                data: ['Money Spent', 'Number of Trips']
+                data: ['Потрачено', 'Количество поездок']
             },
             xAxis: [
                 {
@@ -82,7 +83,7 @@ export const StatisticsPage = () => {
             yAxis: [
                 {
                     type: 'value',
-                    name: 'Money Spent',
+                    name: 'Потрачено',
                     min: 0,
                     max: Math.max(...processedData.map(item => item.totalCost)) + 50,
                     interval: 50,
@@ -92,23 +93,23 @@ export const StatisticsPage = () => {
                 },
                 {
                     type: 'value',
-                    name: 'Trips',
+                    name: 'Количество поездок',
                     min: 0,
                     max: Math.max(...processedData.map(item => item.tripCount)) + 2,
                     interval: 1,
                     axisLabel: {
-                        formatter: '{value} trips'
+                        formatter: '{value} поездок'
                     }
                 }
             ],
             series: [
                 {
-                    name: 'Money Spent',
+                    name: 'Потрачено',
                     type: 'bar',
                     data: processedData.map(item => item.totalCost)
                 },
                 {
-                    name: 'Number of Trips',
+                    name: 'Количество поездок',
                     type: 'bar',
                     yAxisIndex: 1,
                     data: processedData.map(item => item.tripCount)
@@ -122,16 +123,17 @@ export const StatisticsPage = () => {
     }
 
     if (!tripsData.length) {
-        return <h1 className="text-center text-2xl mt-4">Для сбора статистики купите билеты</h1>;
+        return <h1 className="text-center text-2xl">Для сбора статистики купите билеты</h1>;
     }
 
     return (
-        <>
+        <div className='container mt-6'>
             <ReactECharts option={getOption()} style={{ height: 400 }} />
-            <div className="flex justify-between w-full">
-                <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
-                    <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
+            <div className="grid grid-cols-3 gap-8 justify-between w-full">
+
+                <div className="font-semibold p-4 rounded-lg shadow-lg text-center mt-2 text-lg border border-primary border-l-8">
+                    <div className="flex items-center justify-center w-12 h-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-primary">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
                         </svg>
@@ -141,9 +143,10 @@ export const StatisticsPage = () => {
                         {tripsData.length}
                     </span>
                 </div>
-                <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
-                    <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
+
+                <div className="font-semibold p-4 rounded-lg shadow-lg text-center mt-2 text-lg border border-primary border-l-8">
+                    <div className="flex items-center justify-center w-12 h-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-primary">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
                         </svg>
@@ -153,9 +156,10 @@ export const StatisticsPage = () => {
                         {getMostVisitedCity(tripsData)}
                     </span>
                 </div>
-                <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
-                    <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
+                
+                <div className="font-semibold p-4 rounded-lg shadow-lg text-center mt-2 text-lg border border-primary border-l-8">
+                    <div className="flex items-center justify-center w-12 h-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-primary">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
                         </svg>
@@ -166,6 +170,6 @@ export const StatisticsPage = () => {
                     </span>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

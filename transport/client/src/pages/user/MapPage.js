@@ -54,30 +54,39 @@ export const MapPage = () => {
     // };
 
     return (
-        <div>
-            <input type="text" 
-                value={selectedDeparture ? `${selectedDeparture.city}, ${selectedDeparture.country}` : ''}
-                label="Departure"
-                placeholder="Select departure"
-                readOnly={true}
-            />
-            <input type="text"
-                value={selectedDestination ? `${selectedDestination.city}, ${selectedDestination.country}` : ''}
-                label="Destination"
-                placeholder="Select destination"
-                readOnly={true}
-            />
-            <SearchIcon
-                className="icon-small bg-red-500 text-white"
-                onClick={search}
-            />
-            <MapWithRoutesLocations
-                lineData={lineData}
-                setSelectedDeparture={setSelectedDeparture}
-                setSelectedDestination={setSelectedDestination}
-                selectedDeparture={selectedDeparture}
-                selectedDestination={selectedDestination}
-            />
+        <div className='container'>
+            <div className="relative z-20 max-w-3xl mx-auto p-4 rounded-lg bg-white text-primary shadow-lg w-full grid grid-cols-3 gap-2">
+                <input type="text"
+                    value={selectedDeparture ? `${selectedDeparture.city}, ${selectedDeparture.country}` : ''}
+                    label="Departure"
+                    placeholder="Select departure"
+                    readOnly={true}
+                />
+                <input type="text"
+                    value={selectedDestination ? `${selectedDestination.city}, ${selectedDestination.country}` : ''}
+                    label="Destination"
+                    placeholder="Select destination"
+                    readOnly={true}
+                />
+                <div className='flex'>
+                    <button className="primary bg-primary text-white text-lg rounded-lg p-2 inline-flex items-center justify-center" onClick={search}>
+                        <SearchIcon
+                            className="icon-small text-white rounded-lg mx-1 h-5 w-5"
+                            onClick={search}
+                        />
+                        Найти рейсы
+                    </button>
+                </div>
+            </div>
+            <div className='absolute inset-0 left-0 right-0 m-auto bg-center z-0 max-w-7xl h-full rounded'>
+                <MapWithRoutesLocations
+                    lineData={lineData}
+                    setSelectedDeparture={setSelectedDeparture}
+                    setSelectedDestination={setSelectedDestination}
+                    selectedDeparture={selectedDeparture}
+                    selectedDestination={selectedDestination}
+                />
+            </div>
         </div>
     );
 };

@@ -38,7 +38,7 @@ export const calculateTimeDifference = (startDate, endDate) => {
         return `${hours}h ${minutes}m`;
     }
 
-    return `${days}d ${hours}h ${minutes}m`;
+    return `${days}д ${hours}ч ${minutes}мин`;
 };
 
 export const checkIfTicketOver = (date) => {

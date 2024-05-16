@@ -24,36 +24,31 @@ export const TimetablePage = () => {
         console.log(data);
     }
 
-    const resetInput = () => {
-        setDepartureInput("");
-    }
-
     if (loading) {
         return <Loader />;
     }
 
     return (
-        <>
-            <div className="flex items-center space-x-4 justify-center">
+        <div className='container'>
+            <div className="relative z-20 max-w-2xl mx-auto p-4 rounded-lg bg-white text-primary shadow-lg w-full grid grid-cols-2 gap-2">
                 <CityAutocomplete label={'Откуда'} setValue={setDepartureInput} placeholder={'Откуда'} />
-                <SearchIcon
-                    className="icon-small bg-red-500 text-white"
-                    onClick={search}
-                    disabled={!(departureInput?.id)}
-                />
-                <XIcon
-                    className="icon-small bg-red-500 text-white"
-                    onClick={resetInput}
-                />
+                <div className='flex'>
+                    <button className="primary bg-primary text-white text-lg rounded-lg p-2 inline-flex items-center justify-center" onClick={search}>
+                        <SearchIcon
+                            className="icon-small text-white rounded-lg mx-1 h-5 w-5"
+                        />
+                        Найти рейсы
+                    </button>
+                </div>
             </div>
             {routes.length !== 0 && <div class="flex flex-col">
                 <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                         <div class="overflow-hidden">
                             <table
-                                class="min-w-full text-left text-sm font-light text-surface rounded-lg bg-green-200">
+                                class="min-w-full text-left text-sm font-light text-surface rounded-lg">
                                 <thead
-                                    class="border-b border-neutral-200 font-medium rounded-lg bg-green-500">
+                                    class="border-b border-neutral-200 font-light rounded-lg bg-primary text-white">
                                     <tr>
                                         <th scope="col" class="px-6 py-4">Поездка</th>
                                         <th scope="col" class="px-6 py-4">Прибытие</th>
@@ -64,7 +59,7 @@ export const TimetablePage = () => {
                                 <tbody>
                                     {routes.map((route, index) => (
                                         <tr
-                                            class="border-b border-neutral-200 transition duration-300 ease-in-out rounded-lg bg-green-200 hover:bg-green-300 cursor-pointer"
+                                            class="border-b border-neutral-200 transition duration-300 ease-in-out rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer"
                                             onClick={(() => navigate(`/trips/${route._id}`))}
                                             >
                                             <td class="whitespace-nowrap px-6 py-4 font-medium">{index + 1}</td>
@@ -86,6 +81,6 @@ export const TimetablePage = () => {
                     </div>
                 </div>
             </div>}
-        </>
+        </div>
     )
 }
