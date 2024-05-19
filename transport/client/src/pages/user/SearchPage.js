@@ -67,14 +67,16 @@ export const SearchPage = () => {
     if (routes.length === 0) return <div className="text-center text-2xl mt-10">No routes found</div>;
 
     return (
-        routes.map(route => (
+        <div className='container'>
+        {routes.map(route => (
             <TravelCard
                 key={route._id}
                 trip={route}
                 likeButtonHandler={() => likeTrip(route._id)}
                 isFavorite={favorites.some(f => f.routeId === route._id)}
             />
-        ))
+        ))}
+       </div> 
     );
 };
 

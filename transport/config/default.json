@@ -16,5 +16,8 @@
     "googleClientSecret": "",
     "linkedInClientID": "",
     "linkedInClientSecret": "",
-    "sessionSecret": "transport secret"
+    "sessionSecret": "transport secret",
+    "cloudinaryCloudName": "dhe48syju",
+    "cloudinaryApiKey": "136984935133643",
+    "cloudinaryApiSecret": "wyh6s04qYmNmgVEdxdhxfdhUs48"
 }

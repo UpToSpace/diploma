@@ -11,15 +11,17 @@ const jwt = require("jsonwebtoken")
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth.middleware');
 const admin = require('../middleware/admin.middleware');
-const mongoose = require('mongoose');
+const multer = require('multer');
+const cloudinary = require('../config/cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // /api/user
 router.get('/', auth, async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
-        const user = await User.findOne({ _id: decoded.id });
-        res.json(user.email);
+        const user = await User.findOne({ _id: decoded.id }, { password: 0 });
+        res.json(user);
     } catch (e) {
         console.log(e)
         res.status(500).json({ message: 'Что-то пошло не так' });
@@ -164,6 +166,47 @@ router.post('/', auth,
             res.status(500).json({ message: 'Что-то пошло не так' });
         }
     })
+
+// /api/user/upload-avatar
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'avatars',
+        format: async (req, file) => 'png', // формат файла
+        public_id: (req, file) => `${file.originalname}-${Date.now()}`, // уникальное имя файла
+    },
+});
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+        if (!validTypes.includes(file.mimetype)) {
+            cb(new Error('Только файлы форматов JPG, JPEG, PNG и GIF допустимы.'));
+        } else {
+            cb(null, true);
+        }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+    },
+});
+
+router.put('/upload-avatar', upload.single('avatar'), async (req, res) => {
+    try{
+    const { userId } = req.body;
+    const avatarUrl = req.file.path;
+
+    // Сохранение пользователя в MongoDB
+    const user = await User.findById(userId);
+    user.avatarUrl = avatarUrl;
+    await user.save();
+
+    res.json({ user });
+    } catch (e) {
+        console.log(e)
+        res.status(500).json({ message: 'Что-то пошло не так' });
+    }
+});
 
 // /api/user/admin/carriers/:id/activate
 router.put('/admin/carriers/:id/activate', auth, async (req, res) => {

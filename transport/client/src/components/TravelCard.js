@@ -4,7 +4,7 @@ import { calculateTimeDifference, convertDate, convertTime } from './functions';
 
 export const TravelCard = ({ trip, isFavorite, likeButtonHandler }) => {
     return (
-        <div className="bg-white shadow-md rounded-lg p-4 mx-auto w-7xl mb-6 grid grid-cols-4 col-span-4 gap-2">
+        <div className="bg-white shadow-md rounded-lg p-4 mx-auto w-7xl my-6 grid grid-cols-4 col-span-4 gap-2">
 
             <div className="flex">
                 <div className="flex justify-between">

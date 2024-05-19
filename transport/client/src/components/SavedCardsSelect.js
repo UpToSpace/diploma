@@ -4,7 +4,7 @@ export const SavedCardsSelect = ({ savedCards, onSelectCard }) => {
     return (
         <div>
             <label htmlFor="saved-cards" className="block text-sm font-medium text-gray-700">
-                Your saved cards
+                Сохраненные карты
             </label>
             <select
                 id="saved-cards"

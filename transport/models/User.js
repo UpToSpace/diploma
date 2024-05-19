@@ -5,6 +5,7 @@ const schema = new Schema({
     password: { type: String, required: true },
     role: { type: String, required: true },
     isActivated: { type: Boolean, default: false },
+    avatarUrl: { type: String, default: 'https://res.cloudinary.com/dhe48syju/image/upload/v1716136365/avatars/avatar.png-1716136365328.png'},
     activationLink: { type: String },
     refreshToken: { type: String },
     refreshLink: { type: String },

@@ -14,7 +14,9 @@ export const useHttp = () => {
 
             if (body) {
                 body = JSON.stringify(body);
-                headers['Content-Type'] = 'application/json';
+                if (!headers['Content-Type']) {
+                    headers['Content-Type'] = 'application/json';
+                }
             }
 
             // console.log('request', url, method, body, headers); 

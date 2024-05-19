@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import bus from '../styles/images/bus.png'
-import fullbus from '../styles/images/fullbus.png'
 import { useHttp } from '../hooks/http.hook';
 import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
@@ -46,7 +44,7 @@ export const Feedback = ({ setShowFeedback, route, getTickets, getUserReviews })
     }
 
     return (
-        <div className="max-w-2xl w-full mx-auto p-4 border shadow-lg rounded-md">
+        <div className="max-w-3xl w-full mx-auto p-4 border shadow-lg border-primary rounded-3xl">
             <h2 className="text-xl font-semibold text-center mb-1">Ваш отзыв</h2>
             <form onSubmit={submitFeedback}>
                 <div className="flex justify-center mb-1">
@@ -59,7 +57,8 @@ export const Feedback = ({ setShowFeedback, route, getTickets, getUserReviews })
                                 onClick={() => handleRatingChange(index)}
                                 type="button"
                             >
-                                {index <= rating ? <img src={fullbus} /> : <img src={bus} />}
+                                {index <= rating ? <img width="50" height="50" src="https://img.icons8.com/ios-filled/50/FFD43A/bus2.png" alt="bus2" />
+                                    : <img width="50" height="50" src="https://img.icons8.com/ios/50/000000/bus2.png" alt="bus2" />}
                             </button>
                         );
                     })}
@@ -69,17 +68,18 @@ export const Feedback = ({ setShowFeedback, route, getTickets, getUserReviews })
                     placeholder="Введите текст..."
                     value={comment}
                     onChange={handleCommentChange}
-                    rows="4"
+                    rows={4}
+                    maxLength={500}
                 />
                 <div className="mt-4 flex justify-center">
                     <button
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-4"
+                        className="border border-octonary hover:bg-octonary hover:text-white text-octonary duration-300 transition-all font-bold py-2 px-4 rounded mr-4"
                         onClick={() => setShowFeedback(false)}>
                         Отменить
                     </button>
                     <button
                         type="submit"
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        className="border border-septenary hover:bg-septenary hover:text-white text-septenary duration-300 transition-all font-bold py-2 px-4 rounded">
                         Отправить
                     </button>
                 </div>

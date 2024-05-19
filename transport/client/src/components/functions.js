@@ -35,7 +35,7 @@ export const calculateTimeDifference = (startDate, endDate) => {
     }
 
     if (days === 0) {
-        return `${hours}h ${minutes}m`;
+        return `${hours}ч ${minutes}мин`;
     }
 
     return `${days}д ${hours}ч ${minutes}мин`;

@@ -81,7 +81,7 @@ export const TripPage = () => {
                         <div className="flex-1">
                             <div className="flex justify-between">
                                 <div>
-                                    <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Отправление</div>
+                                    <div className="uppercase tracking-wide text-sm text-primary font-semibold">Отправление</div>
                                     <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                         {trip.departure.city}, {trip.departure.country}
                                     </p>
@@ -114,7 +114,7 @@ export const TripPage = () => {
                         <div className="flex-1">
                             <div className="flex justify-between">
                                 <div>
-                                    <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mt-4">Прибытие</div>
+                                    <div className="uppercase tracking-wide text-sm text-primary font-semibold mt-4">Прибытие</div>
                                     <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                         {trip.destination.city}, {trip.destination.country}
                                     </p>
@@ -131,7 +131,7 @@ export const TripPage = () => {
                 <div className="bg-white shadow-md rounded-lg p-4 mx-auto max-w-4xl mb-6">
                     <div className="flex flex-col md:flex-row justify-center items-center h-full"> {/* Updated classes here */}
                         <div className="px-4 py-5 sm:px-6">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">Seat Layout</h3>
+                            <h3 className="text-lg leading-6 font-medium text-gray-900">Места</h3>
                             <div className="mt-4">
                                 {renderSeatLayout()}
                             </div>

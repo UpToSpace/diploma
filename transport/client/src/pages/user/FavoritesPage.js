@@ -45,14 +45,16 @@ export const FavoritesPage = () => {
     if (!favorites.length) return <div className="text-center text-2xl mt-10">У вас нет избранных поездок</div>;
 
     return (
-        favorites.map(favorite => (
+        <div className='container'>
+        {favorites.map(favorite => (
             <TravelCard
                 key={favorite.routeId._id}
                 trip={favorite.routeId}
                 likeButtonHandler={() => likeTrip(favorite.routeId._id)}
                 isFavorite={true}
             />
-        ))
+        ))}
+        </div>
     );
 };
 

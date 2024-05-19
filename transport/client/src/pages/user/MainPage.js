@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useHttp } from '../../hooks/http.hook';
@@ -27,6 +27,7 @@ export const MainPage = () => {
         check2: false,
         check3: false
     });
+    const [popularDestinations, setPopularDestinations] = useState([]);
 
     const search = () => {
         if (!departureInput || !destinationInput) {
@@ -53,13 +54,6 @@ export const MainPage = () => {
         navigate(`/search?${searchParams}`);
     };
 
-    const resetInput = () => {
-        setDepartureInput("");
-        setDestinationInput("");
-        setStartDate(new Date());
-        setNumberOfSeats(1);
-    };
-
     const handleDateChange = (event) => {
         setStartDate(new Date(event.target.value)); // Update the date state
     };
@@ -72,6 +66,12 @@ export const MainPage = () => {
             [name]: checked
         }));
     };
+
+    useEffect(() => {
+        if (auth.userLocation) {
+            setPopularDestinations([])
+        }
+    }, [auth.userLocation]);
 
     if (loading) {
         return <Loader />;
@@ -175,35 +175,34 @@ export const MainPage = () => {
 
             <div className="container w-full justify-start py-6">
                 <h2 className='section'>Ближайшие отправления</h2>
-                <div className="flex flex-wrap justify-center">
 
-                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                        <div className="relative bg-white rounded-lg overflow-hidden">
-                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
-                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                <h2 className="text-2xl font-bold text-white">Москва</h2>
+                <div className="flex justify-center w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full p-4">
+                        <div className="p-4 rounded-lg shadow-lg">
+                            <div className="relative bg-white rounded-lg overflow-hidden">
+                                <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                    <h2 className="text-2xl font-bold text-white">Москва</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-4 rounded-lg shadow-lg">
+                            <div className="relative bg-white rounded-lg overflow-hidden">
+                                <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                    <h2 className="text-2xl font-bold text-white">Санкт-Петербург</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-4 rounded-lg shadow-lg">
+                            <div className="relative bg-white rounded-lg overflow-hidden">
+                                <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                    <h2 className="text-2xl font-bold text-white">Казань</h2>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                        <div className="relative bg-white rounded-lg overflow-hidden">
-                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
-                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                <h2 className="text-2xl font-bold text-white">Санкт-Петербург</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-1/3 p-4 rounded-lg shadow-lg">
-                        <div className="relative bg-white rounded-lg overflow-hidden">
-                            <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
-                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                <h2 className="text-2xl font-bold text-white">Казань</h2>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
 
