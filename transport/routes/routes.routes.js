@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
+const Transport = require('../models/Transport');
 const config = require('config');
 const stripe = require('stripe')(config.get('stripeSecretKey'));
 const auth = require('../middleware/auth.middleware');
@@ -194,6 +195,25 @@ router.get('/popular', auth, async (req, res) => {
             .limit(3)
         res.json(routes);
     } catch (e) {
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+});
+
+// get all routes by user
+router.get('/user/:id', auth, async (req, res) => {
+    try {
+        const carrierTransports = await Transport.find({ carrier: req.params.id }, { _id: 1 });
+        //console.log(carrierTransports);
+        let allRoutes = [];
+        for (const transport of carrierTransports) {
+            const routes = await Route.find({ transport: transport._id });
+            allRoutes = allRoutes.concat(routes);
+        }
+        //console.log(allRoutes);
+        allRoutes = allRoutes.filter(e => new Date(e.departure.date) > new Date()).sort((a, b) => a.departure.date - b.departure.date);
+        res.json(allRoutes);
+    } catch (e) {
+        console.log(e);
         res.status(500).json({ message: 'Something went wrong' });
     }
 });

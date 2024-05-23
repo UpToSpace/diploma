@@ -159,11 +159,9 @@ export const MainPage = () => {
                         </div>
 
                         <div className='flex'>
-                            <button className="primary bg-primary text-white text-lg rounded-lg p-2 inline-flex items-center justify-center" onClick={search} disabled={!departureInput || !destinationInput}>
+                            <button className="primary bg-primary text-white text-lg rounded-lg p-2 inline-flex items-center justify-center" onClick={search}>
                                 <SearchIcon
                                     className="icon-small text-white rounded-lg mx-1 h-5 w-5"
-                                    onClick={search}
-                                    disabled={!departureInput || !destinationInput}
                                 />
                                 Найти рейсы
                             </button>

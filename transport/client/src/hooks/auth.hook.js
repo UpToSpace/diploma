@@ -69,7 +69,6 @@ export const useAuth = () => {
 
 
     async function getCityName(lat, lon) {
-        const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
         const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ru`);
         const data = await response.json();
         return data.city || data.locality || data.principalSubdivision;

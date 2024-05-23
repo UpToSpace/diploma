@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
         //console.log('hello');
         //console.log("middleware " + token);
         if(!token) {
-            return res.status(401).json({message: 'Карыстальнiк не аўтыразаваны'});
+            return res.status(401).json({message: 'Пользователь не авторизован'});
         }
         jwt.verify(token, config.get('jwtAccessSecret'));
         next();
@@ -20,6 +20,6 @@ module.exports = (req, res, next) => {
         if (e instanceof jwt.TokenExpiredError) {
             return res.status(401).json({ message: e.message });
         }
-        res.status(401).json({message: 'Карыстальнiк не аўтыразаваны'});
+        res.status(401).json({ message: 'Пользователь не авторизован'});
     }
 }

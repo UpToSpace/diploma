@@ -13,16 +13,28 @@ export const TimetablePage = () => {
     const { id } = useParams();
     const { request, loading } = useHttp();
     const userId = useContext(AuthContext).userId;
-    const [departureInput, setDepartureInput] = useState("");
+    const [departureInput, setDepartureInput] = useState(localStorage.getItem('userCity') ?? '');
+    const [searchCity, setSearchCity] = useState(localStorage.getItem('userCity') ?? '');
     const [routes, setRoutes] = useState([]);
     const navigate = useNavigate();
 
     const search = async (e) => {
         console.log(departureInput);
-        const data = await request(`/api/routes/city/${departureInput.text.split(',')[0]}`, 'GET');
+        let searchCityQuery;
+        if (localStorage.getItem('userCity') && !departureInput.text) {
+            searchCityQuery = localStorage.getItem('userCity');
+        } else {
+            searchCityQuery = departureInput.text?.split(',')[0];
+        }
+        const data = await request(`/api/routes/city/${searchCityQuery}`, 'GET');
+        setSearchCity(searchCityQuery);
         setRoutes(data);
         console.log(data);
     }
+
+    useEffect(() => {
+        search();
+    }, []);
 
     if (loading) {
         return <Loader />;
@@ -31,7 +43,12 @@ export const TimetablePage = () => {
     return (
         <div className='container'>
             <div className="relative z-20 max-w-2xl mx-auto p-4 rounded-lg bg-white text-primary shadow-lg w-full grid grid-cols-2 gap-2">
-                <CityAutocomplete label={'Откуда'} setValue={setDepartureInput} placeholder={'Откуда'} />
+                <CityAutocomplete 
+                label={'Откуда'} 
+                setValue={setDepartureInput} 
+                placeholder={'Откуда'} 
+                value={departureInput?.place_name ?? searchCity} 
+                />
                 <div className='flex'>
                     <button className="primary bg-primary text-white text-lg rounded-lg p-2 inline-flex items-center justify-center" onClick={search}>
                         <SearchIcon
@@ -63,8 +80,8 @@ export const TimetablePage = () => {
                                             onClick={(() => navigate(`/trips/${route._id}`))}
                                             >
                                             <td class="whitespace-nowrap px-6 py-4 font-medium">{index + 1}</td>
-                                            {route.departure.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{`${convertDate(route.departure.date)} ${convertTime(route.departure.date)}`}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
-                                            {route.destination.city === departureInput.text.split(',')[0] ? <td class="whitespace-nowrap px-6 py-4 font-medium">{`${convertDate(route.destination.date)} ${convertTime(route.destination.date)}`}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
+                                            {route.departure.city === searchCity ? <td class="whitespace-nowrap px-6 py-4 font-medium">{`${convertDate(route.departure.date)} ${convertTime(route.departure.date)}`}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
+                                            {route.destination.city === searchCity ? <td class="whitespace-nowrap px-6 py-4 font-medium">{`${convertDate(route.destination.date)} ${convertTime(route.destination.date)}`}</td> : <td class="whitespace-nowrap px-6 py-4 font-medium">-</td>}
                                             <td class="whitespace-nowrap px-6 py-4 font-medium">{`${route.transport.number} ${route.transport.brand}-${route.transport.model}`}</td>
                                         </tr>))}
                                     {/* <tr

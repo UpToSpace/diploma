@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react';
 
 export const useHttp = () => {
     const [loading, setLoading] = useState(false);
@@ -7,63 +7,55 @@ export const useHttp = () => {
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         setLoading(true);
         try {
+            if (body) {
+                body = JSON.stringify(body);
+                headers['Content-Type'] = 'application/json';
+            }
+
             const token = localStorage.getItem('token');
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            if (body) {
-                body = JSON.stringify(body);
-                if (!headers['Content-Type']) {
-                    headers['Content-Type'] = 'application/json';
-                }
-            }
-
-            // console.log('request', url, method, body, headers); 
-
-            const response = await fetch(url, {
-                method,
-                body,
-                headers
-            });
+            const response = await fetch(url, { method, body, headers });
             const data = await response.json();
-
-            //console.log(data);
 
             if (!response.ok) {
                 if (response.status === 401 && data.message === 'jwt expired') {
-                    const dataRefresh = await request('/api/auth/refresh', 'POST', null);
-                    localStorage.setItem('token', dataRefresh.token);
-                    headers['Authorization'] = `Bearer ${dataRefresh.token}`;
-                    const newResponse = await fetch(url, {
-                        method,
-                        body,
-                        headers
-                    });
-                    const newData = await newResponse.json();
-                    setLoading(false)
-                    return newData;
-                }
-                if (response.status === 401 && data.message === 'refresh jwt expired') {
-                    await request('/api/auth/logout', 'POST', null);
-                    localStorage.removeItem('token');
-                    window.location.reload();
-                    return;
+                    await refreshToken();
+                    headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                    return request(url, method, body, headers);
+                } else if (response.status === 401 && data.message === 'refresh jwt expired') {
+                    logout();
                 }
                 throw new Error(data.message || 'Something went wrong');
             }
 
-            setLoading(false)
-
+            setLoading(false);
             return data;
         } catch (e) {
             setLoading(false);
-            setError(e.message);
+            setError(e);
             throw e;
         }
+    }, []);
+
+    const refreshToken = useCallback(async () => {
+        try {
+            const response = await fetch('/api/auth/refresh', { method: 'POST' });
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+        } catch (error) {
+            logout();
+        }
+    }, []);
+
+    const logout = useCallback(() => {
+        localStorage.removeItem('token');
+        window.location.reload();
     }, []);
 
     const clearError = useCallback(() => setError(null), []);
 
     return { loading, request, error, clearError };
-}
+};

@@ -17,7 +17,7 @@ export const MapPage = () => {
 
     const search = () => {
         if (!selectedDeparture || !selectedDestination) {
-            toast.error('Please select departure and destination');
+            toast.error('Пожалуйста, выберите пункт отправления и пункт назначения.');
             return;
         }
         try {
@@ -34,38 +34,19 @@ export const MapPage = () => {
             toast.error(e.message);
         }
     };
-
-    // const handleSetDestination = (suggestion) => {
-    //     setDestination(suggestion);
-    //     // Draw line between departure and destination
-    //     if (departure) {
-    //         setLineData({
-    //             type: 'Feature',
-    //             properties: {},
-    //             geometry: {
-    //                 type: 'LineString',
-    //                 coordinates: [
-    //                     [departure.center[0], departure.center[1]],
-    //                     [suggestion.center[0], suggestion.center[1]]
-    //                 ]
-    //             }
-    //         });
-    //     }
-    // };
-
     return (
         <div className='container'>
             <div className="relative z-20 max-w-3xl mx-auto p-4 rounded-lg bg-white text-primary shadow-lg w-full grid grid-cols-3 gap-2">
                 <input type="text"
                     value={selectedDeparture ? `${selectedDeparture.city}, ${selectedDeparture.country}` : ''}
                     label="Departure"
-                    placeholder="Select departure"
+                    placeholder="Выберите пункт отправления"
                     readOnly={true}
                 />
                 <input type="text"
                     value={selectedDestination ? `${selectedDestination.city}, ${selectedDestination.country}` : ''}
                     label="Destination"
-                    placeholder="Select destination"
+                    placeholder="Выберите пункт назначения"
                     readOnly={true}
                 />
                 <div className='flex'>

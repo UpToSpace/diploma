@@ -34,7 +34,7 @@ export default function Header() {
                         <Link
                             key={link.to}
                             to={link.to}
-                            className={`font-light text-white hover:text-gray-300`}
+                            className={`font-light text-white hover:text-gray-300 whitespace-nowrap`}
                         >
                             {link.label}
                         </Link>

@@ -15,6 +15,9 @@ export const AccountPage = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [showAvatarForm, setShowAvatarForm] = useState(false);
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
 
     const logoutHandler = event => {
         event.preventDefault();
@@ -72,7 +75,7 @@ export const AccountPage = () => {
             return;
         }
         if (oldPassword === newPassword) {
-            toast.errort('Новый пароль не должен совпадать со старым');
+            toast.error('Новый пароль не должен совпадать со старым');
             return;
         }
         try {
@@ -88,7 +91,7 @@ export const AccountPage = () => {
 
     const handleAvatarSubmit = async (e) => {
         e.preventDefault();
-
+        setButtonDisabled(true);
         const formData = new FormData();
         formData.append('avatar', avatar);
         formData.append('userId', user._id);
@@ -103,6 +106,9 @@ export const AccountPage = () => {
         } catch (error) {
             console.error('Ошибка загрузки аватарки:', error);
         }
+        setShowAvatarForm(false);
+        setAvatar(null);
+        setButtonDisabled(false);
     };
 
     return (
@@ -117,18 +123,20 @@ export const AccountPage = () => {
                     <p className="text-gray-700 mt-1">Роль: {user.role}</p>
                     <p className="text-gray-700 mt-1">Дата рождения: {new Date(user.dateOfBirth).toLocaleDateString()}</p>
                     <p className="text-gray-700 mt-1">Дата регистрации: {new Date(user.dateOfRegistration).toLocaleDateString()}</p>
-                </div>
-                <div>
-                    <a href="/" onClick={logoutHandler} className="flex items-center text-red-600 hover:text-red-800 transition duration-150 ease-in-out">
+                    <a href="/" onClick={logoutHandler} className="flex items-center border border-primary rounded-lg mt-2 text-red-600 hover:text-red-800 transition duration-150 ease-in-out">
                         <img width="40" height="40" src="https://img.icons8.com/dotty/80/072446/get-off-bus.png" alt="get-off-bus" />
                         Выйти из аккаунта
                     </a>
-                    <form onSubmit={handleAvatarSubmit}>
+                </div>
+                <div>
+                    {!showAvatarForm && <button onClick={() => setShowAvatarForm(true)} className='primary mb-2'>Изменить аватар</button>}
+                    {showAvatarForm && <form onSubmit={handleAvatarSubmit} className='flex flex-col'>
                         <label for="image_uploads">Выберите файл</label>
                         <input type="file" accept='.png, .jpeg, .gif, .jpg' id="image_uploads" name="image_uploads" onChange={handleFileChange} />
-                        <button type="submit">Загрузить аватарку</button>
-                    </form>
-                    <form onSubmit={handleSubmit} className='space-y-5'>
+                        <button type="submit" className='primary disabled:bg-slate-800' disabled={buttonDisabled}>Загрузить аватарку</button>
+                    </form>}
+                    {!showPasswordForm && <button onClick={() => setShowPasswordForm(true)} className='primary mt-2'>Изменить пароль</button>}
+                    {showPasswordForm && <form onSubmit={handleSubmit} className='space-y-5'>
                         <h3 className="text-xl font-semibold text-gray-800">Изменить пароль</h3>
                         <div>
                             <label htmlFor="oldPassword" className="block text-gray-700">Старый пароль</label>
@@ -164,7 +172,7 @@ export const AccountPage = () => {
                             />
                         </div>
                         <button className="primary" type="submit">Изменить пароль</button>
-                    </form>
+                    </form>}
                 </div>
             </div>
         </div>

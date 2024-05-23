@@ -76,7 +76,7 @@ export const AuthPage = () => {
             </div>
 
             <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form class="space-y-6" action="#" method="POST">
+                <form class="space-y-2" action="#" method="POST">
                     <div>
                         <label for="email">Электронная почта</label>
                         <div class="mt-2">
@@ -113,35 +113,19 @@ export const AuthPage = () => {
                         </div>
                     </div>
 
-                    <div>
+
                         <button
                             type="submit"
-                            class="primary"
+                            className="primary"
                             disabled={loading}
                             onClick={loginHandler}
                         >Войти</button>
-                    </div>
+
+                    <p class="note">
+                        Не зарегистрированы?
+                        <a href="/register"> Регистрация</a>
+                    </p>
                 </form>
-
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <div>
-                        <button class="secondary">
-                            <img src={google} alt="Google" class="mr-3 h-4" />
-                            Google
-                        </button>
-                    </div>
-                    <div>
-                        <button class="secondary">
-                            <img src={linkedin} alt="GitHub" class="mr-3 h-4" />
-                            LinkedIn
-                        </button>
-                    </div>
-                </div>
-
-                <p class="note">
-                    Не зарегистрированы?
-                    <a href="/register"> Регистрация</a>
-                </p>
             </div>
         </div>
 

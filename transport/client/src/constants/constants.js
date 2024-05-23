@@ -8,7 +8,7 @@ export const navLinks = {
     user: [
         { to: "/", label: "Главная" },
         { to: "/statistics", label: "Статистика" },
-        { to: "/tickets", label: "Мои_Билеты" },
+        { to: "/tickets", label: "Мои Билеты" },
         { to: "/favorites", label: "Избранное" },
         { to: "/timetable", label: "Расписание" },
         { to: "/map", label: "Карта" }

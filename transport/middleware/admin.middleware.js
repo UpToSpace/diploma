@@ -11,14 +11,14 @@ module.exports = async (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
 
         if (!token) {
-            return res.status(401).json({ message: 'Карыстальнiк не аўтыразаваны' });
+            return res.status(401).json({ message: 'Пользователь не авторизован' });
         }
         const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
         //console.log(decoded)
         const user = await User.findOne({ _id: decoded.id });
         //console.log(user)
         if (user.role !== 'admin') {
-            return res.status(403).json({ message: 'Няма доступу' });
+            return res.status(403).json({ message: 'Нет доступа' });
         }
         next();
     } catch (e) {
@@ -26,6 +26,6 @@ module.exports = async (req, res, next) => {
         if (e instanceof jwt.TokenExpiredError) {
             return res.status(401).json({ message: e.message });
         }
-        res.status(401).json({ message: 'Карыстальнiк не аўтыразаваны' });
+        res.status(401).json({ message: 'Пользователь не авторизован' });
     }
 }

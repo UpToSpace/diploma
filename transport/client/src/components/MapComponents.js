@@ -208,28 +208,6 @@ export const Map = ({ points }) => {
     );
 }
 
-const PointLayer = {
-    id: 'point',
-    type: 'circle',
-    paint: {
-        'circle-radius': 10,
-        'circle-color': '#007cbf'
-    }
-};
-
-const RouteLayer = {
-    id: 'route',
-    type: 'line',
-    layout: {
-        'line-join': 'round',
-        'line-cap': 'round'
-    },
-    paint: {
-        'line-color': '#ff7f00',
-        'line-width': 4
-    }
-};
-
 export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture, selectedDestination, setSelectedDestination }) => {
     const [routes, setRoutes] = useState([]);
     const [lineData, setLineData] = useState(null);
@@ -319,6 +297,19 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
             onMove={(event) => {
                 setViewState(event.viewState);
             }}
+            onLoad={(e) => {
+                const layers = e.target.getStyle().layers;
+
+                layers.forEach((layer) => {
+                    if (layer.type === 'symbol' && layer.layout['text-field']) {
+                        e.target.setLayoutProperty(layer.id, 'text-field', [
+                            'get',
+                            `name_${'ru'}`
+                        ]);
+                    }
+                });
+            }
+            }
         >
             {!selectedDeparture && uniqueDepartures.map((point, index) => (
                 <Marker
@@ -326,9 +317,7 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
                     longitude={point.longitude}
                     key={index}
                     onClick={() => handleDepartureClick(point)}
-                >
-                    {/* Customize your marker */}
-                </Marker>
+                />
             ))}
 
             {selectedDeparture && (!selectedDestination ? destinations.map((point, index) => (
@@ -337,46 +326,23 @@ export const MapWithRoutesLocations = ({ selectedDeparture, setSelectedDeparture
                     longitude={point.longitude}
                     key={index}
                     onClick={() => handleDestinationClick(point)}
-                >
-                    {/* Customize your marker */}
-                </Marker>
+                />
             )) :
                 <Marker
                     latitude={selectedDestination.latitude}
                     longitude={selectedDestination.longitude}
                     onClick={() => handleDestinationClick(selectedDestination)}
-                >
-                    <img src={blueflag}
-                        alt="marker"
-                        height={viewState.zoom * 10 + "px"}
-                        width={viewState.zoom * 10 + "px"} />
-                </Marker>
+                    color='green'
+                />
             )}
 
             {selectedDeparture && (
                 <Marker
                     latitude={selectedDeparture.latitude}
                     longitude={selectedDeparture.longitude}
+                    color='red'
                     onClick={() => handleDepartureClick(selectedDeparture)}
-                >
-                    <img src={redflagIcon}
-                        alt="marker"
-                        height={viewState.zoom * 10 + "px"}
-                        width={viewState.zoom * 10 + "px"} />
-                </Marker>
-            )}
-
-            {selectedDestination && (
-                <Marker
-                    latitude={selectedDestination.latitude}
-                    longitude={selectedDestination.longitude}
-                    onClick={() => handleDestinationClick(selectedDestination)}
-                >
-                    <img src={blueflag}
-                        alt="marker"
-                        height={viewState.zoom * 10 + "px"}
-                        width={viewState.zoom * 10 + "px"} />
-                </Marker>
+                />
             )}
 
             {lineData && (
