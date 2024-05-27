@@ -100,47 +100,47 @@ export const CarrierStatisticsPage = () => {
     }
 
     return (
-            tripsData.ticketsByMonth.length !== 0 ? <>
-                <ReactECharts option={option} style={{ height: 400 }} key={JSON.stringify(tripsData.ticketsByMonth)} />
-                <div className="flex justify-between w-full">
-                    <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
-                        <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
-                            </svg>
-                        </div>
-                        Продано билетов
-                        <span className="block mt-2 text-center text-gray-900 font-normal text-base">
-                            {tripsData.ticketsNumber}
-                        </span>
+        tripsData.ticketsByMonth.length !== 0 ? <div className='container'>
+            <ReactECharts option={option} style={{ height: 400 }} key={JSON.stringify(tripsData.ticketsByMonth)} />
+            <div className="flex justify-between w-full">
+                <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
+                    <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                        </svg>
                     </div>
-                    <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
-                        <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
-                            </svg>
-                        </div>
-                        Осуществлено маршрутов
-                        <span className="block mt-2 text-center text-gray-900 font-normal text-base">
-                            {tripsData.routesNumber}
-                        </span>
-                    </div>
-                    <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
-                        <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
-                            </svg>
-                        </div>
-                        Заработано денег
-                        <span className="block mt-2 text-center text-gray-900 font-normal text-base">
-                            {tripsData.cash.reduce((a, b) => a.cost + b.cost)} BYN
-                        </span>
-                    </div>
+                    Продано билетов
+                    <span className="block mt-2 text-center text-gray-900 font-normal text-base">
+                        {tripsData.ticketsNumber}
+                    </span>
                 </div>
-            </> :
+                <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
+                    <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                        </svg>
+                    </div>
+                    Осуществлено маршрутов
+                    <span className="block mt-2 text-center text-gray-900 font-normal text-base">
+                        {tripsData.routesNumber}
+                    </span>
+                </div>
+                <div className="w-1/3 p-4 rounded-lg shadow-lg text-center mt-2 text-lg">
+                    <div className="flex items-center justify-center w-12 h-12 bg-red-500 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-800">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+                        </svg>
+                    </div>
+                    Заработано денег
+                    <span className="block mt-2 text-center text-gray-900 font-normal text-base">
+                        {tripsData.cash.reduce((a, b) => a.cost + b.cost)} BYN
+                    </span>
+                </div>
+            </div>
+        </div> :
             <div className="flex justify-center items-center h-96">
                 <p className="text-2xl">Для статистики необходимо добавить поездок и чтобы у вас купили билеты!</p>
             </div>

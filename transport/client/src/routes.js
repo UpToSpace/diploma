@@ -62,6 +62,8 @@ export const useRoutes = (userRole) => {
                     <Route path="/account" element={<AccountPage />} />
                     <Route path="/transports" element={<CarrierTransportsPage />} />
                     <Route path="/transports/:id" element={<CarrierTransportPage />} />
+                    <Route path="/trips/transports/:id" element={<CarrierTransportPage />} />
+                    <Route path="/trips/:id" element={<TripPage />} />
                     <Route path="/routes" exact element={<CarrierRoutesPage />} />
                     <Route path="/statistics" element={<CarrierStatisticsPage />} />
                     <Route path="/" exact element={<CarrierMainPage />} />

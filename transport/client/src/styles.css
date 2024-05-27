@@ -38,6 +38,7 @@ input[type="email"],
 input[type="number"],
 input[type="tel"],
 input[type="date"],
+input[type="time"],
 textarea {
     @apply border border-gray-400 px-3 py-1 rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-full shadow-sm;
 }
@@ -111,6 +112,13 @@ input[type="date"] {
     @apply max-w-7xl mx-auto;
 }
 
+.seat {
+  padding: 3px !important;
+  margin-right: 3px !important;
+  height: 30px !important;
+  width: 30px !important;
+  text-align: center;
+}
 /* .btn-date, .input-number, .btn-icon {
   border: 2px solid transparent;
   padding: 8px 12px;

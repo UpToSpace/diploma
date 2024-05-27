@@ -206,11 +206,17 @@ router.get('/user/:id', auth, async (req, res) => {
         //console.log(carrierTransports);
         let allRoutes = [];
         for (const transport of carrierTransports) {
-            const routes = await Route.find({ transport: transport._id });
+            const routes = await Route.find({ 
+                transport: transport._id,
+                "departure.date": { $gt: new Date() }
+            }).populate({
+                path: 'transport',
+                model: 'Transport'
+             });
             allRoutes = allRoutes.concat(routes);
         }
         //console.log(allRoutes);
-        allRoutes = allRoutes.filter(e => new Date(e.departure.date) > new Date()).sort((a, b) => a.departure.date - b.departure.date);
+        allRoutes = allRoutes.sort((a, b) => a.departure.date - b.departure.date);
         res.json(allRoutes);
     } catch (e) {
         console.log(e);

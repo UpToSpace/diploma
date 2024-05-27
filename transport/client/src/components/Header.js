@@ -30,9 +30,9 @@ export default function Header() {
             {/* right */}
             <div className="flex items-center space-x-4 justify-start px-2">
                 {links.map(link => (
-                    <div className={`flex items-center h-full text-center py-6 ${isActive(link.to) && 'border-b-white border-b-2'}`}>
+                    <div className={`flex items-center h-full text-center py-6 ${isActive(link.to) && 'border-b-white border-b-2'}`} key={link.to}>
                         <Link
-                            key={link.to}
+                            
                             to={link.to}
                             className={`font-light text-white hover:text-gray-300 whitespace-nowrap`}
                         >

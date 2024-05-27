@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { useHttp } from '../../hooks/http.hook';
 import { Loader } from '../../components/Loader';
@@ -34,6 +34,7 @@ const findMissingSeats = (seatLayout, maxSeats) => {
 export const CarrierTransportsPage = () => {
     const { request, loading } = useHttp();
     const auth = useAuth()
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         carrier: '',
@@ -196,189 +197,158 @@ export const CarrierTransportsPage = () => {
     }
 
     return (
-        <>
-            <form className="max-w-lg mx-auto my-10 p-5" onSubmit={handleSubmit}>
-                <div className="flex flex-wrap -mx-3 mb-6">
-
-                    {/* Number */}
-                    <div className="w-full px-3 mb-6">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="number">
-                            Number
-                        </label>
-                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="number" type="text" placeholder="Transport Number" name="number" value={form.number} onChange={handleChange} />
-                        {errors.number && <p className="text-red-500 text-xs italic">{errors.number}</p>}
-                    </div>
-
-                    {/* Brand */}
-                    <div className="w-full px-3 mb-6">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="brand">
-                            Brand
-                        </label>
-                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="brand" type="text" placeholder="Brand" name="brand" value={form.brand} onChange={handleChange} />
-                    </div>
-
-                    {/* Model */}
-                    <div className="w-full px-3 mb-6">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="model">
-                            Model
-                        </label>
-                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="model" type="text" placeholder="Model" name="model" value={form.model} onChange={handleChange} />
-                    </div>
-
-                    {/* Year of Build */}
-                    <div className="w-full px-3 mb-6">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="yearOfBuild">
-                            Year of Build
-                        </label>
-                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="yearOfBuild" type="number" placeholder="Year of Build" name="yearOfBuild" value={form.yearOfBuild} onChange={handleChange}
-                            min={new Date().getFullYear() - 100} max={new Date().getFullYear()} />
-                        {errors.number && <p className="text-red-500 text-xs italic">{errors.number}</p>}
-                    </div>
-
-                    {/* Capacity */}
-                    <div className="w-full px-3 mb-6">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="capacity">
-                            Capacity
-                        </label>
-                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                            id="capacity"
-                            type="number"
-                            placeholder="Capacity"
-                            name="capacity"
-                            value={form.capacity}
-                            readOnly={true}
-                            onChange={handleChange} />
-                    </div>
-                </div>
-
-                <div className="w-full px-3 mb-6">
-                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="layout">
-                        Seat Layout
+        <div className='container'>
+            <div class="mt-6 sm:mx-auto w-full sm:max-w-sm">
+                <h2 className="selection mb-6">Добавление транспорта</h2>
+                <form className="space-y-2" onSubmit={handleSubmit}>
+                    <label htmlFor="number">
+                        Номер
                     </label>
+                    <input id="number" type="text" name="number" value={form.number} onChange={handleChange} maxLength={7} />
+
+                    <label htmlFor="brand">
+                        Бренд
+                    </label>
+                    <input id="brand" type="text" name="brand" value={form.brand} onChange={handleChange} maxLength={10} />
+
+                    <label htmlFor="model">
+                        Модель
+                    </label>
+                    <input id="model" type="text" name="model" value={form.model} onChange={handleChange} maxLength={10}/>
+
+                    <label htmlFor="yearOfBuild">
+                        Год производства
+                    </label>
+                    <input id="yearOfBuild" type="number" name="yearOfBuild" value={form.yearOfBuild} onChange={handleChange}
+                        min={new Date().getFullYear() - 100} max={new Date().getFullYear()} maxLength={4} />
+
+                    <label htmlFor="capacity">
+                        Вместимость
+                    </label>
+                    <input
+                        id="capacity"
+                        type="number"
+                        name="capacity"
+                        value={form.capacity}
+                        readOnly={true}
+                        onChange={handleChange} />
+
                     <select
-                        className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                        className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 cursor-pointer"
                         id="layout"
                         name="layout"
                         onChange={handleLayoutChange}
                     >
-                        <option value="">Select a predefined layout</option>
+                        <option value="">Выберите сохраненную схему мест</option>
                         {predefinedLayouts.map((layout) => (
                             <option key={layout.id} value={layout.id}>
                                 {layout.name}
                             </option>
                         ))}
                     </select>
-                </div>
 
-                <div>
-                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                        Seats Layout
-                    </label>
-                    {form.rows.map((row, rowIndex) => (
-                        <div key={rowIndex} className="flex items-center mb-2">
-                            {row.seats.map((seat, seatIndex) => (
-                                <input
-                                    key={seatIndex}
-                                    type="text"
-                                    placeholder="Seat"
-                                    value={seat}
-                                    onChange={(e) => handleSeatChange(rowIndex, seatIndex, e.target.value)}
-                                    className="appearance-none block w-12 bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white mr-2"
-                                />
-                            ))}
-                            <button type="button" onClick={() => addSeat(rowIndex)} className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">
-                                Add Seat
-                            </button>
-                            <button type="button" onClick={() => removeRow(rowIndex)} className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded ml-2">
-                                Remove Row
-                            </button>
-                        </div>
-                    ))}
-                    <button type="button" onClick={addRow} className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">
-                        Add Row
-                    </button>
-                </div>
+                        <label>
+                            Схема мест
+                        </label>
+                        {form.rows.map((row, rowIndex) => (
+                            <div key={rowIndex} className="flex items-center mb-2">
+                                {row.seats.map((seat, seatIndex) => (
+                                    <input
+                                        key={seatIndex}
+                                        type="text"
+                                        value={seat}
+                                        onChange={(e) => handleSeatChange(rowIndex, seatIndex, e.target.value)}
+                                        className="seat"
+                                        maxLength={2}
+                                        max={99}
+                                        min={1}
+                                    />
+                                ))}
+                                <button type="button" onClick={() => addSeat(rowIndex)} className="bg-green-500 hover:bg-green-400 text-sm text-white font-thin py-2 px-4 rounded">
+                                    Добавить место
+                                </button>
+                                <button type="button" onClick={() => removeRow(rowIndex)} className="bg-red-500 hover:bg-red-400 text-sm text-white font-thin py-2 px-4 rounded ml-2">
+                                    Удалить ряд
+                                </button>
+                            </div>
+                        ))}
+                    <button type="button" onClick={addRow} className="bg-green-500 hover:bg-green-400 text-sm text-white font-thin py-2 px-4 rounded">
+                            Добавить ряд
+                        </button>
 
-                <div className="flex flex-col items-start justify-center p-4">
-                    <label className="inline-flex items-center space-x-2">
-                        <input
-                            type="checkbox"
-                            name="check1"
-                            checked={checkedState.check1}
-                            onChange={handleCheckboxChange}
-                            className="form-checkbox h-5 w-5 text-blue-600"
-                        />
-                        <span>Кондиционер</span>
-                    </label>
-                    <label className="inline-flex items-center space-x-2">
-                        <input
-                            type="checkbox"
-                            name="check2"
-                            checked={checkedState.check2}
-                            onChange={handleCheckboxChange}
-                            className="form-checkbox h-5 w-5 text-blue-600"
-                        />
-                        <span>Wi-Fi</span>
-                    </label>
-                    <label className="inline-flex items-center space-x-2">
-                        <input
-                            type="checkbox"
-                            name="check3"
-                            checked={checkedState.check3}
-                            onChange={handleCheckboxChange}
-                            className="form-checkbox h-5 w-5 text-blue-600"
-                        />
-                        <span>220v</span>
-                    </label>
-                </div>
+                    <div className="flex flex-col items-start justify-center p-4 space-y-2">
+                        <label className="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="check1"
+                                checked={checkedState.check1}
+                                onChange={handleCheckboxChange}
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span>Кондиционер</span>
+                        </label>
+                        <label className="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="check2"
+                                checked={checkedState.check2}
+                                onChange={handleCheckboxChange}
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span>Wi-Fi</span>
+                        </label>
+                        <label className="inline-flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="check3"
+                                checked={checkedState.check3}
+                                onChange={handleCheckboxChange}
+                                className="form-checkbox h-5 w-5 text-blue-600"
+                            />
+                            <span>220v</span>
+                        </label>
+                    </div>
 
-                <div className="flex items-center justify-center mt-5">
-                    <button className="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-                        Add Transport
-                    </button>
-                </div>
-            </form>
+                    <div className="flex items-center justify-center mt-5">
+                        <button className="primary" type="submit">
+                            Добавить
+                        </button>
+                    </div>
+                </form>
+            </div>
 
             {transports.length !== 0 && <div className="overflow-x-auto relative shadow-md sm:rounded-lg my-5">
-                <table className="w-full text-sm text-left text-gray-500 bg-green-200">
-                    <thead className="text-xs text-gray-700 uppercase bg-green-500">
-                        <tr>
-                            <th scope="col" className="py-3 px-6">
-                                Number
-                            </th>
-                            <th scope="col" className="py-3 px-6">
-                                Brand
-                            </th>
-                            <th scope="col" className="py-3 px-6">
-                                Model
-                            </th>
-                            <th scope="col" className="py-3 px-6">
-                                Details
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {transports.map((transport) => (
-                            <tr key={transport.id} className="text-gray-950 border-b transition duration-300 ease-in-out rounded-lg bg-green-200 hover:bg-green-300 cursor-pointer">
-                                <td className="py-4 px-6">
-                                    {transport.number}
-                                </td>
-                                <td scope="row" className="py-4 px-6">
-                                    {transport.brand}
-                                </td>
-                                <td className="py-4 px-6">
-                                    {transport.model}
-                                </td>
-                                <td className="py-4 px-6">
-                                    <Link to={`/transports/${transport._id}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                        View Details
-                                    </Link>
-                                </td>
+                <div className="overflow-hidden rounded-lg">
+                    <table className="min-w-full text-left text-sm font-light text-surface">
+                        <thead className="border-b border-neutral-200 font-light bg-primary text-white rounded-t-lg">
+                            <tr>
+                                <th scope="col" className="px-6 py-4 rounded-tl-lg">Номер</th>
+                                <th scope="col" className="px-6 py-4">Номер</th>
+                                <th scope="col" className="px-6 py-4">Вместимость</th>
+                                <th scope="col" className="px-6 py-4">Бренд</th>
+                                <th scope="col" className="px-6 py-4">Модель</th>
+                                <th scope="col" className="px-6 py-4 rounded-tr-lg">Год изготовления</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {transports.map((transport, index) => (
+                                <tr
+                                    key={transport._id}
+                                    className="border-b border-neutral-200 transition duration-300 ease-in-out bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-lg"
+                                    onClick={() => navigate(`/transports/${transport._id}`)}
+                                >
+                                    <td className="whitespace-nowrap px-6 py-4 font-medium">{index + 1}</td>
+                                    <td className="whitespace-nowrap px-6 py-4 font-medium">{transport.number}</td>
+                                    <td className="whitespace-nowrap px-6 py-4 font-medium">{transport.capacity}</td>
+                                    <td className="whitespace-nowrap px-6 py-4 font-medium">{transport.brand}</td>
+                                    <td className="whitespace-nowrap px-6 py-4 font-medium">{transport.model}</td>
+                                    <td className="whitespace-nowrap px-6 py-4 font-medium">{transport.yearOfBuild}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>}
-        </>
+        </div>
     );
 }

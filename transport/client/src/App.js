@@ -15,7 +15,7 @@ import { Elements } from '@stripe/react-stripe-js';
 function App() {
   const { login, logout, userId, ready, userRole } = useAuth();
   const { request } = useHttp();
-  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY, { locale: 'ru' });
   console.log('App.js: userRole = ', userRole)
 
   const routes = useRoutes(userRole);

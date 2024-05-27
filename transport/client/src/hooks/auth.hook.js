@@ -69,9 +69,13 @@ export const useAuth = () => {
 
 
     async function getCityName(lat, lon) {
+        try {
         const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ru`);
         const data = await response.json();
         return data.city || data.locality || data.principalSubdivision;
+        } catch (e) {
+            console.log('auth.hook.js: getCityName: e.message = ', e.message)
+        }   
     }
 
     useEffect(() => {

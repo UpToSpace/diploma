@@ -251,164 +251,174 @@ export const CarrierRoutesPage = () => {
         window.scrollTo(0, 0); // Optional: Scroll to the form
     };
 
+    const handleCancelEditButtonClick = () => {
+        setEditingRouteId(null);
+        setForm({
+            transport: transports[0]?._id || '',
+            departure: {
+                latitude: 0,
+                longitude: 0,
+                city: '',
+                country: '',
+                place: '',
+                date: '',
+                time: '',
+            },
+            destination: {
+                latitude: 0,
+                longitude: 0,
+                city: '',
+                country: '',
+                place: '',
+                date: '',
+                time: '',
+            },
+            price: '',
+        });
+    };
+
     if (loading) {
         return <Loader />;
     }
 
     if (!transports.length) {
         return (
-            <div className="flex flex-col items-center justify-center h-full">
-                <p className="text-lg font-semibold text-gray-800">You don't have any transports yet. Please add some</p>
-            </div>
+            <h2 className='section'>Добавьте сначала транспорт</h2>
         );
     }
 
     return (
-        <>
-            <form className="max-w-xl mx-auto my-10 p-5" onSubmit={handleSubmit}>
-                <div className="mb-6">
-                    <label htmlFor="transport" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select Transport</label>
-                    <select id="transport" name="transport" onChange={handleChange} value={form.transport} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <div className='container'>
+            <div class="mt-6 sm:mx-auto w-full sm:max-w-sm">
+                <h2 className="selection mb-6">Добавление рейсов</h2>
+                <form className="space-y-2" onSubmit={handleSubmit}>
+
+                    <label htmlFor="transport">Выберите транспорт</label>
+                    <select
+                        className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 cursor-pointer"
+                        id="transport"
+                        name="transport"
+                        onChange={handleChange}
+                        value={form.transport}
+                    >
                         {transports.map((transport) => (
                             <option key={transport._id} value={transport._id}>{transport.model} - {transport.number}</option>
                         ))}
                     </select>
-                </div>
-                {/* Input fields for departure, destination, departureTime, arrivalTime, and price */}
-                {/* Example for one input field */}
-                <div className="mb-6">
-                    <AutoCompleteInput
-                        handleManualInputChange={handleChange}
-                        setPlace={setForm} // This is correctly passed and now will work as intended
-                        name="departure"
-                        place={form.departure}
-                    />
-                    {/* <label htmlFor="departure" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Departure</label>
-                <input type="text" id="departure" name="departure" required onChange={handleChange} value={form.departure}  /> */}
-                </div>
-                {/* Destination Input Field */}
-                <div className="mb-6">
-                    <AutoCompleteInput
-                        handleManualInputChange={handleChange}
-                        setPlace={setForm} // This is correctly passed and now will work as intended
-                        name="destination"
-                        place={form.destination}
-                    />
-                    {/* <label htmlFor="destination" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Destination</label>
-                <input type="text" id="destination" name="destination" required onChange={handleChange} value={form.destination} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Destination location" /> */}
-                </div>
 
-                {/* Departure Time Input Field */}
-                <div className="mb-6">
-                    <label htmlFor="departureDate" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Departure Date</label>
-                    <input type="date" id="departureDate" name="departure.date" required onChange={handleChange} value={form.departure.date} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
-                </div>
+                    <label>
+                        Место оправления
+                        <AutoCompleteInput
+                            handleManualInputChange={handleChange}
+                            setPlace={setForm}
+                            name="departure"
+                            place={form.departure}
+                        />
+                    </label>
 
-                <div className="mb-6">
-                    <label htmlFor="departureTime" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Departure Time</label>
-                    <input type="time" id="departureTime" name="departure.time" required onChange={handleChange} value={form.departure.time} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
-                </div>
+                    <label>
+                        Место прибытия
+                        <AutoCompleteInput
+                            handleManualInputChange={handleChange}
+                            setPlace={setForm}
+                            name="destination"
+                            place={form.destination}
+                        />
+                    </label>
 
-                {/* Arrival Time Input Field */}
-                <div className="mb-6">
-                    <label htmlFor="destinationDate" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Destination Date</label>
-                    <input type="date" id="destinationDate" name="destination.date" required onChange={handleChange} value={form.destination.date} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
-                </div>
-                <div className="mb-6">
-                    <label htmlFor="destinationTime" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Destination Time</label>
-                    <input type="time" id="destinationTime" name="destination.time" required onChange={handleChange} value={form.destination.time} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
-                </div>
 
-                {/* Price Input Field */}
-                <div className="mb-6">
-                    <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Price</label>
-                    <input type="number" id="price" name="price" required onChange={handleChange} value={form.price} min="0" step="0.01" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Price" />
-                </div>
+                    <label htmlFor="departureDate">
+                        Дата отправления
+                        <input type="date" id="departureDate" name="departure.date" required onChange={handleChange} value={form.departure.date} />
+                    </label>
 
-                {editingRouteId ?
-                    <>
+                    <label htmlFor="departureTime">
+                        Время отправления
+                        <input type="time" id="departureTime" name="departure.time" required onChange={handleChange} value={form.departure.time} />
+                    </label>
+
+                    <label htmlFor="destinationDate">
+                        Дата прибытия
+                        <input type="date" id="destinationDate" name="destination.date" required onChange={handleChange} value={form.destination.date} />
+                    </label>
+
+                    <label htmlFor="destinationTime">
+                        Время прибытия
+                        <input type="time" id="destinationTime" name="destination.time" required onChange={handleChange} value={form.destination.time} />
+                    </label>
+
+                    <label htmlFor="price">
+                        Цена поездки
+                        <input type="number" id="price" name="price" required onChange={handleChange} value={form.price} min="0" step="0.01" />
+                    </label>
+
+
+                    {editingRouteId ?
+                        <>
+                            <button
+                                type="submit"
+                                className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                            >Сохранить
+                            </button>
+                            <button
+                                onClick={handleCancelEditButtonClick}
+                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                            >Отмена
+                            </button>
+                        </>
+                        :
                         <button
                             type="submit"
-                            className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                        >Save changes
+                            className="primary"
+                        >Добавить рейс
                         </button>
-                        <button
-                            onClick={() => setEditingRouteId(null)}
-                            className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                        >Cancel
-                        </button>
-                    </>
-                    :
-                    <button
-                        type="submit"
-                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >Add Route
-                    </button>
-                }
-            </form>
-            {/* <MiniMap
-                longitude={form.departure.longitude}
-                latitude={form.departure.latitude}
-                updateCoordinates={(latitude, longitude) => {
-                    setForm(prevForm => ({
-                        ...prevForm,
-                        departure: {
-                            latitude,
-                            longitude,
-                        }
-                    }));
-                }}
-            />
-            <MiniMap
-                longitude={form.destination.longitude}
-                latitude={form.destination.latitude}
-                updateCoordinates={(latitude, longitude) => {
-                    setForm(prevForm => ({
-                        ...prevForm,
-                        destination: {
-                            latitude,
-                            longitude,
-                        }
-                    }));
-                }}
-            /> */}
+                    }
 
-            {routes.length !== 0 && <table className="table-auto w-full mt-4">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="px-4 py-2">Transport</th>
-                        <th className="px-4 py-2">Departure City</th>
-                        <th className="px-4 py-2">Destination City</th>
-                        <th className="px-4 py-2">Price</th>
-                        <th className="px-4 py-2"></th>
-                        <th className="px-4 py-2"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {routes.map((route, index) => (
-                        <tr key={route._id} className="bg-white">
-                            <td className="border px-4 py-2">{route.transport.model}</td>
-                            <td className="border px-4 py-2">{route.departure.city}</td>
-                            <td className="border px-4 py-2">{route.destination.city}</td>
-                            <td className="border px-4 py-2">{route.price}</td>
-                            <td className="border px-4 py-2">
-                                <button
-                                    className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    onClick={() => editRoute(route._id)}>
-                                    Edit
-                                </button>
-                            </td>
-                            <td className="border px-4 py-2">
-                                <button
-                                    className="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                    onClick={() => deleteRoute(route._id)}>
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>}
-        </>
+                </form>
+            </div>
+            {routes.length !== 0 && <div className="overflow-x-auto relative shadow-md sm:rounded-lg my-5">
+                    <div className="overflow-hidden rounded-lg">
+                        <table className="min-w-full text-left text-sm font-light text-surface">
+                            <thead className="border-b border-neutral-200 font-light bg-primary text-white rounded-t-lg">
+                                <tr>
+                                    <th scope="col" className="px-6 py-4 rounded-tl-lg">Номер</th>
+                                    <th scope="col" className="px-6 py-4">Номер транспорта</th>
+                                    <th scope="col" className="px-6 py-4">Отправление</th>
+                                    <th scope="col" className="px-6 py-4">Прибытие</th>
+                                    <th scope="col" className="px-6 py-4">Цена</th>
+                                <th scope="col" className="px-6 py-4"></th>
+                                    <th scope="col" className="px-6 py-4 rounded-tr-lg"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {routes.map((route, index) => (
+                                    <tr key={route._id} className="bg-white">
+                                        <td className="border px-4 py-2">{index + 1}</td>
+                                        <td className="border px-4 py-2">{route.transport.number}</td>
+                                        <td className="border px-4 py-2">{`${convertDate(route.departure.date)} ${convertTime(route.departure.date)} - ${route.departure.city}`}</td>
+                                        <td className="border px-4 py-2">{`${convertDate(route.destination.date)} ${convertTime(route.destination.date)} - ${route.destination.city}`}</td>
+                                        <td className="border px-4 py-2">{route.price} BYN</td>
+                                        <td className="border px-4 py-2">
+                                            <button
+                                                className="primary"
+                                                onClick={() => editRoute(route._id)}>
+                                                Редактировать
+                                            </button>
+                                        </td>
+                                        <td className="border px-4 py-2">
+                                            <button
+                                                className="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                                onClick={() => deleteRoute(route._id)}>
+                                                Удалить
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div >
+                </div >
+            }
+        </div >
     );
 }

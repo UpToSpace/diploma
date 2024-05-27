@@ -93,13 +93,13 @@ export const CarrierTransportPage = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-5">
-            <h2 className="text-2xl font-bold mb-4">Transport Details</h2>
+            <h2 className="text-2xl font-bold mb-4">Информация о транспорте</h2>
             {editMode ? (
                 <div>
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                         <div className="px-4 py-5 sm:px-6">
                             <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                Number:
+                                Номер:
                                 <input
                                     type="text"
                                     name="number"
@@ -107,15 +107,12 @@ export const CarrierTransportPage = () => {
                                     onChange={handleInputChange}
                                 />
                             </h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                Details about the transport.
-                            </p>
                         </div>
                         <div className="border-t border-gray-200">
                             <dl>
                                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Brand
+                                        Бренд
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <input
@@ -128,7 +125,7 @@ export const CarrierTransportPage = () => {
                                 </div>
                                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Model
+                                        Модель
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <input
@@ -141,7 +138,7 @@ export const CarrierTransportPage = () => {
                                 </div>
                                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Year of Build
+                                        Год постройки
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <input
@@ -156,7 +153,7 @@ export const CarrierTransportPage = () => {
                                 </div>
                                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Capacity
+                                        Вместимость
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <input
@@ -169,7 +166,7 @@ export const CarrierTransportPage = () => {
                                 </div>
                                 <div className="px-4 py-5 sm:px-6">
                                     <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                        Seat Layout
+                                        Карта мест
                                     </h3>
                                     <div className="mt-4">
                                         {renderSeatLayout(transport)}
@@ -211,14 +208,14 @@ export const CarrierTransportPage = () => {
 
                                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Edit
+                                        Редактировать
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-3" onClick={saveChanges}>
-                                            Save
+                                            Сохранить
                                         </button>
                                         <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={cancelButtonHandler}>
-                                            Cancel
+                                            Отмена
                                         </button>
                                     </dd>
                                 </div>
@@ -230,17 +227,14 @@ export const CarrierTransportPage = () => {
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                     <div className="px-4 py-5 sm:px-6">
                         <h3 className="text-lg leading-6 font-medium text-gray-900">
-                            Number: {transport.number}
+                            Номер: {transport.number}
                         </h3>
-                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                            Details about the transport.
-                        </p>
                     </div>
                     <div className="border-t border-gray-200">
                         <dl>
                             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">
-                                    Brand
+                                    Бренд
                                 </dt>
                                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     {transport.brand}
@@ -248,7 +242,7 @@ export const CarrierTransportPage = () => {
                             </div>
                             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">
-                                    Model
+                                    Модель
                                 </dt>
                                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     {transport.model}
@@ -256,7 +250,7 @@ export const CarrierTransportPage = () => {
                             </div>
                             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">
-                                    Year of Build
+                                    Год изготовления
                                 </dt>
                                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     {transport.yearOfBuild}
@@ -264,15 +258,15 @@ export const CarrierTransportPage = () => {
                             </div>
                             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">
-                                    Capacity
+                                    Вместимость
                                 </dt>
                                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {transport.capacity}
+                                    {transport.capacity} мест
                                 </dd>
                             </div>
                             <div className="px-4 py-5 sm:px-6">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                    Seat Layout
+                                    Карта мест
                                 </h3>
                                 <div className="mt-4">
                                     {renderSeatLayout(transport)}
@@ -313,15 +307,12 @@ export const CarrierTransportPage = () => {
                             </div>
 
                             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt className="text-sm font-medium text-gray-500">
-                                    Edit
-                                </dt>
-                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-center w-full">
                                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-3" onClick={editButtonHandler}>
-                                        Edit
+                                        Редактировать
                                     </button>
                                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={deleteTransport}>
-                                        Delete
+                                        Удалить
                                     </button>
                                 </dd>
                             </div>

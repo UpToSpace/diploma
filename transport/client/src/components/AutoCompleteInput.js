@@ -65,12 +65,9 @@ export function AutoCompleteInput({
                 <input
                     id="address"
                     type="text"
-                    placeholder="Address"
                     value={streetAndNumber}
                     onChange={handleChange}
-                    name="streetAndNumber"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                />
+                    name="streetAndNumber" />
                 <ul className="addressSuggestions">
                     {suggestions?.map((suggestion, index) => (
                         <li key={index} onClick={() => handleSuggestionClick(suggestion)}>

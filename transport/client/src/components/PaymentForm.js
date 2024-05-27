@@ -16,7 +16,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
     const [saveCard, setSaveCard] = useState(false);
     const [showCardElement, setShowCardElement] = useState(false);
     const [savedCards, setSavedCards] = useState([]);
-    const [cardToPay, setCardToPay] = useState(null);   
+    const [cardToPay, setCardToPay] = useState(null);
     const [payButtonDisabled, setPayButtonDisabled] = useState(false);
 
     const getSavedCards = useCallback(async () => {
@@ -38,7 +38,10 @@ export default function PaymentForm({ amount, seats, routeId }) {
 
     const handleSelectCard = async (cardId) => {
         setPayButtonDisabled(true);
-        if (!cardId || !amount || !routeId || !seats || !userId) {
+        if (seats?.length === 0) {
+            return toast.error('Выберите места');
+        }
+        if (!cardId || !amount || !routeId || !userId) {
             return toast.error('Заполните все поля');
         }
         try {
@@ -67,7 +70,8 @@ export default function PaymentForm({ amount, seats, routeId }) {
             const { token, error } = await stripe.createToken(cardElement);
 
             if (error) {
-                console.log(error);
+                toast.error(error.message);
+                setPayButtonDisabled(false);
                 return;
             }
             const response = await request('/api/creditcards/charge', 'POST', { token: token.id, saveCard, amount, userId, seats, routeId })
@@ -84,7 +88,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
 
     return (
         <div className="flex flex-col items-center w-full max-w-96">
-            {savedCards.length !== 0  && <div className="w-full pb-1">
+            {savedCards.length !== 0 && <div className="w-full pb-1">
                 <input
                     id="another-card"
                     type="checkbox"
@@ -102,7 +106,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
                     <SavedCardsSelect savedCards={savedCards} onSelectCard={setCardToPay} className="w-full" />
                     <button
                         disabled={!stripe || !cardToPay || loading || payButtonDisabled}
-                        className={`px-6 py-2 w-full text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`primary ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={() => handleSelectCard(cardToPay)}
                     >
                         Оплатить
@@ -111,7 +115,7 @@ export default function PaymentForm({ amount, seats, routeId }) {
             )}
 
             {showCardElement && (
-                <form onSubmit={handleSubmit} className="space-y-6 w-full">
+                <form onSubmit={handleSubmit} className="space-y-2 w-full">
                     <div className="p-4 bg-gray-50 border border-gray-300 rounded-md w-full">
                         <CardElement options={{
                             style: {
@@ -142,8 +146,8 @@ export default function PaymentForm({ amount, seats, routeId }) {
                     </div>
                     <button
                         type="submit"
-                        disabled={!stripe || loading || payButtonDisabled}
-                        className={`w-full px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={payButtonDisabled}
+                        className={`primary ${!stripe ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         Оплатить
                     </button>

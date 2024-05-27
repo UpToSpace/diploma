@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { Map } from '../../components/MapComponents';
 import PaymentForm from '../../components/PaymentForm';
+import { AuthContext } from '../../context/AuthContext';
 import { calculateTimeDifference, convertDate, convertTime } from '../../components/functions';
 
 export const TripPage = () => {
@@ -13,6 +14,7 @@ export const TripPage = () => {
     const [seats, setSeats] = useState([]);
     const [bookedSeats, setBookedSeats] = useState([]);
     const navigate = useNavigate();
+    const isCarrier = (useContext(AuthContext).userRole === 'carrier');
 
     const getTrip = useCallback(async () => {
         try {
@@ -39,6 +41,9 @@ export const TripPage = () => {
     }, [getTrip, getBookedSeats]);
 
     const bookSeat = async (seat) => {
+        if (isCarrier) {
+            return;
+        }
         if (seats.includes(seat)) {
             setSeats(seats.filter(s => s !== seat));
         } else {
@@ -68,8 +73,12 @@ export const TripPage = () => {
         ));
     };
 
-    if (loading || !trip) {
+    if (loading) {
         return <Loader />
+    }
+
+    if (!trip) {
+        return <h2 className='mt-4'>Маршрут не найден</h2>
     }
 
     return (
@@ -97,7 +106,11 @@ export const TripPage = () => {
                                 </div>
                                 <div className="border-b border-dashed border-gray-400 my-2"></div>
                                 <div className="text-lg font-semibold">{trip.price} BYN</div>
-                                <a href={'carrier/' + trip.transport.carrier} className="text-indigo-500">Перевозчик</a>
+                                {isCarrier ? 
+                                    <a href={'transports/' + trip.transport._id} className="text-indigo-500">Транспорт</a>
+                                    :
+                                    <a href={'carrier/' + trip.transport.carrier} className="text-indigo-500">Перевозчик</a>
+                                }
                                 <div className="flex flex-col md:flex-row justify-center items-center h-full">
                                     {trip.transport.conditioners && <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 19.5v-.75a7.5 7.5 0 0 0-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -114,7 +127,7 @@ export const TripPage = () => {
                         <div className="flex-1">
                             <div className="flex justify-between">
                                 <div>
-                                    <div className="uppercase tracking-wide text-sm text-primary font-semibold mt-4">Прибытие</div>
+                                    <div className="uppercase tracking-wide text-sm text-primary font-semibold">Прибытие</div>
                                     <p className="block mt-1 text-lg leading-tight font-medium text-black">
                                         {trip.destination.city}, {trip.destination.country}
                                     </p>
@@ -139,24 +152,24 @@ export const TripPage = () => {
                     </div>
                 </div>
 
-                {/* Selected Seats and Total Cost */}
-                <div className="bg-white shadow-md rounded-lg p-4 mx-auto max-w-4xl mb-6">
-                    <div className="flex flex-col md:flex-row justify-between">
-                        <div className="px-4 py-4 sm:px-6">
-                            <p className="text-gray-500">Выбраные места: {seats.sort().join(', ')}</p>
-                            <p className="text-gray-500">Итого: {parseFloat((seats.length * trip.price).toFixed(2))} BYN</p>
+                {!isCarrier &&
+                    <>
+                        <div className="bg-white shadow-md rounded-lg p-4 mx-auto max-w-4xl mb-6">
+                            <div className="flex flex-col md:flex-row justify-between">
+                                <div className="px-4 py-4 sm:px-6">
+                                    <p className="text-gray-500">Выбраные места: {seats.sort().join(', ')}</p>
+                                    <p className="text-gray-500">Итого: {parseFloat((seats.length * trip.price).toFixed(2))} BYN</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                {/* Payment Form */}
-                <div className="bg-white shadow-md rounded-lg p-4 mx-auto">
-                    <div className="flex flex-col md:flex-row justify-center">
-                        <PaymentForm amount={trip.price} seats={seats} routeId={id} />
-                    </div>
-                </div>
+                        <div className="bg-white shadow-md rounded-lg p-4 mx-auto">
+                            <div className="flex flex-col md:flex-row justify-center">
+                                <PaymentForm amount={trip.price} seats={seats} routeId={id} />
+                            </div>
+                        </div>
+                    </>
+                }
             </div>
-            {/* <Map points={[{ latitude: trip.departure.latitude, longitude: trip.departure.longitude }, { latitude: trip.destination.latitude, longitude: trip.destination.longitude }]} /> */}
         </>
     );
 }

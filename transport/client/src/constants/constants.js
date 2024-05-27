@@ -2,8 +2,8 @@ export const roles = ['admin', 'user', 'carrier'];
 
 export const navLinks = {
     admin: [
-        { to: "/", label: "Home" },
-        { to: "/admin", label: "Admin Panel" }
+        { to: "/", label: "Главная" },
+        { to: "/admin", label: "Панель управления" }
     ],
     user: [
         { to: "/", label: "Главная" },
@@ -14,9 +14,9 @@ export const navLinks = {
         { to: "/map", label: "Карта" }
     ],
     carrier: [
-        { to: "/", label: "Home" },
-        { to: "/transports", label: "Transports" },
-        { to: "/routes", label: "Routes" },
+        { to: "/", label: "Главная" },
+        { to: "/transports", label: "Транспорт" },
+        { to: "/routes", label: "Поездки" },
         { to: "/statistics", label: "Статистика" },
     ],
     guest: [
