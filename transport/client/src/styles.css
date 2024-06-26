@@ -191,4 +191,12 @@ ul {
     padding: 0 12px;
     height: 40px; 
 } */
-
+.addressSuggestions li{
+  cursor: pointer;
+  padding: 5px;
+  border: #072446 1px;
+  border-radius: 5px;
+}
+.addressSuggestions li:hover {
+  background-color: #DDE2E9;
+}

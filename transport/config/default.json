@@ -1,7 +1,7 @@
 {
     "port": 5000,
     "wsport": 5001,
-    "mongoUri": "mongodb://admin:admin@localhost:27017/transport?authSource=admin&authMechanism=DEFAULT",
+    "mongoUri": "mongodb+srv://user1:6L0CkMv7WUxNOdAf@transportcluster.wtxhnf9.mongodb.net/?retryWrites=true&w=majority&appName=TransportCluster",
     "jwtAccessSecret": "transport secret",
     "jwtRefreshSecret": "transport refresh secret",
     "baseUrl": "https://localhost:5000",

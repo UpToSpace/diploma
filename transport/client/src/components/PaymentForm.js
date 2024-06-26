@@ -37,7 +37,6 @@ export default function PaymentForm({ amount, seats, routeId }) {
     }, []);
 
     const handleSelectCard = async (cardId) => {
-        setPayButtonDisabled(true);
         if (seats?.length === 0) {
             return toast.error('Выберите места');
         }
@@ -45,11 +44,14 @@ export default function PaymentForm({ amount, seats, routeId }) {
             return toast.error('Заполните все поля');
         }
         try {
+            setPayButtonDisabled(true);
             const data = await request('/api/creditcards/charge/saved', 'POST', { cardId, amount, routeId, seats, userId });
             console.log(data);
+            setPayButtonDisabled(false);
             if (data) window.location.reload();
         } catch (e) {
             toast.error(e.message);
+            setPayButtonDisabled(false);
         }
     };
 

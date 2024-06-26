@@ -80,6 +80,7 @@ router.get('/:id/statistics', auth, async (req, res) => {
 router.get('/carrier/:id/statistics', auth, async (req, res) => {
     try {
         const { id } = req.params;
+        //console.log("Carrier ID:", id);
         const transports = await Transport.find({ carrier: id }, { _id: 1 });
         console.log("Transports found:", transports.length, transports);
 
@@ -87,7 +88,7 @@ router.get('/carrier/:id/statistics', auth, async (req, res) => {
         console.log("Routes found:", routes.length, routes);
 
         if (routes.length === 0) {
-            return res.status(404).json({ message: 'No routes found for the given carrier' });
+            return res.status(404).json({ message: 'Не найдены рейсы для данного перевозчика' });
         }
 
         const ticketsNumber = await Ticket.find({ route: { $in: routes.map(r => r._id) } }).countDocuments();
@@ -134,7 +135,7 @@ router.get('/carriers/:id', auth, async (req, res) => {
 router.get('/all', admin, async (req, res) => {
     try {
         const { email } = req.query;
-        const users = await User.find({ email: { $regex: email, $options: 'i' } }, { password: 0 }).limit(20);
+        const users = await User.find({ email: { $regex: email, $options: 'i' }, role: 'carrier' }, { password: 0 }).limit(20);
         res.json(users);
     } catch (e) {
         console.log(e)

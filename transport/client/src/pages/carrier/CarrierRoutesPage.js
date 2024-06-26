@@ -94,27 +94,27 @@ export const CarrierRoutesPage = () => {
         console.log(form);
         console.log(auth);
         if (!form.transport || !form.departure || !form.destination || !form.price) {
-            return toast.error('All fields are required');
+            return toast.error('Заполните все поля');
         }
         if (!form.departure.city || !form.destination.city) {
             return toast.error('Выберите город из выпадающего списка');
         }
         if (form.departure.city === form.destination.city) {
-            return toast.error('Departure and destination cities must be different');
+            return toast.error('Места отправления и прибытия не могут совпадать');
         }
         if (new Date(`${form.departure.date}T${form.departure.time}`) < new Date()) {
-            return toast.error('Departure date and time must be in the future');
+            return toast.error('Дата и время отправления не могут быть раньше текущей даты и времени');
         }
         if (new Date(`${form.destination.date}T${form.destination.time}`) < new Date(`${form.departure.date}T${form.departure.time}`)) {
-            return toast.error('Destination date and time must be after departure date and time');
+            return toast.error('Дата и время прибытия не могут быть раньше даты и времени отправления');
         }
-        const checkIfTransportAvailable = await request(`/api/transports/check`, 'POST', {
+        const checkIfTransportAvailable = await request(`/api/transports/check`, 'POST', { // TODO
             transport: form.transport,
             departureDate: fromZonedTime(`${form.departure.date}T${form.departure.time}`, timeZone).toISOString(),
             destinationDate: fromZonedTime(`${form.destination.date}T${form.destination.time}`, timeZone).toISOString(),
         });
         if (checkIfTransportAvailable.message === 'Transport is not available') {
-            return toast.error('Transport is not available during the specified dates');
+            return toast.error('Транспорт недоступен в указанное время');
         }
         try {
             const pointsToRequest = `${form.departure.longitude},${form.departure.latitude};${form.destination.longitude},${form.destination.latitude}`;
@@ -122,10 +122,10 @@ export const CarrierRoutesPage = () => {
                 `steps=true&geometries=geojson&access_token=${process.env.REACT_APP_MAP_TOKEN}&overview=full&annotations=distance,duration`)
             console.log(data);
             if (data.code === 'NoRoute') {
-                throw new Error('No route found');
+                throw new Error('Маршрут не найден');
             }
             if (data.routes[0].distance > 10000 * 1000) {
-                throw new Error('Route exceeds maximum distance limitation');
+                throw new Error('Маршрут превышает максимальное ограничение расстояния в 10000 км');
             }
             const travelDurationSeconds = data.routes[0].duration; // duration in seconds
             const departureDateTime = new Date(`${form.departure.date}T${form.departure.time}`);
@@ -140,7 +140,7 @@ export const CarrierRoutesPage = () => {
                 await updateRoute(editingRouteId);
             } else {
                 const response = await request('/api/routes', 'POST', form);
-                toast('Route added successfully!');
+                toast.success('Рейс добавлен!');
             }
             getTransportsAndRoutes(); // Refresh the list of routes
             setForm({
@@ -302,7 +302,7 @@ export const CarrierRoutesPage = () => {
                         value={form.transport}
                     >
                         {transports.map((transport) => (
-                            <option key={transport._id} value={transport._id}>{transport.model} - {transport.number}</option>
+                            <option key={transport._id} value={transport._id}>{transport.brand} {transport.model} - {transport.number}</option>
                         ))}
                     </select>
 
@@ -317,7 +317,7 @@ export const CarrierRoutesPage = () => {
                     </label>
 
                     <label>
-                        Место прибытия
+                        Место назначения
                         <AutoCompleteInput
                             handleManualInputChange={handleChange}
                             setPlace={setForm}
@@ -327,9 +327,9 @@ export const CarrierRoutesPage = () => {
                     </label>
 
 
-                    <label htmlFor="departureDate">
+                    <label htmlFor="departureDate"> 
                         Дата отправления
-                        <input type="date" id="departureDate" name="departure.date" required onChange={handleChange} value={form.departure.date} />
+                        <input type="date" lang='ru' id="departureDate" name="departure.date" required onChange={handleChange} value={form.departure.date} />
                     </label>
 
                     <label htmlFor="departureTime">
@@ -380,7 +380,7 @@ export const CarrierRoutesPage = () => {
                     <div className="overflow-hidden rounded-lg">
                         <table className="min-w-full text-left text-sm font-light text-surface">
                             <thead className="border-b border-neutral-200 font-light bg-primary text-white rounded-t-lg">
-                                <tr>
+                                <tr >
                                     <th scope="col" className="px-6 py-4 rounded-tl-lg">Номер</th>
                                     <th scope="col" className="px-6 py-4">Номер транспорта</th>
                                     <th scope="col" className="px-6 py-4">Отправление</th>
@@ -392,7 +392,7 @@ export const CarrierRoutesPage = () => {
                             </thead>
                             <tbody>
                                 {routes.map((route, index) => (
-                                    <tr key={route._id} className="bg-white">
+                                    <tr key={route._id} className="border-b border-neutral-200 transition duration-300 ease-in-out bg-gray-200 rounded-lg">
                                         <td className="border px-4 py-2">{index + 1}</td>
                                         <td className="border px-4 py-2">{route.transport.number}</td>
                                         <td className="border px-4 py-2">{`${convertDate(route.departure.date)} ${convertTime(route.departure.date)} - ${route.departure.city}`}</td>
@@ -407,7 +407,7 @@ export const CarrierRoutesPage = () => {
                                         </td>
                                         <td className="border px-4 py-2">
                                             <button
-                                                className="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                                className="btn bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
                                                 onClick={() => deleteRoute(route._id)}>
                                                 Удалить
                                             </button>

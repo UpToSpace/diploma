@@ -98,17 +98,25 @@ router.get('/all', auth, async (req, res) => {
 
         console.log(query)
 
+        const matchConditions = {};
+        if (wifi === 'true') {
+            matchConditions.wifi = true;
+        }
+        if (power === 'true') {
+            matchConditions.power = true;
+        }
+        if (conditioners === 'true') {
+            matchConditions.conditioners = true;
+        }
+
         const allRoutes = await Route.find(query).populate({
             path: 'transport',
             model: 'Transport',
-            match: {
-                wifi: wifi === 'true' ? true : { $exists: true },
-                power: power === 'true' ? true : { $exists: true },
-                conditioners: conditioners === 'true' ? true : { $exists: true }
-            }
+            match: matchConditions
         });
 
         const routes = await Promise.all(allRoutes.map(async (route) => {
+            console.log(route)
             const ticketsSold = await Ticket.countDocuments({ route: route._id });
             const seatsAvailable = route.transport.capacity - ticketsSold;
             if (seatsAvailable >= numberOfSeats) {
@@ -156,13 +164,15 @@ router.get('/:id/seats', auth, async (req, res) => {
 router.get('/city/:city', auth, async (req, res) => {
     try {
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
-
-        const now = new Date(); // Current date and time
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
         const departures = await Route.find({
             "departure.city": req.params.city,
-            // "destination.date": today,
-            // "destination.time": { $gt: now.toISOString().substr(11, 5) } // compare as "HH:MM"
+            "destination.date": {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+            //  "destination.time": { $gt: now.toISOString().substr(11, 5) } // compare as "HH:MM"
         }).populate(
             {
                 path: 'transport',
@@ -170,7 +180,10 @@ router.get('/city/:city', auth, async (req, res) => {
             });
         const destinations = await Route.find({
             "destination.city": req.params.city,
-            // "departure.date": today,
+            "destination.date": {
+            $gte: startOfDay,
+            $lte: endOfDay
+        }
             // "departure.time": { $lt: now.toISOString().substr(11, 5) } // compare as "HH:MM"
         }).populate(
             {

@@ -171,7 +171,7 @@ export const MainPage = () => {
                 </div>
             </div>
 
-            <div className="container w-full justify-start py-6">
+            {/* <div className="container w-full justify-start py-6">
                 <h2 className='section'>Ближайшие отправления</h2>
 
                 <div className="flex justify-center w-full">
@@ -224,8 +224,8 @@ export const MainPage = () => {
                                 <h2 className="text-2xl font-bold text-white">Санкт-Петербург</h2>
                             </div>
                         </div>
-                    </div>
-
+                    </div> */} 
+{/* 
                     <div className="w-1/3 p-4 rounded-lg shadow-lg">
                         <div className="relative bg-white rounded-lg overflow-hidden">
                             <img className="w-full h-64 object-cover object-center" src="https://images.unsplash.com/photo-1623276884890-3d1c4f1b0b6e" alt="content" />
@@ -235,8 +235,8 @@ export const MainPage = () => {
                         </div>
                     </div>
 
-                </div>
-            </div>
+                </div> */}
+            {/* </div> */}
 
             <div className="container w-full justify-start py-6">
                 <h2 className='section'>Карта маршрутов</h2>

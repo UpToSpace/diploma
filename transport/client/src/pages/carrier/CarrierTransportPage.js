@@ -75,7 +75,7 @@ export const CarrierTransportPage = () => {
     };
 
     const deleteTransport = async () => {
-        if (!window.confirm('Are you sure you want to delete this transport?')) {
+        if (!window.confirm('Вы уверены, что хотите удалить этот траспорт?')) {
             return;
         }
         try {
@@ -138,7 +138,7 @@ export const CarrierTransportPage = () => {
                                 </div>
                                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Год постройки
+                                        Год производства
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <input
@@ -173,7 +173,7 @@ export const CarrierTransportPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col items-start justify-center p-4">
+                                <div className="flex flex-col items-start justify-center p-4 space-y-2">
                                     <label className="inline-flex items-center space-x-2">
                                         <input
                                             type="checkbox"
@@ -273,7 +273,7 @@ export const CarrierTransportPage = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-start justify-center p-4">
+                                <div className="flex flex-col items-start justify-center p-4 space-y-2">
                                 <label className="inline-flex items-center space-x-2">
                                     <input
                                         type="checkbox"

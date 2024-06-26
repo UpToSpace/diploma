@@ -16,7 +16,7 @@ export const navLinks = {
     carrier: [
         { to: "/", label: "Главная" },
         { to: "/transports", label: "Транспорт" },
-        { to: "/routes", label: "Поездки" },
+        { to: "/routes", label: "Рейсы" },
         { to: "/statistics", label: "Статистика" },
     ],
     guest: [

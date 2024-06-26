@@ -64,7 +64,7 @@ export const SearchPage = () => {
     };
 
     if (loading) return <Loader />;
-    if (routes.length === 0) return <div className="text-center text-2xl mt-10">No routes found</div>;
+    if (routes.length === 0) return <div className="text-center text-2xl mt-10">Рейсы не найдены</div>;
 
     return (
         <div className='container'>

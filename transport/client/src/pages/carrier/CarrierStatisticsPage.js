@@ -51,7 +51,7 @@ export const CarrierStatisticsPage = () => {
             }
         },
         legend: {
-            data: ['Ticket Count', 'Total Cost']
+            data: ['Количество билетов', 'Общая стоимость']
         },
         xAxis: [
             {
@@ -65,7 +65,7 @@ export const CarrierStatisticsPage = () => {
         yAxis: [
             {
                 type: 'value',
-                name: 'Ticket Count',
+                name: 'Количество билетов',
                 min: 0,
                 interval: 1,
                 axisLabel: {
@@ -74,7 +74,7 @@ export const CarrierStatisticsPage = () => {
             },
             {
                 type: 'value',
-                name: 'Total Cost',
+                name: 'Полная стоимость',
                 axisLabel: {
                     formatter: '${value}'
                 }
@@ -82,12 +82,12 @@ export const CarrierStatisticsPage = () => {
         ],
         series: [
             {
-                name: 'Ticket Count',
+                name: 'Количество билетов',
                 type: 'bar',
                 data: tripsData.ticketsByMonth.map(item => item.count)
             },
             {
-                name: 'Total Cost',
+                name: 'Полная стоимость',
                 type: 'line',
                 yAxisIndex: 1,
                 data: tripsData.ticketsByMonth.map(item => item.totalCost)
@@ -136,7 +136,7 @@ export const CarrierStatisticsPage = () => {
                     </div>
                     Заработано денег
                     <span className="block mt-2 text-center text-gray-900 font-normal text-base">
-                        {tripsData.cash.reduce((a, b) => a.cost + b.cost)} BYN
+                        {tripsData.ticketsByMonth[0].totalCost} BYN
                     </span>
                 </div>
             </div>

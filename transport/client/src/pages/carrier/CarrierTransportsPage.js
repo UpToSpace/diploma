@@ -68,24 +68,17 @@ export const CarrierTransportsPage = () => {
         getTransports();
     }, [getTransports]);
 
-    const [errors, setErrors] = useState({});
-
     const validateForm = () => {
-        let isValid = true;
-        let errors = {};
-
         if (!form.number) {
-            isValid = false;
-            errors.number = 'Number is required.';
-        }
+            toast.error('Введите номер транспорта');
+            return false;
+        }   
 
         if (form.yearOfBuild < 1900 || form.yearOfBuild > new Date().getFullYear()) {
-            isValid = false;
-            errors.yearOfBuild = 'Year of Build must be between 1900 and current year.';
+            toast.error('Введите корректный год производства');
+            return false;
         }
-
-        setErrors(errors);
-        return isValid;
+        return true;
     };
 
     const handleChange = (e) => {
@@ -96,16 +89,26 @@ export const CarrierTransportsPage = () => {
     };
 
     const validateSeatLayout = () => {
+        if (form.rows.length === 1 && form.rows[0].seats.length === 0) {
+            toast.error('Добавьте хотя бы один ряд');
+            return false;
+        }
+
+        if (form.rows.some(row => row.seats.length === 0)) {
+            toast.error('Добавьте хотя бы одно место в каждый ряд');
+            return false;
+        }
+
         const duplicates = findDuplicates(form.rows.map(row => row.seats));
         const missing = findMissingSeats(form.rows.map(row => row.seats), form.capacity);
 
         if (duplicates.size > 0) {
-            toast.error(`Duplicate seat numbers detected: ${[...duplicates].join(", ")}`);
+            toast.error(`Найден дубликат места: ${[...duplicates].join(", ")}`);
             return false;
         }
 
         if (missing.length > 0) {
-            toast.error(`Missing seat numbers: ${missing.join(", ")}`);
+            toast.error(`Номер места пропущен: ${missing.join(", ")}`);
             return false;
         }
 
@@ -115,7 +118,7 @@ export const CarrierTransportsPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateForm || !validateSeatLayout()) {
+        if (!validateForm() || !validateSeatLayout()) {
             return;
         }
 
@@ -131,7 +134,7 @@ export const CarrierTransportsPage = () => {
         try {
             // Replace this URL with your actual API endpoint
             const response = await request('/api/transports', 'POST', payload);
-            toast.success(response.message);
+            toast.success('Транспорт успешно добавлен');
             await getTransports();
         } catch (e) {
             toast.error(e.message);
@@ -204,12 +207,12 @@ export const CarrierTransportsPage = () => {
                     <label htmlFor="number">
                         Номер
                     </label>
-                    <input id="number" type="text" name="number" value={form.number} onChange={handleChange} maxLength={7} />
+                    <input id="number" type="text" name="number" value={form.number} onChange={handleChange} minLength={5} maxLength={8} />
 
                     <label htmlFor="brand">
                         Бренд
                     </label>
-                    <input id="brand" type="text" name="brand" value={form.brand} onChange={handleChange} maxLength={10} />
+                    <input id="brand" type="text" name="brand" value={form.brand} onChange={handleChange} minLength={2} maxLength={10} />
 
                     <label htmlFor="model">
                         Модель
