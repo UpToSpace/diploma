@@ -1,9 +1,8 @@
 const { Router } = require('express');
 const CreditCard = require('../models/CreditCard');
 const auth = require('../middleware/auth.middleware');
-const config = require('config');
 const router = Router();
-const stripe = require('stripe')(config.get('stripeSecretKey'));
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 

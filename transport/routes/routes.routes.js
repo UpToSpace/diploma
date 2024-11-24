@@ -2,8 +2,7 @@ const { Router } = require('express');
 const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
 const Transport = require('../models/Transport');
-const config = require('config');
-const stripe = require('stripe')(config.get('stripeSecretKey'));
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const auth = require('../middleware/auth.middleware');
 const router = Router();
 
@@ -181,9 +180,9 @@ router.get('/city/:city', auth, async (req, res) => {
         const destinations = await Route.find({
             "destination.city": req.params.city,
             "destination.date": {
-            $gte: startOfDay,
-            $lte: endOfDay
-        }
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
             // "departure.time": { $lt: now.toISOString().substr(11, 5) } // compare as "HH:MM"
         }).populate(
             {
@@ -219,13 +218,13 @@ router.get('/user/:id', auth, async (req, res) => {
         //console.log(carrierTransports);
         let allRoutes = [];
         for (const transport of carrierTransports) {
-            const routes = await Route.find({ 
+            const routes = await Route.find({
                 transport: transport._id,
                 "departure.date": { $gt: new Date() }
             }).populate({
                 path: 'transport',
                 model: 'Transport'
-             });
+            });
             allRoutes = allRoutes.concat(routes);
         }
         //console.log(allRoutes);

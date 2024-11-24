@@ -2,8 +2,7 @@ const { Router } = require('express');
 const Transport = require('../models/Transport');
 const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
-const config = require('config');
-const stripe = require('stripe')(config.get('stripeSecretKey'));
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const auth = require('../middleware/auth.middleware');
 const router = Router();
 
@@ -18,7 +17,7 @@ router.post('/', auth, async (req, res) => {
         }
         const transport = new Transport({ carrier, number, brand, model, yearOfBuild, capacity, seatsLayout, conditioners, wifi, power });
         await transport.save();
-        res.status(201).json({ message: `Transport ` + number + ` added successfully`});
+        res.status(201).json({ message: `Transport ` + number + ` added successfully` });
     } catch (e) {
         console.log(e);
         res.status(500).json({ message: 'Something went wrong' });
@@ -28,7 +27,7 @@ router.post('/', auth, async (req, res) => {
 // Get all carriers's Transports and routes
 router.get('/users/:id', auth, async (req, res) => {
     try {
-        const transports = await Transport.find({ carrier: req.params.id}).sort({ number: 1 })
+        const transports = await Transport.find({ carrier: req.params.id }).sort({ number: 1 })
         const routes = await Route.find().populate('transport').where('transport').in(transports);
         res.json({ transports, routes });
     } catch (e) {
@@ -83,7 +82,7 @@ router.post('/check', auth, async (req, res) => {
 router.put('/:id', auth, async (req, res) => {
     try {
         const { number, brand, model, yearOfBuild, capacity, seatsLayout, wifi, power, conditioners } = req.body;
-        const candidate = await Transport.findOne({ number, _id: { $ne: req.params.id }});
+        const candidate = await Transport.findOne({ number, _id: { $ne: req.params.id } });
         if (candidate) {
             return res.status(400).json({ message: `Transport ` + number + ` already exists` });
         }

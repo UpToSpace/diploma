@@ -1,5 +1,4 @@
 const { Router } = require('express');
-const config = require('config');
 const User = require('../models/User');
 const Favourite = require('../models/Favourite');
 const Ticket = require('../models/Ticket');
@@ -19,7 +18,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 router.get('/', auth, async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const user = await User.findOne({ _id: decoded.id }, { password: 0 });
         res.json(user);
     } catch (e) {
@@ -148,7 +147,7 @@ router.post('/', auth,
     async (req, res) => {
         try {
             const { token, newPassword, oldPassword } = req.body;
-            const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
+            const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
             const user = await User.findOne({ _id: decoded.id })
             const isMatch = await bcrypt.compare(oldPassword, user.password);
             //console.log(isMatch)
@@ -193,16 +192,16 @@ const upload = multer({
 });
 
 router.put('/upload-avatar', upload.single('avatar'), async (req, res) => {
-    try{
-    const { userId } = req.body;
-    const avatarUrl = req.file.path;
+    try {
+        const { userId } = req.body;
+        const avatarUrl = req.file.path;
 
-    // Сохранение пользователя в MongoDB
-    const user = await User.findById(userId);
-    user.avatarUrl = avatarUrl;
-    await user.save();
+        // Сохранение пользователя в MongoDB
+        const user = await User.findById(userId);
+        user.avatarUrl = avatarUrl;
+        await user.save();
 
-    res.json({ user });
+        res.json({ user });
     } catch (e) {
         console.log(e)
         res.status(500).json({ message: 'Что-то пошло не так' });
@@ -228,7 +227,7 @@ router.delete('/:id', admin, async (req, res) => {
     try {
         const { id } = req.params;
         const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const user = await User.findOne({ _id: decoded.id }) // Use the session
 
         if (decoded.id === id) {

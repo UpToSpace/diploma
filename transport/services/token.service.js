@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const User = require('../models/User');
 
 class TokenService {
     generateTokens(payload) {
-        const accessToken = jwt.sign(payload, config.get('jwtAccessSecret'), { expiresIn: "1h" });
-        const refreshToken = jwt.sign(payload, config.get('jwtRefreshSecret'), { expiresIn: "24h" });
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: "1h" });
+        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "24h" });
         return {
             accessToken,
             refreshToken

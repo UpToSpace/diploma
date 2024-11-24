@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
 
 module.exports = (req, res, next) => {
-    if(req.method === 'OPTIONS') {
+    if (req.method === 'OPTIONS') {
         return next();
     }
 
@@ -10,16 +9,16 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         //console.log('hello');
         //console.log("middleware " + token);
-        if(!token) {
-            return res.status(401).json({message: 'Пользователь не авторизован'});
+        if (!token) {
+            return res.status(401).json({ message: 'Пользователь не авторизован' });
         }
-        jwt.verify(token, config.get('jwtAccessSecret'));
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         next();
     } catch (e) {
         //console.log("middlware " + e);
         if (e instanceof jwt.TokenExpiredError) {
             return res.status(401).json({ message: e.message });
         }
-        res.status(401).json({ message: 'Пользователь не авторизован'});
+        res.status(401).json({ message: 'Пользователь не авторизован' });
     }
 }

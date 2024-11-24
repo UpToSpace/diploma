@@ -2,8 +2,7 @@ const { Router } = require('express');
 const Ticket = require('../models/Ticket');
 const auth = require('../middleware/auth.middleware');
 const router = Router();
-const config = require('config');
-const stripe = require('stripe')(config.get('stripeSecretKey'));
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Create a new Ticket
 // router.post('/', auth, async (req, res) => {

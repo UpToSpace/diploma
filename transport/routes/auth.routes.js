@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid');
 const User = require('../models/User');
-const config = require('config');
 const TokenService = require('../services/token.service');
 const MailService = require('../services/mail.service');
 const auth = require('../middleware/auth.middleware');
@@ -25,9 +24,9 @@ router.post(
 
             const hashedPassword = await bcrypt.hash(password, 12);
             const activationLink = uuid.v4();
-            await MailService.sendActivationMail(email, `${config.get('baseUrl')}/api/auth/activate/${activationLink}`);
+            await MailService.sendActivationMail(email, `${process.env.BASE_URL}/api/auth/activate/${activationLink}`);
             if (isCarrier) {
-                const user = new User({ email: email.toLowerCase(), password: hashedPassword, fullName: fullName, role: "carrier", activationLink, dateOfBirth, activatedAsCarrier: false});
+                const user = new User({ email: email.toLowerCase(), password: hashedPassword, fullName: fullName, role: "carrier", activationLink, dateOfBirth, activatedAsCarrier: false });
                 await user.save();
                 const tokens = TokenService.generateTokens({ id: user._id });
                 await TokenService.saveToken(user._id, tokens.refreshToken);
@@ -108,7 +107,7 @@ router.post('/refresh', async (req, res) => {
         if (!refreshToken) {
             return res.status(401).json({ message: '' });
         }
-        const userData = jwt.verify(refreshToken, config.get('jwtRefreshSecret'));
+        const userData = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
         //console.log(userData)
         const userFromDb = await User.findOne({ refreshToken });
         const users = await User.find({});
@@ -138,7 +137,7 @@ router.get('/activate/:link', async (req, res) => {
         }
         user.isActivated = true;
         await user.save();
-        res.redirect(`${config.get('clientUrl')}/login`);
+        res.redirect(`${process.env.CLIENT_URL}/login`);
     } catch (e) {
         console.log(e);
         res.status(500).json({ message: 'Что-то пошло не так' });
@@ -149,7 +148,7 @@ router.get('/activate/:link', async (req, res) => {
 router.get('/userrole', auth, async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, config.get('jwtAccessSecret'));
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const user = await User.findOne({ _id: decoded.id });
         res.json({ role: user.role, id: user._id });
     } catch (e) {
@@ -170,7 +169,7 @@ router.post('/reset', async (req, res) => {
             return res.status(400).json({ message: 'Праверце пошту, каб актываваць акаунт' });
         }
         const resetLink = uuid.v4();
-        await MailService.sendResetMail(email, `${config.get('clientUrl')}/reset?resetLink=${resetLink}`);
+        await MailService.sendResetMail(email, `${process.env.CLIENT_URL}/reset?resetLink=${resetLink}`);
         user.activationLink = resetLink;
         await user.save();
         res.json({ message: 'Праверце пошту' });
